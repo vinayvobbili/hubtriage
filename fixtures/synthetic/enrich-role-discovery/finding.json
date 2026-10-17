@@ -16,7 +16,7 @@
   "Resources": [
     {
       "Type": "AwsIamAccessKey",
-      "Id": "AWS::IAM::AccessKey:ASIAIOSFODNN7EXAMPLE",
+      "Id": "AWS::IAM::AccessKey:ASIA-EXAMPLE-ENRICH",
       "Partition": "aws",
       "Region": "us-east-1",
       "Details": {

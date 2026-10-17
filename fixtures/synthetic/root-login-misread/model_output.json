@@ -5,20 +5,20 @@
     {
       "text": "Root called GetAccountSummary.",
       "bindings": [
-        {"record_id": "bbe695cb273e#0000", "field": "CloudTrailEvent.userIdentity.type", "value": "Root"},
-        {"record_id": "bbe695cb273e#0000", "field": "CloudTrailEvent.eventName", "value": "GetAccountSummary"}
+        {"record_id": "f408c90c75fb#0000", "field": "CloudTrailEvent.userIdentity.type", "value": "Root"},
+        {"record_id": "f408c90c75fb#0000", "field": "CloudTrailEvent.eventName", "value": "GetAccountSummary"}
       ]
     },
     {
       "text": "The call came from the known admin address 203.0.113.10.",
       "bindings": [
-        {"record_id": "bbe695cb273e#0000", "field": "CloudTrailEvent.sourceIPAddress", "value": "203.0.113.10"}
+        {"record_id": "f408c90c75fb#0000", "field": "CloudTrailEvent.sourceIPAddress", "value": "203.0.113.10"}
       ]
     },
     {
       "text": "The root session was MFA-authenticated.",
       "bindings": [
-        {"record_id": "bbe695cb273e#0000", "field": "CloudTrailEvent.userIdentity.sessionContext.attributes.mfaAuthenticated", "value": "true"}
+        {"record_id": "f408c90c75fb#0000", "field": "CloudTrailEvent.userIdentity.sessionContext.attributes.mfaAuthenticated", "value": "true"}
       ]
     }
   ]

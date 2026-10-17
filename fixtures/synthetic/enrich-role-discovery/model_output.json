@@ -5,17 +5,17 @@
     {
       "text": "The calls were made by the assumed role hubtriage-enrich.",
       "bindings": [
-        {"record_id": "00b727320c0f#0000", "field": "CloudTrailEvent.userIdentity.sessionContext.sessionIssuer.arn", "value": "arn:aws:iam::111122223333:role/hubtriage-enrich"},
-        {"record_id": "00b727320c0f#0001", "field": "CloudTrailEvent.userIdentity.sessionContext.sessionIssuer.arn", "value": "arn:aws:iam::111122223333:role/hubtriage-enrich"}
+        {"record_id": "ff7f3af4b5cf#0000", "field": "CloudTrailEvent.userIdentity.sessionContext.sessionIssuer.arn", "value": "arn:aws:iam::111122223333:role/hubtriage-enrich"},
+        {"record_id": "ff7f3af4b5cf#0001", "field": "CloudTrailEvent.userIdentity.sessionContext.sessionIssuer.arn", "value": "arn:aws:iam::111122223333:role/hubtriage-enrich"}
       ]
     },
     {
       "text": "Both calls in the window were read-only: ListAttachedRolePolicies and DescribeInstances.",
       "bindings": [
-        {"record_id": "00b727320c0f#0000", "field": "CloudTrailEvent.eventName", "value": "ListAttachedRolePolicies"},
-        {"record_id": "00b727320c0f#0000", "field": "CloudTrailEvent.readOnly", "value": true},
-        {"record_id": "00b727320c0f#0001", "field": "CloudTrailEvent.eventName", "value": "DescribeInstances"},
-        {"record_id": "00b727320c0f#0001", "field": "CloudTrailEvent.readOnly", "value": true}
+        {"record_id": "ff7f3af4b5cf#0000", "field": "CloudTrailEvent.eventName", "value": "ListAttachedRolePolicies"},
+        {"record_id": "ff7f3af4b5cf#0000", "field": "CloudTrailEvent.readOnly", "value": true},
+        {"record_id": "ff7f3af4b5cf#0001", "field": "CloudTrailEvent.eventName", "value": "DescribeInstances"},
+        {"record_id": "ff7f3af4b5cf#0001", "field": "CloudTrailEvent.readOnly", "value": true}
       ]
     },
     {

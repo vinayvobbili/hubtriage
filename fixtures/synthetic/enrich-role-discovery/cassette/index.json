@@ -19,7 +19,7 @@
     "service": "cloudtrail",
     "operation": "LookupEvents",
     "params": {
-      "LookupAttributes": [{"AttributeKey": "AccessKeyId", "AttributeValue": "ASIAIOSFODNN7EXAMPLE"}],
+      "LookupAttributes": [{"AttributeKey": "AccessKeyId", "AttributeValue": "ASIA-EXAMPLE-ENRICH"}],
       "StartTime": "2026-10-16T15:20:05+00:00",
       "EndTime": "2026-10-16T17:20:05+00:00",
       "MaxResults": 50

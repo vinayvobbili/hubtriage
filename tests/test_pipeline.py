@@ -36,7 +36,7 @@ def test_reads_resources_from_asff():
     assert f.access_keys() == []
     key = finding("enrich-role-discovery").access_keys()[0]
     assert (key.access_key_id, key.principal_name, key.principal_type) == (
-        "ASIAIOSFODNN7EXAMPLE", "hubtriage-enrich", "AssumedRole",
+        "ASIA-EXAMPLE-ENRICH", "hubtriage-enrich", "AssumedRole",
     )
 
 

@@ -47,9 +47,9 @@ ok   root-login-misread  expected needs_human
   why       benign, but 2 of 3 claim(s) were refused; a dismissal built on a misread record goes to a human
   ADMIT     Root called GetAccountSummary.
   REFUSE    The call came from the known admin address 203.0.113.10.
-            bbe695cb273e#0000.CloudTrailEvent.sourceIPAddress: record says '198.51.100.7', claim asserts '203.0.113.10'
+            f408c90c75fb#0000.CloudTrailEvent.sourceIPAddress: record says '198.51.100.7', claim asserts '203.0.113.10'
   REFUSE    The root session was MFA-authenticated.
-            bbe695cb273e#0000.CloudTrailEvent.userIdentity.sessionContext.attributes.mfaAuthenticated: record says 'false', claim asserts 'true'
+            f408c90c75fb#0000.CloudTrailEvent.userIdentity.sessionContext.attributes.mfaAuthenticated: record says 'false', claim asserts 'true'
 ```
 
 `hubtriage demo -v` also prints each `BatchUpdateFindings` request.
