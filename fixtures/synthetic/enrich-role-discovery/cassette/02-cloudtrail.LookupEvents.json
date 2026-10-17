@@ -1,0 +1,26 @@
+{
+  "Events": [
+    {
+      "AccessKeyId": "ASIAIOSFODNN7EXAMPLE",
+      "CloudTrailEvent": "{\"eventVersion\":\"1.09\",\"userIdentity\":{\"type\":\"AssumedRole\",\"principalId\":\"AROAEXAMPLEROLEID0001:hubtriage\",\"arn\":\"arn:aws:sts::111122223333:assumed-role/hubtriage-enrich/hubtriage\",\"accountId\":\"111122223333\",\"accessKeyId\":\"ASIAIOSFODNN7EXAMPLE\",\"sessionContext\":{\"sessionIssuer\":{\"type\":\"Role\",\"principalId\":\"AROAEXAMPLEROLEID0001\",\"arn\":\"arn:aws:iam::111122223333:role/hubtriage-enrich\",\"accountId\":\"111122223333\",\"userName\":\"hubtriage-enrich\"},\"attributes\":{\"creationDate\":\"2026-10-16T16:19:41Z\",\"mfaAuthenticated\":\"false\"}}},\"eventTime\":\"2026-10-16T16:19:44Z\",\"eventSource\":\"iam.amazonaws.com\",\"eventName\":\"ListAttachedRolePolicies\",\"awsRegion\":\"us-east-1\",\"sourceIPAddress\":\"203.0.113.80\",\"userAgent\":\"Boto3/1.40.0 md/Botocore#1.40.0 ua/2.1 os/macos lang/python#3.12\",\"requestParameters\":{\"roleName\":\"hubtriage-enrich\"},\"responseElements\":null,\"requestID\":\"0a1b2c3d-1111-4a5b-8c9d-0e1f2a3b4c5d\",\"eventID\":\"6f5e4d3c-2222-4b1a-9c8d-7e6f5a4b3c2d\",\"readOnly\":true,\"eventType\":\"AwsApiCall\",\"managementEvent\":true,\"recipientAccountId\":\"111122223333\",\"eventCategory\":\"Management\"}",
+      "EventId": "6f5e4d3c-2222-4b1a-9c8d-7e6f5a4b3c2d",
+      "EventName": "ListAttachedRolePolicies",
+      "EventSource": "iam.amazonaws.com",
+      "EventTime": "2026-10-16T16:19:44+00:00",
+      "ReadOnly": "true",
+      "Resources": [],
+      "Username": "hubtriage"
+    },
+    {
+      "AccessKeyId": "ASIAIOSFODNN7EXAMPLE",
+      "CloudTrailEvent": "{\"eventVersion\":\"1.09\",\"userIdentity\":{\"type\":\"AssumedRole\",\"principalId\":\"AROAEXAMPLEROLEID0001:hubtriage\",\"arn\":\"arn:aws:sts::111122223333:assumed-role/hubtriage-enrich/hubtriage\",\"accountId\":\"111122223333\",\"accessKeyId\":\"ASIAIOSFODNN7EXAMPLE\",\"sessionContext\":{\"sessionIssuer\":{\"type\":\"Role\",\"principalId\":\"AROAEXAMPLEROLEID0001\",\"arn\":\"arn:aws:iam::111122223333:role/hubtriage-enrich\",\"accountId\":\"111122223333\",\"userName\":\"hubtriage-enrich\"},\"attributes\":{\"creationDate\":\"2026-10-16T16:19:41Z\",\"mfaAuthenticated\":\"false\"}}},\"eventTime\":\"2026-10-16T16:19:42Z\",\"eventSource\":\"ec2.amazonaws.com\",\"eventName\":\"DescribeInstances\",\"awsRegion\":\"us-east-1\",\"sourceIPAddress\":\"203.0.113.80\",\"userAgent\":\"Boto3/1.40.0 md/Botocore#1.40.0 ua/2.1 os/macos lang/python#3.12\",\"requestParameters\":{\"instancesSet\":{\"items\":[{\"instanceId\":\"i-0a1b2c3d4e5f60718\"}]}},\"responseElements\":null,\"requestID\":\"1b2c3d4e-3333-4c5d-8e9f-0a1b2c3d4e5f\",\"eventID\":\"7a6b5c4d-4444-4d3c-9b8a-7f6e5d4c3b2a\",\"readOnly\":true,\"eventType\":\"AwsApiCall\",\"managementEvent\":true,\"recipientAccountId\":\"111122223333\",\"eventCategory\":\"Management\"}",
+      "EventId": "7a6b5c4d-4444-4d3c-9b8a-7f6e5d4c3b2a",
+      "EventName": "DescribeInstances",
+      "EventSource": "ec2.amazonaws.com",
+      "EventTime": "2026-10-16T16:19:42+00:00",
+      "ReadOnly": "true",
+      "Resources": [],
+      "Username": "hubtriage"
+    }
+  ]
+}

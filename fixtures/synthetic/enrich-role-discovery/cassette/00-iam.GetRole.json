@@ -1,0 +1,22 @@
+{
+  "Role": {
+    "Arn": "arn:aws:iam::111122223333:role/hubtriage-enrich",
+    "AssumeRolePolicyDocument": {
+      "Statement": [
+        {
+          "Action": "sts:AssumeRole",
+          "Effect": "Allow",
+          "Principal": {"AWS": "arn:aws:iam::444455556666:role/hubtriage-agent"}
+        }
+      ],
+      "Version": "2012-10-17"
+    },
+    "CreateDate": "2026-10-16T12:00:00+00:00",
+    "Description": "hubtriage read-only enrichment, assumed from the security account",
+    "MaxSessionDuration": 3600,
+    "Path": "/",
+    "RoleId": "AROAEXAMPLEROLEID0001",
+    "RoleName": "hubtriage-enrich",
+    "Tags": [{"Key": "ManagedBy", "Value": "terraform"}]
+  }
+}

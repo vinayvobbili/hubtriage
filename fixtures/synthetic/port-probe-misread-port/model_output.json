@@ -1,0 +1,20 @@
+{
+  "verdict": "true_positive",
+  "summary": "The probed instance is reachable from the internet on SSH and RDP.",
+  "claims": [
+    {
+      "text": "Security group sg-0123abcd4567ef890 allows TCP 22 from 0.0.0.0/0.",
+      "bindings": [
+        {"record_id": "9bd6f28b3658#0000", "field": "IpPermissions.0.FromPort", "value": 22},
+        {"record_id": "9bd6f28b3658#0000", "field": "IpPermissions.0.IpRanges.0.CidrIp", "value": "0.0.0.0/0"}
+      ]
+    },
+    {
+      "text": "Security group sg-0123abcd4567ef890 also allows RDP (TCP 3389) from 0.0.0.0/0.",
+      "bindings": [
+        {"record_id": "9bd6f28b3658#0000", "field": "IpPermissions.0.FromPort", "value": 3389},
+        {"record_id": "9bd6f28b3658#0000", "field": "IpPermissions.0.IpRanges.0.CidrIp", "value": "0.0.0.0/0"}
+      ]
+    }
+  ]
+}

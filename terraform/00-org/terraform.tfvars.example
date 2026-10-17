@@ -1,0 +1,6 @@
+# Copy to terraform.tfvars (git-ignored) and fill in. Never commit the copy.
+organization_id        = "o-exampleorgid"
+budget_email           = "you@example.com"
+monthly_budget_usd     = 20
+security_account_email = "you+aws-security@example.com"
+workload_account_email = "you+aws-workload@example.com"

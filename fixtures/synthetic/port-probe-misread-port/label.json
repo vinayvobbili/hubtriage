@@ -1,0 +1,6 @@
+{
+  "verdict": "true_positive",
+  "refused": 1,
+  "source": "synthetic: hand-written to exercise the gate",
+  "why": "The RDP claim cites a real rule with the wrong port and is refused. Escalation still stands on the SSH claim, and the RDP sentence never reaches the note."
+}

@@ -1,0 +1,57 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "StayInTheOrganization",
+      "Effect": "Deny",
+      "Action": "organizations:LeaveOrganization",
+      "Resource": "*"
+    },
+    {
+      "Sid": "KeepGuardDutyOn",
+      "Effect": "Deny",
+      "Action": [
+        "guardduty:DeleteDetector",
+        "guardduty:DisassociateFromAdministratorAccount",
+        "guardduty:DisassociateFromMasterAccount",
+        "guardduty:UpdateDetector",
+        "guardduty:CreateFilter",
+        "guardduty:UpdateFilter",
+        "guardduty:CreateIPSet",
+        "guardduty:UpdateIPSet"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "ArnNotLike": {"aws:PrincipalArn": "arn:aws:iam::*:role/OrganizationAccountAccessRole"}
+      }
+    },
+    {
+      "Sid": "KeepSecurityHubOn",
+      "Effect": "Deny",
+      "Action": [
+        "securityhub:DisableSecurityHub",
+        "securityhub:DisassociateFromAdministratorAccount",
+        "securityhub:DisassociateFromMasterAccount",
+        "securityhub:DeleteInsight"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "ArnNotLike": {"aws:PrincipalArn": "arn:aws:iam::*:role/OrganizationAccountAccessRole"}
+      }
+    },
+    {
+      "Sid": "KeepTheTrail",
+      "Effect": "Deny",
+      "Action": [
+        "cloudtrail:DeleteTrail",
+        "cloudtrail:StopLogging",
+        "cloudtrail:UpdateTrail",
+        "cloudtrail:PutEventSelectors"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "ArnNotLike": {"aws:PrincipalArn": "arn:aws:iam::*:role/OrganizationAccountAccessRole"}
+      }
+    }
+  ]
+}

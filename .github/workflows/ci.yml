@@ -1,0 +1,45 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+# Nothing here has AWS credentials, and nothing needs them: the demo and the
+# evals replay recorded responses, and Terraform is validated, not planned.
+jobs:
+  test:
+    name: Test (py${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install --upgrade pip
+      - run: pip install -e ".[dev,aws]"
+      - run: ruff check .
+      - run: pytest -q
+      - name: Demo (every labeled case must come out as labeled)
+        run: hubtriage demo
+      - name: Eval
+        run: hubtriage eval
+
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform fmt -check -recursive terraform
+      - name: Validate every stage
+        run: |
+          for stage in terraform/00-org terraform/10-security terraform/20-workload; do
+            terraform -chdir="$stage" init -backend=false -input=false
+            terraform -chdir="$stage" validate
+          done

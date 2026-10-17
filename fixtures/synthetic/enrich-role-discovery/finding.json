@@ -1,0 +1,33 @@
+{
+  "SchemaVersion": "2018-10-08",
+  "Id": "arn:aws:guardduty:us-east-1:111122223333:detector/12abc34d567e8fa901bc2d34eexample/finding/7d2b9f4e1a3c5e7f9b1d3f5a7c9eexample",
+  "ProductArn": "arn:aws:securityhub:us-east-1::product/aws/guardduty",
+  "ProductName": "GuardDuty",
+  "CompanyName": "Amazon",
+  "GeneratorId": "arn:aws:guardduty:us-east-1:111122223333:detector/12abc34d567e8fa901bc2d34eexample",
+  "AwsAccountId": "111122223333",
+  "Region": "us-east-1",
+  "Types": ["TTPs/Discovery/Discovery:IAMUser-AnomalousBehavior"],
+  "CreatedAt": "2026-10-16T16:20:05.000Z",
+  "UpdatedAt": "2026-10-16T16:20:05.000Z",
+  "Severity": {"Label": "LOW", "Normalized": 20, "Product": 2},
+  "Title": "API ListAttachedRolePolicies was invoked using an anomalous identity.",
+  "Description": "APIs commonly used in Discovery tactics were invoked by a principal in an anomalous way.",
+  "Resources": [
+    {
+      "Type": "AwsIamAccessKey",
+      "Id": "AWS::IAM::AccessKey:ASIAIOSFODNN7EXAMPLE",
+      "Partition": "aws",
+      "Region": "us-east-1",
+      "Details": {
+        "AwsIamAccessKey": {
+          "PrincipalId": "AROAEXAMPLEROLEID0001:hubtriage",
+          "PrincipalName": "hubtriage-enrich",
+          "PrincipalType": "AssumedRole"
+        }
+      }
+    }
+  ],
+  "Workflow": {"Status": "NEW"},
+  "RecordState": "ACTIVE"
+}

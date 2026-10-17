@@ -1,0 +1,15 @@
+[
+  {
+    "service": "cloudtrail",
+    "operation": "LookupEvents",
+    "params": {
+      "LookupAttributes": [{"AttributeKey": "Username", "AttributeValue": "root"}],
+      "StartTime": "2026-10-16T08:12:44+00:00",
+      "EndTime": "2026-10-16T10:12:44+00:00",
+      "MaxResults": 50
+    },
+    "account_id": "111122223333",
+    "region": "us-east-1",
+    "file": "00-cloudtrail.LookupEvents.json"
+  }
+]

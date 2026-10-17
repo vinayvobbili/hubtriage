@@ -1,0 +1,28 @@
+{
+  "verdict": "benign",
+  "summary": "The discovery calls were hubtriage's own read-only enrichment role, assumed from the security account's agent role.",
+  "claims": [
+    {
+      "text": "The calls were made by the assumed role hubtriage-enrich.",
+      "bindings": [
+        {"record_id": "00b727320c0f#0000", "field": "CloudTrailEvent.userIdentity.sessionContext.sessionIssuer.arn", "value": "arn:aws:iam::111122223333:role/hubtriage-enrich"},
+        {"record_id": "00b727320c0f#0001", "field": "CloudTrailEvent.userIdentity.sessionContext.sessionIssuer.arn", "value": "arn:aws:iam::111122223333:role/hubtriage-enrich"}
+      ]
+    },
+    {
+      "text": "Both calls in the window were read-only: ListAttachedRolePolicies and DescribeInstances.",
+      "bindings": [
+        {"record_id": "00b727320c0f#0000", "field": "CloudTrailEvent.eventName", "value": "ListAttachedRolePolicies"},
+        {"record_id": "00b727320c0f#0000", "field": "CloudTrailEvent.readOnly", "value": true},
+        {"record_id": "00b727320c0f#0001", "field": "CloudTrailEvent.eventName", "value": "DescribeInstances"},
+        {"record_id": "00b727320c0f#0001", "field": "CloudTrailEvent.readOnly", "value": true}
+      ]
+    },
+    {
+      "text": "The role trusts only the security account's hubtriage-agent role.",
+      "bindings": [
+        {"record_id": "1e0ad347b843#0000", "field": "AssumeRolePolicyDocument.Statement.0.Principal.AWS", "value": "arn:aws:iam::444455556666:role/hubtriage-agent"}
+      ]
+    }
+  ]
+}

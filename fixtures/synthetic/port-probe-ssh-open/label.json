@@ -1,0 +1,6 @@
+{
+  "verdict": "true_positive",
+  "refused": 0,
+  "source": "synthetic: hand-written to exercise the gate",
+  "why": "Every claim matches its record; an exposed port being probed is a real exposure."
+}

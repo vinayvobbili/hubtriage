@@ -1,0 +1,22 @@
+{
+  "verdict": "true_positive",
+  "summary": "The probed instance is running with a public address and its security group lets anyone reach SSH.",
+  "claims": [
+    {
+      "text": "Instance i-0a1b2c3d4e5f60718 is running with public IP 203.0.113.25.",
+      "bindings": [
+        {"record_id": "b1a692c9463e#0000", "field": "InstanceId", "value": "i-0a1b2c3d4e5f60718"},
+        {"record_id": "b1a692c9463e#0000", "field": "State.Name", "value": "running"},
+        {"record_id": "b1a692c9463e#0000", "field": "PublicIpAddress", "value": "203.0.113.25"}
+      ]
+    },
+    {
+      "text": "Security group sg-0123abcd4567ef890 allows TCP 22 from 0.0.0.0/0.",
+      "bindings": [
+        {"record_id": "9bd6f28b3658#0000", "field": "GroupId", "value": "sg-0123abcd4567ef890"},
+        {"record_id": "9bd6f28b3658#0000", "field": "IpPermissions.0.FromPort", "value": 22},
+        {"record_id": "9bd6f28b3658#0000", "field": "IpPermissions.0.IpRanges.0.CidrIp", "value": "0.0.0.0/0"}
+      ]
+    }
+  ]
+}

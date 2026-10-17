@@ -1,0 +1,60 @@
+[build-system]
+# Same pin as witness: hatchling 1.30 emits Metadata-Version 2.5, which twine
+# and PyPI's validator reject.
+requires = ["hatchling>=1.27,<1.30"]
+build-backend = "hatchling.build"
+
+[project]
+name = "hubtriage"
+dynamic = ["version"]
+description = "Triage AWS Security Hub findings with an LLM that can only say what the AWS APIs said."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "Vinay Vobbilichetty" }]
+keywords = [
+    "aws", "security-hub", "guardduty", "cloudtrail", "triage", "soc",
+    "incident-response", "llm", "agent", "provenance", "verification",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Security",
+]
+# The gate is witness; everything else in the core is the standard library.
+# Talking to AWS is an extra, so the offline demo and the evals install nothing
+# that could reach an account.
+dependencies = ["witness-cli>=0.2.0"]
+
+[project.optional-dependencies]
+aws = ["boto3>=1.35"]
+dev = ["pytest>=7", "ruff>=0.4"]
+
+[project.urls]
+Source = "https://github.com/vinayvobbili/hubtriage"
+
+[project.scripts]
+hubtriage = "hubtriage.cli:main"
+
+[tool.hatch.version]
+path = "src/hubtriage/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/hubtriage"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]

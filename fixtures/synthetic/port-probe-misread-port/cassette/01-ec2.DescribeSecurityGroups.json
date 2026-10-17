@@ -1,0 +1,31 @@
+{
+  "SecurityGroups": [
+    {
+      "Description": "lab target, ssh",
+      "GroupId": "sg-0123abcd4567ef890",
+      "GroupName": "lab-ssh",
+      "IpPermissions": [
+        {
+          "FromPort": 22,
+          "IpProtocol": "tcp",
+          "IpRanges": [{"CidrIp": "0.0.0.0/0"}],
+          "Ipv6Ranges": [],
+          "PrefixListIds": [],
+          "ToPort": 22,
+          "UserIdGroupPairs": []
+        }
+      ],
+      "IpPermissionsEgress": [
+        {
+          "IpProtocol": "-1",
+          "IpRanges": [{"CidrIp": "0.0.0.0/0"}],
+          "Ipv6Ranges": [],
+          "PrefixListIds": [],
+          "UserIdGroupPairs": []
+        }
+      ],
+      "OwnerId": "111122223333",
+      "VpcId": "vpc-0123456789abcdef0"
+    }
+  ]
+}

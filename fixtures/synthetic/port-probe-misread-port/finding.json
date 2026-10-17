@@ -1,0 +1,36 @@
+{
+  "SchemaVersion": "2018-10-08",
+  "Id": "arn:aws:guardduty:us-east-1:111122223333:detector/12abc34d567e8fa901bc2d34eexample/finding/1ac9e5b8f0d3a2c4e6f8b0d2a4c6example",
+  "ProductArn": "arn:aws:securityhub:us-east-1::product/aws/guardduty",
+  "ProductName": "GuardDuty",
+  "CompanyName": "Amazon",
+  "GeneratorId": "arn:aws:guardduty:us-east-1:111122223333:detector/12abc34d567e8fa901bc2d34eexample",
+  "AwsAccountId": "111122223333",
+  "Region": "us-east-1",
+  "Types": ["TTPs/Discovery/Recon:EC2-PortProbeUnprotectedPort"],
+  "CreatedAt": "2026-10-16T14:02:11.000Z",
+  "UpdatedAt": "2026-10-16T14:47:39.000Z",
+  "Severity": {"Label": "LOW", "Normalized": 20, "Product": 2},
+  "Title": "Unprotected port on EC2 instance i-0a1b2c3d4e5f60718 is being probed.",
+  "Description": "EC2 instance has an unprotected port which is being probed by a known malicious host.",
+  "Resources": [
+    {
+      "Type": "AwsEc2Instance",
+      "Id": "arn:aws:ec2:us-east-1:111122223333:instance/i-0a1b2c3d4e5f60718",
+      "Partition": "aws",
+      "Region": "us-east-1",
+      "Details": {
+        "AwsEc2Instance": {
+          "Type": "t3.micro",
+          "ImageId": "ami-0abcdef1234567890",
+          "IpV4Addresses": ["10.0.1.25", "203.0.113.25"],
+          "VpcId": "vpc-0123456789abcdef0",
+          "SubnetId": "subnet-0123456789abcdef0",
+          "LaunchedAt": "2026-10-16T13:40:02.000Z"
+        }
+      }
+    }
+  ],
+  "Workflow": {"Status": "NEW"},
+  "RecordState": "ACTIVE"
+}

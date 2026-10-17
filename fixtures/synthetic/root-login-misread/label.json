@@ -1,0 +1,6 @@
+{
+  "verdict": "needs_human",
+  "refused": 2,
+  "source": "synthetic: hand-written to exercise the gate",
+  "why": "The model dismisses root usage on an address and an MFA state the record contradicts. Both claims are refused, so the benign verdict is sent to a human instead of closing a root session without MFA from an unknown address."
+}

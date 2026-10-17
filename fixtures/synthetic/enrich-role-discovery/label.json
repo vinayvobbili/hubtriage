@@ -1,0 +1,6 @@
+{
+  "verdict": "benign",
+  "refused": 0,
+  "source": "synthetic: hand-written to exercise the gate",
+  "why": "The agent's own enrichment role tripping GuardDuty's anomaly model is the first false positive a deployment like this meets. Benign stands because every claim is admitted."
+}

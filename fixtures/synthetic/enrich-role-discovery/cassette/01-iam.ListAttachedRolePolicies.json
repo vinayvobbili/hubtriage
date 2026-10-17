@@ -1,0 +1,6 @@
+{
+  "AttachedPolicies": [
+    {"PolicyArn": "arn:aws:iam::111122223333:policy/hubtriage-enrich", "PolicyName": "hubtriage-enrich"}
+  ],
+  "IsTruncated": false
+}

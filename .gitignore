@@ -1,0 +1,22 @@
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.ruff_cache/
+*.db
+
+# Terraform: state holds account ids and emails, tfvars holds the emails the
+# accounts are created with. Neither is ever committed; the examples are.
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+.terraform.tfstate.lock.info
+
+# Live recordings land here until they are reviewed and moved into fixtures/.
+recordings/
