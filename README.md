@@ -60,6 +60,27 @@ each path, and their "model answers" are not a model's (see
 works; they say nothing about how accurate any model is. Cases recorded from a real
 organization, and accuracy measured against live models, come next.
 
+## Decisions and what failed
+
+- **The model does not choose its lookups.** The questions asked about a finding are a fixed
+  plan, because a model that picks its own lookups can also skip the one that would contradict it
+  (`src/hubtriage/evidence.py`).
+- **A benign verdict needs every claim admitted.** Closing an alert is the expensive direction to
+  be wrong in, so one refused claim sends it to a human. A true positive only needs one admitted
+  claim.
+- **The model's summary is not written back.** The first time this ran, the summary of a refused
+  benign verdict repeated both refused claims into the finding's note. The note now carries only
+  admitted claims (`src/hubtriage/writeback.py`).
+- **The no-close rule is in IAM, not only in code.** The agent's role denies `RESOLVED` and
+  `SUPPRESSED` and denies writing fields the product owns, so a bug in the code cannot close a
+  finding.
+- **Key-shaped placeholders failed.** GitHub secret scanning flagged the AWS documentation
+  placeholder in the fixtures as an access key id. They are now `ASIA-EXAMPLE-*`, and a test
+  refuses any tracked file with that shape.
+- **Not deployed.** hubtriage is validated in CI against recorded fixtures and is not deployed to
+  AWS yet. The Terraform is validated, not applied, and the shipped cases are hand-written, so
+  nothing here measures how accurate any model is.
+
 ## How it fits together
 
 ```
