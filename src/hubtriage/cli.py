@@ -46,7 +46,8 @@ def _print_decision(result) -> None:
         mark = "ADMIT " if o.admitted else "REFUSE"
         print(f"  {mark}    {o.claim.text}")
         if not o.admitted:
-            print(f"            {o.reason}")
+            # The gate lists every field a record has, which can run to pages.
+            print(f"            {o.reason.split('; available:')[0]}")
 
 
 def cmd_demo(args) -> int:
@@ -157,6 +158,7 @@ def cmd_consume(args) -> int:
     securityhub = session.client("securityhub", region_name=args.region)
     judge = llm.from_env()
     live = AwsClient(enrich_role=args.enrich_role, session=session)
+    answered: set[str] = set()
 
     def handle(raw: dict) -> None:
         result = consumer.triage_new(
@@ -165,6 +167,7 @@ def cmd_consume(args) -> int:
             lambda current: cases.record(current, args.out, live, judge),
             write_back=args.write_back,
             product=args.product,
+            answered=answered,
         )
         if result is not None:
             print(result.finding.title)

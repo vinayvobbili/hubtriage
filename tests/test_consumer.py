@@ -215,6 +215,20 @@ def test_an_event_becomes_a_verdict_and_a_recorded_case(tmp_path):
     assert json.loads((case_dir / "cassette" / "index.json").read_text())
 
 
+def test_a_second_delivery_is_caught_even_while_the_hub_still_says_new(tmp_path):
+    class StaleHub(FakeHub):
+        def batch_update_findings(self, **update):
+            self.updates.append(update)
+            return {"ProcessedFindings": update["FindingIdentifiers"], "UnprocessedFindings": []}
+
+    doc = raw_finding()
+    body = event(doc)
+    sqs, securityhub = FakeSqs(body, body), StaleHub(doc)
+    tally = consume(sqs, securityhub, tmp_path, answered=set())
+    assert (tally.messages, tally.failed) == (2, 0) and sqs.deleted == ["r0", "r1"]
+    assert len(securityhub.updates) == 1
+
+
 def test_a_second_delivery_of_an_answered_finding_writes_nothing(tmp_path):
     doc = raw_finding()
     body = event(doc)

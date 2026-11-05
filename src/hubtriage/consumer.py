@@ -96,13 +96,22 @@ def triage_new(
     *,
     write_back: bool = True,
     product: str | None = "GuardDuty",
+    answered: set[str] | None = None,
     log: Callable[[str], None] = print,
 ) -> Result | None:
-    """Triage one finding from an event if it still needs it. None means nothing to do."""
+    """Triage one finding from an event if it still needs it. None means nothing to do.
+
+    `answered` holds the findings this run has written back. The hub can go on
+    returning a finding as NEW for a minute or more after that write, so its own
+    answer is not enough to catch a second delivery.
+    """
     finding = Finding.from_asff(raw)
     # The event rule matches if any finding in the event does, so each is checked.
     if product and raw.get("ProductName") != product:
         log(f"skipped, not {product}: {finding.title}")
+        return None
+    if answered is not None and finding.id in answered:
+        log(f"skipped, answered in this run: {finding.title}")
         return None
     current = hub.still_new(securityhub, finding.id, finding.product_arn)
     if current is None:
@@ -111,4 +120,6 @@ def triage_new(
     result = run(current)
     if write_back:
         hub.write_back(securityhub, result.update)
+        if answered is not None:
+            answered.add(finding.id)
     return result

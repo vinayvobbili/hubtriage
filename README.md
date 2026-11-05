@@ -88,7 +88,9 @@ organization, and accuracy measured against live models, come next.
   so the trail is managed from there.
 - **The event can arrive before the finding can be read.** On the first live run a finding was
   still missing from `GetFindings` 54 seconds after its import event, and the re-read treated that
-  as an error, which costs one of the message's three receives. It now waits and reads again.
+  as an error, which costs one of the message's three receives. It now waits and reads again. The
+  same delay works the other way: a finding still read as `NEW` after its verdict was written, and
+  a second delivery was triaged twice. The run now remembers what it has answered.
 - **The IAM limits are tested against AWS, not assumed.** `hubtriage check-iam` tries every write
   the agent must be refused, as the agent, and then a note it may write. It refuses to run on
   anything but a GuardDuty sample, since a rule that failed would change the finding. All ten

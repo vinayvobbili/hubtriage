@@ -8,16 +8,10 @@ it runs only on a finding GuardDuty generated as a sample.
 
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass
 from typing import Any
 
 from .clients import is_unavailable
-
-# GuardDuty fills a sample's threat and network details with values like
-# GeneratedFindingThreatName. Its own API also has a sample flag; the copy in
-# Security Hub does not.
-SAMPLE_MARK = "GeneratedFinding"
 
 CLOSING = {"Workflow.Status=RESOLVED", "Workflow.Status=SUPPRESSED"}
 DENIED_CODES = {"AccessDenied", "AccessDeniedException"}
@@ -28,7 +22,7 @@ class NotASample(ValueError):
 
 
 def is_sample(raw: dict) -> bool:
-    return SAMPLE_MARK in json.dumps(raw)
+    return raw.get("Sample") is True
 
 
 def forbidden_writes(raw: dict) -> dict[str, dict]:

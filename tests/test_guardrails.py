@@ -14,9 +14,9 @@ AGENT_TF = Path(__file__).resolve().parents[1] / "terraform" / "10-security" / "
 SAMPLE = {
     "Id": "arn:aws:guardduty:us-east-1:111122223333:detector/d/finding/f",
     "ProductArn": "arn:aws:securityhub:us-east-1::product/aws/guardduty",
-    "ProductFields": {"threatName": "GeneratedFindingThreatName"},
+    "Sample": True,
 }
-REAL = {**SAMPLE, "ProductFields": {"threatName": "Tor"}}
+REAL = {key: value for key, value in SAMPLE.items() if key != "Sample"}
 
 
 class Refused(Exception):
