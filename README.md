@@ -6,7 +6,9 @@
 
 ![hubtriage: GuardDuty to Security Hub to a checked verdict; a misread port and a misread dismissal stopped by the gate; IAM that won't let the agent close a finding](https://raw.githubusercontent.com/vinayvobbili/hubtriage/main/docs/demo.gif)
 
-With sound (2 minutes, made from made-up cases): [docs/hubtriage-demo.mp4](docs/hubtriage-demo.mp4)
+With sound (2 minutes, made from made-up cases):
+
+https://github.com/user-attachments/assets/e98bdf7e-7714-476e-af27-0a288b598b43
 
 A GuardDuty finding arrives in Security Hub. hubtriage asks AWS a fixed set of questions
 about it — the instance and its security groups, the IAM principal and its policies, the
