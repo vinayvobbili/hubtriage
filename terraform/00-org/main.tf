@@ -169,17 +169,9 @@ resource "aws_guardduty_organization_admin_account" "security" {
 
 # Security Hub must be on in the management account before it can delegate.
 # Default standards off: they need AWS Config recording, which bills quietly.
+# The delegation itself is in stage 10, after the security account's own hub.
 resource "aws_securityhub_account" "management" {
   enable_default_standards = false
-}
-
-resource "aws_securityhub_organization_admin_account" "security" {
-  admin_account_id = aws_organizations_account.security.id
-  depends_on = [
-    aws_securityhub_account.management,
-    aws_organizations_organization.this,
-    aws_guardduty_organization_admin_account.security,
-  ]
 }
 
 # Lets the security account create and own the organization trail.
@@ -187,7 +179,7 @@ resource "aws_cloudtrail_organization_delegated_admin_account" "security" {
   account_id = aws_organizations_account.security.id
   depends_on = [
     aws_organizations_organization.this,
-    aws_securityhub_organization_admin_account.security,
+    aws_guardduty_organization_admin_account.security,
   ]
 }
 

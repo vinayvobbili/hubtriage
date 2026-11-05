@@ -2,8 +2,8 @@
 
 | Stage | Runs as | Builds |
 |---|---|---|
-| `00-org` | your Identity Center session, management account | budget, organization (imported), centralized root access, OUs, the security and workload accounts, delegated admins for GuardDuty, Security Hub and CloudTrail, SCPs |
-| `10-security` | the same session, assuming `OrganizationAccountAccessRole` into security | GuardDuty and Security Hub org configuration, the organization trail and its bucket, EventBridge → SQS, the `hubtriage-agent` role, `hubtriage-enrich` |
+| `00-org` | your Identity Center session, management account | budget, organization (imported), centralized root access, OUs, the security and workload accounts, delegated admins for GuardDuty and CloudTrail, SCPs |
+| `10-security` | the same session, assuming `OrganizationAccountAccessRole` into security | GuardDuty org configuration, the security account's hub followed by its delegation, Security Hub members, the organization trail and its bucket, EventBridge → SQS, the `hubtriage-agent` role, `hubtriage-enrich` |
 | `20-workload` | the same, into workload | `hubtriage-enrich` |
 
 Hub before spokes: each stage reads the previous stage's outputs from its local state file.

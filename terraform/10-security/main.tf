@@ -90,20 +90,21 @@ resource "aws_guardduty_detector_feature" "off" {
 
 # ------------------------------------------------------------- Security Hub
 #
-# LOCAL configuration: each member is enrolled automatically, and no standard
-# is switched on, because every CSPM control evaluates through AWS Config and
-# Config bills per recorded item. GuardDuty findings flow in regardless.
+# LOCAL configuration: no standard is switched on, because every CSPM control
+# evaluates through AWS Config and Config bills per recorded item. GuardDuty
+# findings flow in regardless.
 #
-# Becoming delegated administrator already switched the hub on in this account,
-# so it is imported, the same way the organization is in stage 00.
-
-import {
-  to = aws_securityhub_account.security
-  id = local.security_account
-}
+# The order matters. Delegating to an account whose hub is off switches the hub
+# on with the default standards, so the hub comes first, without them.
 
 resource "aws_securityhub_account" "security" {
   enable_default_standards = false
+}
+
+resource "aws_securityhub_organization_admin_account" "security" {
+  provider         = aws.management
+  admin_account_id = local.security_account
+  depends_on       = [aws_securityhub_account.security]
 }
 
 resource "aws_securityhub_organization_configuration" "this" {
@@ -112,7 +113,18 @@ resource "aws_securityhub_organization_configuration" "this" {
   organization_configuration {
     configuration_type = "LOCAL"
   }
-  depends_on = [aws_securityhub_account.security]
+  depends_on = [aws_securityhub_organization_admin_account.security]
+}
+
+# auto_enable covers accounts that join later. These two already exist.
+resource "aws_securityhub_member" "existing" {
+  for_each = {
+    management = local.org.management_account_id
+    workload   = local.org.workload_account_id
+  }
+  account_id = each.value
+  invite     = false
+  depends_on = [aws_securityhub_organization_configuration.this]
 }
 
 # ------------------------------------------------------- organization trail

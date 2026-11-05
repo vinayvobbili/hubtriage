@@ -81,10 +81,11 @@ organization, and accuracy measured against live models, come next.
   model is told about. A lookup that got no answer (no DNS, an expired login, throttling) stops the
   triage and leaves the message on the queue, so it cannot change a verdict or an accuracy number.
 - **`terraform validate` passed; the first real apply did not.** Delegated-admin registrations
-  conflict when they run in parallel. Delegation had already switched Security Hub on in the
-  security account, so it has to be imported. A delegated administrator cannot read back the
-  organization trail it created, because the ARN names the management account, so the trail is
-  managed from there.
+  conflict when they run in parallel. Delegating to an account whose hub is off switches it on with
+  the default standards, so the hub now comes first, without them. Security Hub's `auto_enable`
+  skips accounts that already exist, so those are enrolled as members. A delegated administrator
+  cannot read back the organization trail it created, because the ARN names the management account,
+  so the trail is managed from there.
 - **Not running on real findings yet.** The organization and security account are applied, but the
   agent has not triaged a real finding and the shipped cases are hand-written, so nothing here
   measures how accurate any model is.
