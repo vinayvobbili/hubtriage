@@ -32,6 +32,14 @@ def test_every_slide_has_a_page_and_narration(built):
     assert json.loads((out / "reel.json").read_text()) == reel
 
 
+def test_no_spoken_spelling_starts_with_the_word_a():
+    assert [spoken for spoken in demo.PHONETIC.values() if spoken.startswith("A ")] == []
+
+
+def test_aws_is_spoken_as_three_letters():
+    assert demo.PHONETIC[r"\bAWS\b"] == "A.W.S"
+
+
 def test_without_music_the_reel_has_the_voice_only(built):
     assert "music" not in built[1]
 

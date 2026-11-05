@@ -97,10 +97,11 @@ h1 { font-size: 38px; line-height: 1.1; letter-spacing: -.02em; margin-top: 8px;
 
 BRAND = '<div class="brand"><div class="logo"></div><span>hub<b>triage</b></span></div>'
 
-# Kokoro reads these better spelled out.
+# Kokoro reads these better spelled out. AWS needs its dots: bare it's one word, like "oz", "A W S" comes out
+# as the word "a" and then "WS", "ay" as "I", and a last dot ends the sentence there.
 PHONETIC = {
     r"\bhubtriage\b": "hub triage",
-    r"\bAWS\b": "A W S",
+    r"\bAWS\b": "A.W.S",
     r"\bIAM\b": "I am",
     r"\bLLM\b": "L L M",
     r"\bMFA\b": "M F A",
