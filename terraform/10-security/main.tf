@@ -32,6 +32,15 @@ provider "aws" {
   }
 }
 
+# The session itself, without the assume_role: the management account.
+provider "aws" {
+  alias  = "management"
+  region = var.region
+  default_tags {
+    tags = { Project = "hubtriage", ManagedBy = "terraform", Stage = "10-security" }
+  }
+}
+
 # ---------------------------------------------------------------- GuardDuty
 #
 # Designating the delegated administrator turned GuardDuty on here, so the
@@ -63,6 +72,10 @@ resource "aws_guardduty_organization_configuration_feature" "off" {
   detector_id = data.aws_guardduty_detector.this.id
   name        = each.value
   auto_enable = "NONE"
+  # AWS adds sub-settings to some plans (off, like their parent); left to it.
+  lifecycle {
+    ignore_changes = [additional_configuration]
+  }
 }
 
 resource "aws_guardduty_detector_feature" "off" {
@@ -70,6 +83,9 @@ resource "aws_guardduty_detector_feature" "off" {
   detector_id = data.aws_guardduty_detector.this.id
   name        = each.value
   status      = "DISABLED"
+  lifecycle {
+    ignore_changes = [additional_configuration]
+  }
 }
 
 # ------------------------------------------------------------- Security Hub
@@ -200,7 +216,12 @@ resource "aws_s3_bucket_policy" "trail" {
   policy = data.aws_iam_policy_document.trail_bucket.json
 }
 
+# Managed from the management account, which owns the trail. A delegated
+# administrator can create it, but DescribeTrails from there refuses the trail's
+# own ARN ("Account number does not match caller's account"), so the provider
+# could not read back what it had just made.
 resource "aws_cloudtrail" "org" {
+  provider                      = aws.management
   name                          = local.trail_name
   s3_bucket_name                = aws_s3_bucket.trail.id
   is_organization_trail         = true
