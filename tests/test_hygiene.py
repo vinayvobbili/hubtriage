@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import re
 import subprocess
 from pathlib import Path
@@ -47,6 +48,27 @@ def test_no_key_shaped_placeholder_is_tracked():
             continue
         hits += [f"{path}: {m.group(0)}" for m in AWS_KEY_ID.finditer(text)]
     assert hits == [], "use a placeholder that is not key-shaped, e.g. ASIA-EXAMPLE-..."
+
+
+def real_ids() -> dict[str, str]:
+    """Stage 00's outputs, from the state file that is never committed."""
+    state = ROOT / "terraform" / "00-org" / "terraform.tfstate"
+    if not state.exists():
+        pytest.skip("no local Terraform state to read the real ids from")
+    outputs = json.loads(state.read_text(encoding="utf-8")).get("outputs", {})
+    return {name: output["value"] for name, output in outputs.items()}
+
+
+def test_no_real_account_or_organization_id_is_tracked():
+    ids = real_ids()
+    hits = []
+    for path in tracked():
+        try:
+            text = (ROOT / path).read_text(encoding="utf-8")
+        except (UnicodeDecodeError, FileNotFoundError):
+            continue
+        hits += [f"{path}: {name}" for name, value in ids.items() if value in text]
+    assert hits == [], "tests, fixtures and docs get made-up ids"
 
 
 def test_the_key_pattern_catches_what_it_should():

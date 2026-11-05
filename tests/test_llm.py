@@ -97,6 +97,14 @@ def test_a_judge_that_never_answered_is_not_an_accuracy_number(monkeypatch, caps
     assert "verdicts correct" not in out
 
 
+def test_answers_can_be_kept_for_reading_without_touching_the_fixtures(monkeypatch, tmp_path):
+    monkeypatch.setattr(llm, "from_env", lambda env=None, allow_public=False: lambda prompt: "{}")
+    before = {p: p.read_bytes() for p in Path(cli.FIXTURES).rglob("model_output.json")}
+    assert cli.main(["eval", "--judge", "env", "--answers", str(tmp_path)]) == 0
+    assert {p.name for p in tmp_path.iterdir()} == {f"{p.parent.name}.json" for p in before}
+    assert {p: p.read_bytes() for p in before} == before
+
+
 def test_no_answer_never_scores_as_correct_on_a_needs_human_case(tmp_path):
     def down(prompt):
         raise llm.NoAnswer("out of credits")

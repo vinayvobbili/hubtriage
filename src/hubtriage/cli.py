@@ -8,6 +8,10 @@
     hubtriage pull --out DIR            live: new findings, recorded as cases
     hubtriage consume --queue-url URL   live: findings from the SQS queue, recorded as cases
     hubtriage check-iam --finding-id ID live: prove the agent's IAM limits on a sample finding
+    hubtriage status                    live: read-only health of the security account
+    hubtriage sample [--wait SECONDS]   live: generate GuardDuty samples, wait for the queue
+    hubtriage test-alert                live: send one test email through the alarm
+    hubtriage answers DIR               what each saved model answer said (eval --answers)
 """
 
 from __future__ import annotations
@@ -21,7 +25,7 @@ from pathlib import Path
 
 from witness.store import Store
 
-from . import cases, consumer, evidence, guardrails, hub, llm
+from . import cases, consumer, evidence, guardrails, hub, live, llm, verdict
 from .clients import Cassette
 from .findings import Finding
 from .triage import require_answer
@@ -77,6 +81,11 @@ def cmd_eval(args) -> int:
         outcomes.append(outcome)
         if args.save_answers and judge is not None:
             (case.directory / "model_output.json").write_text(
+                outcome.result.answer, encoding="utf-8"
+            )
+        if args.answers:
+            Path(args.answers).mkdir(parents=True, exist_ok=True)
+            (Path(args.answers) / f"{case.name}.json").write_text(
                 outcome.result.answer, encoding="utf-8"
             )
         print(
@@ -200,6 +209,48 @@ def cmd_check_iam(args) -> int:
     return 1 if failed else 0
 
 
+def cmd_status(args) -> int:
+    import boto3
+
+    lines = live.status(boto3.Session(), args.region)
+    for line in lines:
+        print(f"{'ok  ' if line.ok else 'FAIL'} {line.name:22} {line.value}")
+    return 0 if all(line.ok for line in lines) else 1
+
+
+def cmd_sample(args) -> int:
+    import boto3
+
+    session = boto3.Session()
+    live.generate_samples(session.client("guardduty", region_name=args.region), args.type)
+    print("sample findings generated")
+    if not args.wait:
+        return 0
+    arrived = live.wait_for_queue(session.client("sqs", region_name=args.region), args.wait)
+    print(f"{arrived} message(s) on the queue" if arrived else "nothing arrived in time")
+    return 0 if arrived else 1
+
+
+def cmd_test_alert(args) -> int:
+    import boto3
+
+    live.test_alert(boto3.Session().client("cloudwatch", region_name=args.region))
+    print("alarm forced; one email should arrive shortly")
+    return 0
+
+
+def cmd_answers(args) -> int:
+    for path in sorted(Path(args.directory).glob("*.json")):
+        print(path.stem)
+        try:
+            model = verdict.parse(path.read_text(encoding="utf-8"))
+        except verdict.VerdictError as e:
+            print(f"  {e}\n")
+            continue
+        print(f"  {model.verdict}, {len(model.claims)} claim(s)\n  {model.summary}\n")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="hubtriage", description=__doc__.split("\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -213,6 +264,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--fixtures", default=FIXTURES)
     p.add_argument("--judge", default="recorded", help="recorded (default) or env")
     p.add_argument("--save-answers", action="store_true", help="keep live answers as recordings")
+    p.add_argument("--answers", help="also write each model answer to this directory, to read")
     p.add_argument("--json", help="also write the summary here")
     p.set_defaults(fn=cmd_eval)
 
@@ -258,6 +310,25 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--finding-id", required=True, help="a GuardDuty sample; anything else is refused")
     p.add_argument("--region", default=os.environ.get("AWS_REGION", "us-east-1"))
     p.set_defaults(fn=cmd_check_iam)
+
+    region = os.environ.get("AWS_REGION", "us-east-1")
+    p = sub.add_parser("status", help="live: read-only health of the security account")
+    p.add_argument("--region", default=region)
+    p.set_defaults(fn=cmd_status)
+
+    p = sub.add_parser("sample", help="live: generate GuardDuty sample findings")
+    p.add_argument("--type", action="append", help="a finding type; repeatable")
+    p.add_argument("--wait", type=float, default=0, help="seconds to wait for them on the queue")
+    p.add_argument("--region", default=region)
+    p.set_defaults(fn=cmd_sample)
+
+    p = sub.add_parser("test-alert", help="live: send one test email through the alarm")
+    p.add_argument("--region", default=region)
+    p.set_defaults(fn=cmd_test_alert)
+
+    p = sub.add_parser("answers", help="what each saved model answer said")
+    p.add_argument("directory")
+    p.set_defaults(fn=cmd_answers)
 
     args = ap.parse_args(argv)
     return args.fn(args)
