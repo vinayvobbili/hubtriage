@@ -17,7 +17,7 @@ from typing import Any, Callable
 from . import hub
 from .clients import is_unavailable
 from .findings import Finding
-from .triage import Result
+from .triage import NoModelAnswered, Result, require_answer
 
 # Long enough for a slow local model and a failover to the next host. The queue's
 # own default is shorter, and a message that came back mid-triage would be triaged
@@ -59,8 +59,9 @@ def drain(
     """Handle messages until the queue is empty, or for as long as it runs with `follow`.
 
     A failure in one message is logged and the next one still runs. A failure that
-    is not about the message (see `is_unavailable`) stops the run: no network or an
-    expired login should not use up every message's three receives.
+    is not about the message (see `is_unavailable`, or no model answering) stops the
+    run: no network or an expired login should not use up every message's three
+    receives.
     """
     tally = Tally()
     while True:
@@ -80,7 +81,7 @@ def drain(
             for raw in findings_in(message["Body"]):
                 handle(raw)
         except Exception as e:  # noqa: BLE001 - whatever it was, SQS retries, then parks it
-            if is_unavailable(e):
+            if is_unavailable(e) or isinstance(e, NoModelAnswered):
                 raise
             tally.failed += 1
             log(f"left on the queue: {type(e).__name__}: {e}")
@@ -117,7 +118,7 @@ def triage_new(
     if current is None:
         log(f"skipped, already handled: {finding.title}")
         return None
-    result = run(current)
+    result = require_answer(run(current))
     if write_back:
         hub.write_back(securityhub, result.update)
         if answered is not None:

@@ -24,6 +24,7 @@ from witness.store import Store
 from . import cases, consumer, evidence, guardrails, hub, llm
 from .clients import Cassette
 from .findings import Finding
+from .triage import require_answer
 
 FIXTURES = Path(__file__).resolve().parents[2] / "fixtures"
 
@@ -142,7 +143,7 @@ def cmd_pull(args) -> int:
     for count, raw in enumerate(hub.new_findings(securityhub, args.product), start=1):
         if count > args.limit:
             break
-        result = cases.record(raw, args.out, live, judge)
+        result = require_answer(cases.record(raw, args.out, live, judge))
         print(result.finding.title)
         _print_decision(result)
         if args.write_back:

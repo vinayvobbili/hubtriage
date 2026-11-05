@@ -9,6 +9,7 @@ import pytest
 
 from hubtriage import cases, cli, consumer, hub, llm
 from hubtriage.clients import Cassette
+from hubtriage.triage import NoModelAnswered
 
 CASE = Path(__file__).resolve().parents[1] / "fixtures" / "synthetic" / "port-probe-ssh-open"
 
@@ -213,6 +214,49 @@ def test_an_event_becomes_a_verdict_and_a_recorded_case(tmp_path):
     (case_dir,) = tmp_path.iterdir()
     assert (case_dir / "finding.json").exists() and (case_dir / "model_output.json").exists()
     assert json.loads((case_dir / "cassette" / "index.json").read_text())
+
+
+def no_model(prompt):
+    raise llm.NoJudgeAnswered("every backend is down")
+
+
+def test_a_model_outage_stops_the_run_and_leaves_every_finding_open(tmp_path):
+    doc = raw_finding()
+    other = {**doc, "Id": doc["Id"] + "-other"}
+    sqs, securityhub = FakeSqs(event(doc), event(other)), FakeHub(doc, other)
+
+    def run(current):
+        return cases.record(current, tmp_path, Cassette(CASE / "cassette"), no_model)
+
+    with pytest.raises(NoModelAnswered, match="every backend is down"):
+        consumer.drain(
+            sqs,
+            "q",
+            lambda raw: consumer.triage_new(securityhub, raw, run, log=lambda _: None),
+            log=lambda _: None,
+        )
+    assert securityhub.updates == [] and sqs.deleted == []
+    assert doc["Workflow"]["Status"] == "NEW"
+    assert len(sqs.visible) == 1  # the second message did not spend a receive
+
+
+def test_pull_writes_nothing_back_when_no_model_answered(monkeypatch, tmp_path):
+    boto3 = pytest.importorskip("boto3")
+    doc = raw_finding()
+    securityhub = FakeHub(doc)
+    monkeypatch.setattr(boto3.Session, "client", lambda self, *a, **kw: securityhub)
+    monkeypatch.setattr(hub, "new_findings", lambda client, product: [doc])
+    monkeypatch.setattr(llm, "from_env", lambda: no_model)
+    monkeypatch.setattr(
+        cases,
+        "record",
+        lambda raw, out, live, judge: cases.run(
+            cases.Case(CASE.name, CASE, {}), judge
+        ).result,
+    )
+    with pytest.raises(NoModelAnswered):
+        cli.main(["pull", "--out", str(tmp_path), "--write-back"])
+    assert securityhub.updates == []
 
 
 def test_a_second_delivery_is_caught_even_while_the_hub_still_says_new(tmp_path):

@@ -24,6 +24,18 @@ class Result:
     update: dict
 
 
+class NoModelAnswered(RuntimeError):
+    """No judge answered. Nothing was concluded, so a live finding has to stay open."""
+
+
+def require_answer(result: Result) -> Result:
+    """For live findings. Writing back would take the finding out of NEW, and the agent
+    only picks up NEW, so a model outage would quietly end its triage for good."""
+    if not result.answer:
+        raise NoModelAnswered(result.decision.reason or "the model's answer was empty")
+    return result
+
+
 def triage(
     store: Store, client: Client, judge: Judge, finding: Finding, *, mode: str = "replay"
 ) -> Result:
