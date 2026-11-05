@@ -118,6 +118,41 @@ resource "aws_organizations_account" "workload" {
   }
 }
 
+# Your Identity Center login in the security account. The agent's role trusts
+# Identity Center roles in that account only, so this is how it gets assumed.
+# The user and the permission set are made by hand before the first apply.
+
+data "aws_ssoadmin_instances" "this" {}
+
+locals {
+  sso_instance_arn  = tolist(data.aws_ssoadmin_instances.this.arns)[0]
+  identity_store_id = tolist(data.aws_ssoadmin_instances.this.identity_store_ids)[0]
+}
+
+data "aws_ssoadmin_permission_set" "admin" {
+  instance_arn = local.sso_instance_arn
+  name         = "AdministratorAccess"
+}
+
+data "aws_identitystore_user" "you" {
+  identity_store_id = local.identity_store_id
+  alternate_identifier {
+    unique_attribute {
+      attribute_path  = "UserName"
+      attribute_value = var.sso_user_name
+    }
+  }
+}
+
+resource "aws_ssoadmin_account_assignment" "security" {
+  instance_arn       = local.sso_instance_arn
+  permission_set_arn = data.aws_ssoadmin_permission_set.admin.arn
+  principal_id       = data.aws_identitystore_user.you.user_id
+  principal_type     = "USER"
+  target_id          = aws_organizations_account.security.id
+  target_type        = "AWS_ACCOUNT"
+}
+
 # ------------------------------------------------------ delegated administrators
 #
 # GuardDuty and Security Hub are regional, so delegation is per region; this

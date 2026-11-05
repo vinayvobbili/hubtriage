@@ -4,3 +4,4 @@ budget_email           = "you@example.com"
 monthly_budget_usd     = 20
 security_account_email = "you+aws-security@example.com"
 workload_account_email = "you+aws-workload@example.com"
+sso_user_name          = "your-identity-center-username"

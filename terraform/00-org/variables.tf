@@ -29,3 +29,8 @@ variable "workload_account_email" {
   description = "Root email for the workload account. Must be unique across AWS."
   type        = string
 }
+
+variable "sso_user_name" {
+  description = "Your IAM Identity Center username, given admin access to the security account."
+  type        = string
+}

@@ -33,7 +33,6 @@ ever tracked.
 ```bash
 export AWS_PROFILE=<your sso profile>
 terraform -chdir=00-org init && terraform -chdir=00-org apply
-# assign your permission set to the new security account in Identity Center
 terraform -chdir=10-security init && terraform -chdir=10-security apply
 terraform -chdir=20-workload init && terraform -chdir=20-workload apply
 ```
