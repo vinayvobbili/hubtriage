@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Run CI's checks locally before a push. Enable with: git config core.hooksPath .githooks
+# Skip once with: git push --no-verify
+exec "$(git rev-parse --show-toplevel)/scripts/check"
