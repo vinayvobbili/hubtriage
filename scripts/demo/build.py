@@ -103,8 +103,8 @@ PHONETIC = {
     r"\bhubtriage\b": "hub triage",
     r"\bAWS\b": "A.W.S",
     r"\bIAM\b": "I am",
-    r"\bLLM\b": "L L M",
-    r"\bMFA\b": "M F A",
+    r"\bLLM\b": "ellellem",
+    r"\bMFA\b": "M.F.A",
     r"\bRDP\b": "R D P",
     r"\bSCPs\b": "S C Ps",
 }
