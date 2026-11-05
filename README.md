@@ -129,8 +129,8 @@ hubtriage eval --judge env
 ## Status
 
 - [x] Offline pipeline: evidence → records → verdict → gate → write-back request, with tests
-- [x] Terraform stages 00 (organization) and 10 (security account) applied to a real organization
-- [ ] Apply stage 20 (workload); record GuardDuty sample findings as cases
+- [x] Terraform stages 00 (organization), 10 (security account) and 20 (workload) applied to a real organization
+- [ ] Record GuardDuty sample findings as cases
 - [x] SQS consumer (`hubtriage consume`), tested against fakes; not yet run against a real queue
 - [ ] Accuracy against live models on recorded cases
 - [ ] OCSF reader for the newer Security Hub
