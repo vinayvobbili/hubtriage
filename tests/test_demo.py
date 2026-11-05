@@ -40,6 +40,13 @@ def test_aws_is_spoken_as_three_letters():
     assert demo.PHONETIC[r"\bAWS\b"] == "A.W.S"
 
 
+def test_letters_are_joined_by_dots_not_spaces():
+    # Spaced letters ("R D P") sound choppy; dots run them together. A last dot would end the sentence.
+    spoken = [s for s in demo.PHONETIC.values() if "." in s]
+    assert spoken and not any(" " in s or s.endswith(".") for s in spoken)
+    assert not any(len(s) <= 6 and " " in s and s.replace(" ", "").isupper() for s in demo.PHONETIC.values())
+
+
 def test_without_music_the_reel_has_the_voice_only(built):
     assert "music" not in built[1]
 

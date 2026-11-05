@@ -105,8 +105,8 @@ PHONETIC = {
     r"\bIAM\b": "I am",
     r"\bLLM\b": "ellellem",
     r"\bMFA\b": "M.F.A",
-    r"\bRDP\b": "R D P",
-    r"\bSCPs\b": "S C Ps",
+    r"\bRDP\b": "R.D.P",
+    r"\bSCPs\b": "S.C.P's",
 }
 
 
