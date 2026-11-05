@@ -176,8 +176,27 @@ def test_still_new_reads_the_finding_as_it_is_now():
 
 
 def test_a_finding_the_hub_does_not_have_is_an_error():
+    waits = []
     with pytest.raises(hub.NotInHub):
-        hub.still_new(FakeHub(), "missing", "arn:aws:securityhub:::product/aws/guardduty")
+        hub.still_new(
+            FakeHub(), "missing", "arn:aws:securityhub:::product/aws/guardduty", sleep=waits.append
+        )
+    assert len(waits) == hub.READ_ATTEMPTS - 1
+
+
+def test_a_finding_the_hub_cannot_return_yet_is_read_again():
+    doc = raw_finding()
+    securityhub = FakeHub(doc)
+    empty_reads = [{"Findings": []}, {"Findings": []}]
+    real_read = securityhub.get_findings
+
+    def lagging(Filters, MaxResults):
+        return empty_reads.pop() if empty_reads else real_read(Filters, MaxResults)
+
+    securityhub.get_findings = lagging
+    waits = []
+    assert hub.still_new(securityhub, doc["Id"], doc["ProductArn"], sleep=waits.append) == doc
+    assert waits == [hub.READ_WAIT_SECONDS] * 2
 
 
 # ------------------------------------------------------------------ end to end

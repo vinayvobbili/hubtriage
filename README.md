@@ -86,6 +86,13 @@ organization, and accuracy measured against live models, come next.
   skips accounts that already exist, so those are enrolled as members. A delegated administrator
   cannot read back the organization trail it created, because the ARN names the management account,
   so the trail is managed from there.
+- **The event can arrive before the finding can be read.** On the first live run a finding was
+  still missing from `GetFindings` 54 seconds after its import event, and the re-read treated that
+  as an error, which costs one of the message's three receives. It now waits and reads again.
+- **The IAM limits are tested against AWS, not assumed.** `hubtriage check-iam` tries every write
+  the agent must be refused, as the agent, and then a note it may write. It refuses to run on
+  anything but a GuardDuty sample, since a rule that failed would change the finding. All ten
+  attempts came out as expected.
 - **Not running on real findings yet.** The organization and security account are applied, but the
   agent has not triaged a real finding and the shipped cases are hand-written, so nothing here
   measures how accurate any model is.

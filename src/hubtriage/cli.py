@@ -7,6 +7,7 @@
     hubtriage triage CASE_DIR           one case, verdict and write-back request
     hubtriage pull --out DIR            live: new findings, recorded as cases
     hubtriage consume --queue-url URL   live: findings from the SQS queue, recorded as cases
+    hubtriage check-iam --finding-id ID live: prove the agent's IAM limits on a sample finding
 """
 
 from __future__ import annotations
@@ -20,7 +21,7 @@ from pathlib import Path
 
 from witness.store import Store
 
-from . import cases, consumer, evidence, hub, llm
+from . import cases, consumer, evidence, guardrails, hub, llm
 from .clients import Cassette
 from .findings import Finding
 
@@ -176,6 +177,19 @@ def cmd_consume(args) -> int:
     return 1 if tally.failed else 0
 
 
+def cmd_check_iam(args) -> int:
+    import boto3
+
+    securityhub = boto3.Session().client("securityhub", region_name=args.region)
+    raw = hub.read(securityhub, args.finding_id)
+    probes = guardrails.check(securityhub, raw)
+    for probe in probes:
+        print(f"{'ok  ' if probe.ok else 'FAIL'} {probe.name:28} expected {probe.expected}, got {probe.got}")
+    failed = sum(not probe.ok for probe in probes)
+    print(f"{len(probes) - failed}/{len(probes)} as expected")
+    return 1 if failed else 0
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="hubtriage", description=__doc__.split("\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -229,6 +243,11 @@ def main(argv: list[str] | None = None) -> int:
         " and each run counts toward the dead-letter limit of three receives",
     )
     p.set_defaults(fn=cmd_consume)
+
+    p = sub.add_parser("check-iam", help="live: try every write the agent must be refused")
+    p.add_argument("--finding-id", required=True, help="a GuardDuty sample; anything else is refused")
+    p.add_argument("--region", default=os.environ.get("AWS_REGION", "us-east-1"))
+    p.set_defaults(fn=cmd_check_iam)
 
     args = ap.parse_args(argv)
     return args.fn(args)
