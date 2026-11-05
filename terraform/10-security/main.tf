@@ -77,6 +77,14 @@ resource "aws_guardduty_detector_feature" "off" {
 # LOCAL configuration: each member is enrolled automatically, and no standard
 # is switched on, because every CSPM control evaluates through AWS Config and
 # Config bills per recorded item. GuardDuty findings flow in regardless.
+#
+# Becoming delegated administrator already switched the hub on in this account,
+# so it is imported, the same way the organization is in stage 00.
+
+import {
+  to = aws_securityhub_account.security
+  id = local.security_account
+}
 
 resource "aws_securityhub_account" "security" {
   enable_default_standards = false
