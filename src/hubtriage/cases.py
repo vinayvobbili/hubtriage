@@ -19,13 +19,14 @@ for each answer instead, and that is the accuracy number worth reporting.
 from __future__ import annotations
 
 import json
+import shutil
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
 from witness.store import Store
 
-from .clients import Cassette
+from .clients import Cassette, Client, Recorder
 from .findings import Finding
 from .llm import Judge, recorded
 from .triage import Result, triage
@@ -74,6 +75,28 @@ def run(case: Case, judge: Judge | None = None, store_dir: str | Path | None = N
         finally:
             store.close()
     return Outcome(case, result)
+
+
+def record(raw: dict, out: str | Path, live: Client, judge: Judge) -> Result:
+    """Triage a live finding and keep it as a case directory, ready to be labeled.
+
+    A second attempt at the same finding starts over: the queue redelivers what
+    failed, and evidence from a run that failed halfway is not evidence for this one.
+    """
+    finding = Finding.from_asff(raw)
+    directory = Path(out) / finding.id.rsplit("/", 1)[-1][:32]
+    directory.mkdir(parents=True, exist_ok=True)
+    shutil.rmtree(directory / "cassette", ignore_errors=True)
+    for leftover in directory.glob("case.db*"):
+        leftover.unlink()
+    (directory / "finding.json").write_text(json.dumps(raw, indent=2, default=str) + "\n")
+    store = Store(directory / "case.db")
+    try:
+        result = triage(store, Recorder(live, directory / "cassette"), judge, finding, mode="live")
+    finally:
+        store.close()
+    (directory / "model_output.json").write_text(result.answer, encoding="utf-8")
+    return result
 
 
 def summarize(outcomes: list[Outcome]) -> dict:

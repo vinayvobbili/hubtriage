@@ -6,6 +6,7 @@
     hubtriage records CASE_DIR          the records a case's model sees, with ids
     hubtriage triage CASE_DIR           one case, verdict and write-back request
     hubtriage pull --out DIR            live: new findings, recorded as cases
+    hubtriage consume --queue-url URL   live: findings from the SQS queue, recorded as cases
 """
 
 from __future__ import annotations
@@ -19,10 +20,9 @@ from pathlib import Path
 
 from witness.store import Store
 
-from . import cases, evidence, hub, llm
+from . import cases, consumer, evidence, hub, llm
 from .clients import Cassette
 from .findings import Finding
-from .triage import triage
 
 FIXTURES = Path(__file__).resolve().parents[2] / "fixtures"
 
@@ -125,33 +125,55 @@ def cmd_triage(args) -> int:
 def cmd_pull(args) -> int:
     import boto3
 
-    from .clients import AwsClient, Recorder
+    from .clients import AwsClient
 
     session = boto3.Session()
     securityhub = session.client("securityhub", region_name=args.region)
     judge = llm.from_env()
     live = AwsClient(enrich_role=args.enrich_role, session=session)
-    out = Path(args.out)
     for count, raw in enumerate(hub.new_findings(securityhub, args.product), start=1):
         if count > args.limit:
             break
-        finding = Finding.from_asff(raw)
-        case_dir = out / finding.id.rsplit("/", 1)[-1][:32]
-        case_dir.mkdir(parents=True, exist_ok=True)
-        (case_dir / "finding.json").write_text(json.dumps(raw, indent=2, default=str) + "\n")
-        store = Store(case_dir / "case.db")
-        try:
-            result = triage(store, Recorder(live, case_dir / "cassette"), judge, finding, mode="live")
-        finally:
-            store.close()
-        (case_dir / "model_output.json").write_text(result.answer, encoding="utf-8")
-        print(f"{finding.title}")
+        result = cases.record(raw, args.out, live, judge)
+        print(result.finding.title)
         _print_decision(result)
         if args.write_back:
             hub.write_back(securityhub, result.update)
             print("  written back to Security Hub")
         print()
     return 0
+
+
+def cmd_consume(args) -> int:
+    if not args.queue_url:
+        raise SystemExit("no queue: pass --queue-url or set HUBTRIAGE_QUEUE_URL"
+                         " (terraform output findings_queue_url in terraform/10-security)")
+    import boto3
+
+    from .clients import AwsClient
+
+    session = boto3.Session()
+    securityhub = session.client("securityhub", region_name=args.region)
+    judge = llm.from_env()
+    live = AwsClient(enrich_role=args.enrich_role, session=session)
+
+    def handle(raw: dict) -> None:
+        result = consumer.triage_new(
+            securityhub,
+            raw,
+            lambda current: cases.record(current, args.out, live, judge),
+            write_back=args.write_back,
+            product=args.product,
+        )
+        if result is not None:
+            print(result.finding.title)
+            _print_decision(result)
+            print()
+
+    sqs = session.client("sqs", region_name=args.region)
+    tally = consumer.drain(sqs, args.queue_url, handle, delete=args.write_back, follow=args.follow)
+    print(f"{tally.messages} message(s), {tally.failed} left on the queue")
+    return 1 if tally.failed else 0
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -192,6 +214,21 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--enrich-role", default="hubtriage-enrich")
     p.add_argument("--write-back", action="store_true", help="send each verdict to Security Hub")
     p.set_defaults(fn=cmd_pull)
+
+    p = sub.add_parser("consume", help="live: triage findings from the SQS queue")
+    p.add_argument("--queue-url", default=os.environ.get("HUBTRIAGE_QUEUE_URL"))
+    p.add_argument("--out", default="recordings")
+    p.add_argument("--region", default=os.environ.get("AWS_REGION", "us-east-1"))
+    p.add_argument("--product", default="GuardDuty")
+    p.add_argument("--enrich-role", default="hubtriage-enrich")
+    p.add_argument("--follow", action="store_true", help="keep waiting when the queue is empty")
+    p.add_argument(
+        "--write-back",
+        action="store_true",
+        help="send each verdict and delete its message; without it, messages stay on the queue"
+        " and each run counts toward the dead-letter limit of three receives",
+    )
+    p.set_defaults(fn=cmd_consume)
 
     args = ap.parse_args(argv)
     return args.fn(args)

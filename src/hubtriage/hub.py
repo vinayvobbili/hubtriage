@@ -23,6 +23,31 @@ def new_findings(securityhub: Any, product_name: str | None = "GuardDuty") -> It
         yield from page["Findings"]
 
 
+class NotInHub(LookupError):
+    pass
+
+
+def still_new(securityhub: Any, finding_id: str, product_arn: str) -> dict | None:
+    """The finding as the hub has it now, or None once it is no longer waiting for triage.
+
+    A queued event is a copy from when it was sent. By the time it is read, the
+    agent may already have answered (SQS can deliver a message twice) or a person
+    may have closed the finding, and neither should be overwritten.
+    """
+    found = securityhub.get_findings(
+        Filters={
+            "Id": [{"Value": finding_id, "Comparison": "EQUALS"}],
+            "ProductArn": [{"Value": product_arn, "Comparison": "EQUALS"}],
+        },
+        MaxResults=1,
+    )["Findings"]
+    if not found:
+        raise NotInHub(finding_id)
+    doc = found[0]
+    waiting = doc.get("Workflow", {}).get("Status") == "NEW" and doc.get("RecordState") == "ACTIVE"
+    return doc if waiting else None
+
+
 class WriteBackFailed(RuntimeError):
     pass
 
