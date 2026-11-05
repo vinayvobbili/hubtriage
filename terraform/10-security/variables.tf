@@ -3,6 +3,11 @@ variable "region" {
   default = "us-east-1"
 }
 
+variable "alert_email" {
+  description = "Where findings that need a person, and parked messages, are emailed."
+  type        = string
+}
+
 variable "trail_retention_days" {
   description = "How long organization trail logs are kept."
   type        = number

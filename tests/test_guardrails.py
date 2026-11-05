@@ -4,10 +4,11 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
-from hubtriage import cli, guardrails, hub
+from hubtriage import cli, guardrails, hub, verdict, writeback
 
 AGENT_TF = Path(__file__).resolve().parents[1] / "terraform" / "10-security" / "agent.tf"
 
@@ -89,6 +90,20 @@ def test_the_check_covers_every_field_terraform_forbids():
     in_terraform = set(re.findall(r'"([^"]+)"', block.group(1)))
     checked = set(guardrails.forbidden_writes(SAMPLE)) - guardrails.CLOSING
     assert checked == in_terraform
+
+
+def test_the_alert_rule_matches_what_the_agent_writes():
+    text = (AGENT_TF.parent / "alerts.tf").read_text(encoding="utf-8")
+    pattern = re.search(r"hubtriage_verdict = \[(.*?)\]", text)
+    alerted = set(re.findall(r'"([^"]+)"', pattern.group(1)))
+    assert alerted == {verdict.TRUE_POSITIVE, verdict.NEEDS_HUMAN}
+    update = writeback.build_update(
+        SimpleNamespace(id="i", product_arn="p"),
+        verdict.Decision(verdict.NEEDS_HUMAN, None, ""),
+        "head",
+    )
+    assert update["UserDefinedFields"]["hubtriage_verdict"] in alerted
+    assert update["Workflow"]["Status"] == "NOTIFIED"
 
 
 def test_the_command_exits_nonzero_when_a_rule_fails(monkeypatch, capsys):

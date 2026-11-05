@@ -1,0 +1,2 @@
+# Copy to terraform.tfvars, which is never committed.
+alert_email = "you+alerts@example.com"

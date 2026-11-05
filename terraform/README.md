@@ -3,7 +3,7 @@
 | Stage | Runs as | Builds |
 |---|---|---|
 | `00-org` | your Identity Center session, management account | budget, organization (imported), centralized root access, OUs, the security and workload accounts, delegated admins for GuardDuty and CloudTrail, SCPs |
-| `10-security` | the same session, assuming `OrganizationAccountAccessRole` into security | GuardDuty org configuration, the security account's hub followed by its delegation, Security Hub members, the organization trail and its bucket, EventBridge → SQS, the `hubtriage-agent` role, `hubtriage-enrich` |
+| `10-security` | the same session, assuming `OrganizationAccountAccessRole` into security | GuardDuty org configuration, the security account's hub followed by its delegation, Security Hub members, the organization trail and its bucket, EventBridge → SQS, email alerts, the `hubtriage-agent` role, `hubtriage-enrich` |
 | `20-workload` | the same, into workload | `hubtriage-enrich` |
 
 Hub before spokes: each stage reads the previous stage's outputs from its local state file.
@@ -36,6 +36,9 @@ terraform -chdir=00-org init && terraform -chdir=00-org apply
 terraform -chdir=10-security init && terraform -chdir=10-security apply
 terraform -chdir=20-workload init && terraform -chdir=20-workload apply
 ```
+
+Stage 10 needs its own `terraform.tfvars` too, copied from the example, for the alert address.
+After it applies, click the confirmation link AWS emails there, or no alert is delivered.
 
 Read the plan before each apply. Stage 00's import should show the organization as
 *imported*, not *created*, and its service-access list as the complete set.

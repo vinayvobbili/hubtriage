@@ -156,7 +156,8 @@ name and address, so `pull` and `consume` refuse `claude` and `agy` and run on l
 - [x] Offline pipeline: evidence → records → verdict → gate → write-back request, with tests
 - [x] Terraform stages 00 (organization), 10 (security account) and 20 (workload) applied to a real organization
 - [ ] Record GuardDuty sample findings as cases
-- [x] SQS consumer (`hubtriage consume`), tested against fakes; not yet run against a real queue
+- [x] SQS consumer (`hubtriage consume`), run against the real queue on GuardDuty samples
+- [x] Email alerts for findings that need a person and for parked messages
 - [ ] Accuracy against live models on recorded cases
 - [ ] OCSF reader for the newer Security Hub
 
