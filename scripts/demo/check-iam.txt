@@ -1,0 +1,11 @@
+ok   Workflow.Status=RESOLVED     expected denied, got denied
+ok   Workflow.Status=SUPPRESSED   expected denied, got denied
+ok   Confidence                   expected denied, got denied
+ok   Criticality                  expected denied, got denied
+ok   RelatedFindings              expected denied, got denied
+ok   Severity.Label               expected denied, got denied
+ok   Severity.Normalized          expected denied, got denied
+ok   Severity.Product             expected denied, got denied
+ok   Types                        expected denied, got denied
+ok   Note                         expected allowed, got allowed
+10/10 as expected

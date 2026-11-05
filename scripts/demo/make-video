@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Rebuild the README's demo video from made-up cases: write the slides and narration, compose the
+# music if it isn't there, and render with slidecast. See scripts/demo/README.md.
+#
+#   scripts/demo/make-video [OUT]
+#
+# OUT defaults to scripts/demo/out (git ignores it). Set PYTHON or SLIDECAST to use other installs.
+set -euo pipefail
+cd "$(dirname "$0")/../.."
+
+out="${1:-scripts/demo/out}"
+python="${PYTHON:-python}"
+slidecast="${SLIDECAST:-slidecast}"
+
+mkdir -p "$out"
+if [ ! -f "$out/music_bed.wav" ]; then
+  # The bed has to outlast the reel, or the music stops before the voice does.
+  "$slidecast" compose -o "$out" --length 150 --bpm 78 --seed 41
+fi
+"$python" scripts/demo/build.py "$out"
+"$slidecast" render "$out/reel.json" -o "$out/hubtriage-demo.mp4" --poster
+# The README's silent preview: 5 fps is plenty for slides, and keeps it small.
+ffmpeg -v error -y -i "$out/hubtriage-demo.mp4" -vf "fps=5,scale=960:-1:flags=lanczos,split[a][b];\
+[a]palettegen=max_colors=128:stats_mode=diff[p];[b][p]paletteuse=dither=bayer:bayer_scale=4:diff_mode=rectangle" \
+  "$out/demo.gif"
+echo "Wrote $out/hubtriage-demo.mp4 and $out/demo.gif (copy both to docs/ to update the README)"

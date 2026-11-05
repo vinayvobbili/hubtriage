@@ -144,7 +144,7 @@ The made-up cases in `fixtures/` can also go to public APIs, which is the quicke
 accuracy number:
 
 ```bash
-pip install 'hubtriage[claude]'
+pip install -e '.[claude]'
 HUBTRIAGE_LLM=claude,agy,local hubtriage eval --judge env
 ```
 
