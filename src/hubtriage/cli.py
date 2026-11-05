@@ -28,12 +28,13 @@ from .findings import Finding
 FIXTURES = Path(__file__).resolve().parents[2] / "fixtures"
 
 
-def _judge(spec: str) -> llm.Judge | None:
-    """None means each case's own recorded answer."""
+def _judge(spec: str, fixtures: str | Path | None = None) -> llm.Judge | None:
+    """None means each case's own recorded answer. Public backends need made-up cases."""
     if spec == "recorded":
         return None
     if spec == "env":
-        return llm.from_env()
+        made_up = fixtures is not None and Path(fixtures).resolve().is_relative_to(FIXTURES)
+        return llm.from_env(allow_public=made_up)
     raise SystemExit(f"unknown judge {spec!r}; use recorded or env")
 
 
@@ -68,7 +69,7 @@ def cmd_demo(args) -> int:
 
 def cmd_eval(args) -> int:
     found = cases.discover(args.fixtures)
-    judge = _judge(args.judge)
+    judge = _judge(args.judge, args.fixtures)
     outcomes = []
     for case in found:
         outcome = cases.run(case, judge)
@@ -82,13 +83,18 @@ def cmd_eval(args) -> int:
             f" expected {case.label['verdict']:14}"
             f" refused {len(outcome.result.decision.refused)}/{len(outcome.result.decision.outcomes)}"
         )
+        if not outcome.answered:
+            print(f"  {outcome.result.decision.reason[:300]}")
     s = cases.summarize(outcomes)
+    if args.json:
+        Path(args.json).write_text(json.dumps(s, indent=2) + "\n", encoding="utf-8")
+    if s["no_answer"]:
+        print(f"\nno accuracy to report: {s['no_answer']} of {s['cases']} cases got no answer")
+        return 1
     print(
         f"\n{s['correct']}/{s['cases']} verdicts correct;"
         f" the gate refused {s['refused']} of {s['claims']} claims"
     )
-    if args.json:
-        Path(args.json).write_text(json.dumps(s, indent=2) + "\n", encoding="utf-8")
     return 0
 
 

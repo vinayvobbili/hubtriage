@@ -122,8 +122,8 @@ GuardDuty -> Security Hub (delegated admin, security account)
 - `src/hubtriage/verdict.py`: the schema, the gate call, and the verdict policy.
 - `src/hubtriage/writeback.py`: the `BatchUpdateFindings` request. The note carries only
   admitted claims; the model's free-text summary is never written back.
-- `src/hubtriage/llm.py`: local OpenAI-compatible hosts with failover between them, and
-  Amazon Bedrock as another link in the same chain.
+- `src/hubtriage/llm.py`: local OpenAI-compatible hosts with failover between them, with
+  Amazon Bedrock, the Claude API and the Antigravity CLI as other links in the same chain.
 - `terraform/`: the organization, built in stages. See [terraform/README.md](terraform/README.md).
 
 ## Models
@@ -135,6 +135,17 @@ export HUBTRIAGE_LOCAL_MODEL=<served model name>
 export HUBTRIAGE_BEDROCK_MODEL=<model or inference profile id>
 hubtriage eval --judge env
 ```
+
+The made-up cases in `fixtures/` can also go to public APIs, which is the quickest way to an
+accuracy number:
+
+```bash
+pip install 'hubtriage[claude]'
+HUBTRIAGE_LLM=claude,agy,local hubtriage eval --judge env
+```
+
+Live findings cannot. They carry real account ids, and a CloudTrail lookup can carry a person's
+name and address, so `pull` and `consume` refuse `claude` and `agy` and run on local or Bedrock.
 
 ## Status
 

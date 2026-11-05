@@ -34,6 +34,7 @@ dependencies = ["witness-cli>=0.2.0"]
 
 [project.optional-dependencies]
 aws = ["boto3>=1.35"]
+claude = ["anthropic>=1.9"]
 dev = ["pytest>=7", "ruff>=0.4"]
 
 [project.urls]

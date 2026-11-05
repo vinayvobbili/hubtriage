@@ -49,8 +49,14 @@ class Outcome:
     result: Result
 
     @property
+    def answered(self) -> bool:
+        return bool(self.result.answer)
+
+    @property
     def correct(self) -> bool:
-        return self.result.decision.verdict == self.case.label["verdict"]
+        # A model that never answered becomes needs_human, which is right for a live
+        # finding and would score as a correct verdict here on a needs_human case.
+        return self.answered and self.result.decision.verdict == self.case.label["verdict"]
 
     @property
     def refused_as_expected(self) -> bool:
@@ -104,6 +110,7 @@ def summarize(outcomes: list[Outcome]) -> dict:
     refused = sum(len(o.result.decision.refused) for o in outcomes)
     return {
         "cases": len(outcomes),
+        "no_answer": sum(not o.answered for o in outcomes),
         "correct": sum(o.correct for o in outcomes),
         "claims": claims,
         "refused": refused,
