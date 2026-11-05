@@ -49,6 +49,9 @@ path = "src/hubtriage/__init__.py"
 [tool.hatch.build.targets.wheel]
 packages = ["src/hubtriage"]
 
+[tool.hatch.build.targets.sdist]
+exclude = ["docs/**/*.gif", "docs/**/*.mp4"]  # the README's demo; GitHub serves it
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"

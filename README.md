@@ -4,6 +4,10 @@
 
 [![CI](https://github.com/vinayvobbili/hubtriage/actions/workflows/ci.yml/badge.svg)](https://github.com/vinayvobbili/hubtriage/actions/workflows/ci.yml)
 
+![hubtriage: GuardDuty to Security Hub to a checked verdict; a misread port and a misread dismissal stopped by the gate; IAM that won't let the agent close a finding](https://raw.githubusercontent.com/vinayvobbili/hubtriage/main/docs/demo.gif)
+
+With sound (2 minutes, made from made-up cases): [docs/hubtriage-demo.mp4](docs/hubtriage-demo.mp4)
+
 A GuardDuty finding arrives in Security Hub. hubtriage asks AWS a fixed set of questions
 about it — the instance and its security groups, the IAM principal and its policies, the
 CloudTrail events around it — and shows the answers to a model as records. The model
