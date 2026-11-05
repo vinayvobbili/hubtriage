@@ -33,7 +33,7 @@ from datetime import datetime, timedelta
 from witness.collectors import structured
 from witness.store import Store, canonical, sha256_text
 
-from .clients import Client, to_json
+from .clients import Client, is_unavailable, to_json
 from .findings import Finding
 
 WINDOW = timedelta(hours=1)
@@ -225,10 +225,13 @@ def ingest_finding(store: Store, finding: Finding) -> str:
 def collect(store: Store, client: Client, finding: Finding, *, mode: str = "replay") -> Evidence:
     """Ask every question in the plan and land each answer as records.
 
-    A lookup that fails - access denied, throttled, not recorded - is kept as an
-    error on the evidence rather than raised. The model is told which questions
-    went unanswered, and the gate has nothing to bind to for them, which is the
-    correct amount of weight for a missing answer.
+    A lookup AWS refused - access denied, no such entity - or that was not recorded
+    is kept as an error on the evidence rather than raised. The model is told which
+    questions went unanswered, and the gate has nothing to bind to for them, which
+    is the correct amount of weight for a missing answer.
+
+    A lookup that never got an answer at all (see `is_unavailable`) stops the
+    triage instead: no verdict is better than one built on a network failure.
     """
     evidence = Evidence(finding_record_id=ingest_finding(store, finding))
     queue = plan(finding)
@@ -242,7 +245,9 @@ def collect(store: Store, client: Client, finding: Finding, *, mode: str = "repl
                 account_id=finding.account_id,
                 region=finding.region,
             )
-        except Exception as e:  # noqa: BLE001 - every failure is reported, none is fatal
+        except Exception as e:  # noqa: BLE001 - every failure is reported
+            if is_unavailable(e):
+                raise
             evidence.collected.append(Collected(lookup, "", [], lookup.kind, error=str(e)))
             continue
 

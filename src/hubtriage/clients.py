@@ -39,6 +39,37 @@ class CassetteMiss(LookupError):
     pass
 
 
+# AWS answered, but about the caller's session or load, not about what was asked.
+_NOT_AN_ANSWER = {
+    "ExpiredToken",
+    "ExpiredTokenException",
+    "InvalidClientTokenId",
+    "RequestExpired",
+    "RequestLimitExceeded",
+    "Throttling",
+    "ThrottlingException",
+    "TooManyRequestsException",
+    "UnrecognizedClientException",
+}
+
+
+def is_unavailable(error: Exception) -> bool:
+    """True when a failed call says nothing about the account: no network, no session, throttled.
+
+    AccessDenied or NoSuchEntity is AWS answering, and a claim can rest on that
+    gap. A DNS failure or an expired login is not an answer. Kept as evidence, it
+    would look like a question AWS could not answer, and could change the verdict
+    or the accuracy measured from a recorded case.
+    """
+    try:
+        from botocore.exceptions import BotoCoreError, ClientError
+    except ImportError:
+        return False
+    if isinstance(error, ClientError):
+        return error.response.get("Error", {}).get("Code") in _NOT_AN_ANSWER
+    return isinstance(error, BotoCoreError)
+
+
 def _iso(value: Any) -> str:
     if isinstance(value, (datetime, date)):
         return value.isoformat()

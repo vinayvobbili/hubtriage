@@ -149,6 +149,18 @@ def test_expired_credentials_stop_the_run_instead_of_burning_receives():
         consumer.drain(Expired(), "q", lambda raw: None)
 
 
+def test_a_network_failure_while_handling_stops_the_run_and_keeps_every_message():
+    exceptions = pytest.importorskip("botocore.exceptions")
+    sqs = FakeSqs(event({"Id": "a"}), event({"Id": "b"}))
+
+    def handle(raw):
+        raise exceptions.EndpointConnectionError(endpoint_url="https://sts.example")
+
+    with pytest.raises(exceptions.EndpointConnectionError):
+        consumer.drain(sqs, "q", handle)
+    assert sqs.deleted == [] and len(sqs.visible) == 1  # the second was never received
+
+
 # ------------------------------------------------------------------ the hub
 
 

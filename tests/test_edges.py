@@ -72,6 +72,48 @@ def test_write_back_reads_unprocessed_findings():
     assert ok.sent == [{"FindingIdentifiers": []}]
 
 
+def _collect_with(error, tmp_path):
+    from witness.store import Store
+
+    from hubtriage import evidence
+    from hubtriage.findings import Finding
+
+    class Failing:
+        def call(self, *args, **kwargs):
+            raise error
+
+    case = next(c for c in cases.discover(FIXTURES) if c.name == "port-probe-ssh-open")
+    store = Store(tmp_path / "t.db")
+    try:
+        return evidence.collect(store, Failing(), Finding.load(case.directory / "finding.json"))
+    finally:
+        store.close()
+
+
+@pytest.mark.parametrize(
+    "make",
+    [
+        lambda e: e.EndpointConnectionError(endpoint_url="https://sts.example"),
+        lambda e: e.ConnectTimeoutError(endpoint_url="https://sts.example"),
+        lambda e: e.NoCredentialsError(),
+        lambda e: e.ClientError({"Error": {"Code": "ExpiredToken"}}, "AssumeRole"),
+        lambda e: e.ClientError({"Error": {"Code": "ThrottlingException"}}, "LookupEvents"),
+    ],
+)
+def test_a_lookup_that_got_no_answer_stops_the_triage(make, tmp_path):
+    exceptions = pytest.importorskip("botocore.exceptions")
+    error = make(exceptions)
+    with pytest.raises(type(error)):
+        _collect_with(error, tmp_path)
+
+
+def test_a_lookup_aws_refused_is_kept_as_a_gap_in_the_evidence(tmp_path):
+    exceptions = pytest.importorskip("botocore.exceptions")
+    denied = exceptions.ClientError({"Error": {"Code": "AccessDenied"}}, "DescribeInstances")
+    found = _collect_with(denied, tmp_path)
+    assert found.collected and all("AccessDenied" in c.error for c in found.collected)
+
+
 def test_every_labeled_case_comes_out_as_labeled():
     found = cases.discover(FIXTURES)
     assert found, "no labeled cases found"

@@ -77,9 +77,17 @@ organization, and accuracy measured against live models, come next.
 - **Key-shaped placeholders failed.** GitHub secret scanning flagged the AWS documentation
   placeholder in the fixtures as an access key id. They are now `ASIA-EXAMPLE-*`, and a test
   refuses any tracked file with that shape.
-- **Not deployed.** hubtriage is validated in CI against recorded fixtures and is not deployed to
-  AWS yet. The Terraform is validated, not applied, and the shipped cases are hand-written, so
-  nothing here measures how accurate any model is.
+- **A network failure is not evidence.** A lookup AWS refused stays in the evidence as a gap the
+  model is told about. A lookup that got no answer (no DNS, an expired login, throttling) stops the
+  triage and leaves the message on the queue, so it cannot change a verdict or an accuracy number.
+- **`terraform validate` passed; the first real apply did not.** Delegated-admin registrations
+  conflict when they run in parallel. Delegation had already switched Security Hub on in the
+  security account, so it has to be imported. A delegated administrator cannot read back the
+  organization trail it created, because the ARN names the management account, so the trail is
+  managed from there.
+- **Not running on real findings yet.** The organization and security account are applied, but the
+  agent has not triaged a real finding and the shipped cases are hand-written, so nothing here
+  measures how accurate any model is.
 
 ## How it fits together
 
@@ -121,8 +129,8 @@ hubtriage eval --judge env
 ## Status
 
 - [x] Offline pipeline: evidence → records → verdict → gate → write-back request, with tests
-- [x] Terraform stages 00 (organization), 10 (security account), 20 (workload): validated, not yet applied
-- [ ] Apply against a real organization; record GuardDuty sample findings as cases
+- [x] Terraform stages 00 (organization) and 10 (security account) applied to a real organization
+- [ ] Apply stage 20 (workload); record GuardDuty sample findings as cases
 - [x] SQS consumer (`hubtriage consume`), tested against fakes; not yet run against a real queue
 - [ ] Accuracy against live models on recorded cases
 - [ ] OCSF reader for the newer Security Hub
