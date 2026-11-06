@@ -12,7 +12,9 @@ A case is a directory:
 `refused`, and `replay_verdict` when it differs from `verdict`, are what the
 recorded answer must come to: a case written to show the gate catching a
 misread has an answer that is wrong on purpose, so its replay ends somewhere
-else than a correct reading would. Cases
+else than a correct reading would. `also_correct` lists other verdicts a careful
+reader could defend from the same records; a live model is not marked wrong for
+them, and the case says why in `why`. Cases
 under fixtures/synthetic were written by hand to exercise the gate - their model
 answers are not a model's, and nothing measured on them is a statement about
 any model. Cases recorded from a real account say so in `source`.
@@ -35,6 +37,7 @@ from .clients import Cassette, Client, Recorder
 from .findings import Finding
 from .llm import Judge, recorded
 from .triage import Result, triage
+from .verdict import VERDICTS
 
 
 @dataclass
@@ -58,10 +61,19 @@ class Outcome:
         return bool(self.result.answer)
 
     @property
+    def acceptable(self) -> set[str]:
+        return {self.case.label["verdict"], *self.case.label.get("also_correct", [])}
+
+    @property
     def correct(self) -> bool:
         # A model that never answered becomes needs_human, which is right for a live
         # finding and would score as a correct verdict here on a needs_human case.
-        return self.answered and self.result.decision.verdict == self.case.label["verdict"]
+        return self.answered and self.result.decision.verdict in self.acceptable
+
+    @property
+    def false_benign(self) -> bool:
+        """The costly mistake: a finding that should reach a person, dismissed."""
+        return self.answered and self.result.decision.verdict == "benign" and "benign" not in self.acceptable
 
     @property
     def refused_as_expected(self) -> bool:
@@ -117,12 +129,25 @@ def record(raw: dict, out: str | Path, live: Client, judge: Judge) -> Result:
 
 
 def summarize(outcomes: list[Outcome]) -> dict:
+    """Counts for the eval. One accuracy number hides which way a model is wrong.
+
+    true_positive and needs_human both put the finding in front of a person, so
+    mixing them up is cheap; benign dismisses it. `confusion` is label -> verdict
+    given -> count, and `false_benign` counts the dismissals a label did not allow.
+    """
     claims = sum(len(o.result.decision.outcomes) for o in outcomes)
     refused = sum(len(o.result.decision.refused) for o in outcomes)
+    confusion = {label: dict.fromkeys(VERDICTS, 0) for label in VERDICTS}
+    for o in outcomes:
+        if o.answered:
+            confusion[o.case.label["verdict"]][o.result.decision.verdict] += 1
     return {
         "cases": len(outcomes),
         "no_answer": sum(not o.answered for o in outcomes),
         "correct": sum(o.correct for o in outcomes),
+        "contested": sum(bool(o.case.label.get("also_correct")) for o in outcomes),
+        "false_benign": sum(o.false_benign for o in outcomes),
+        "confusion": confusion,
         "claims": claims,
         "refused": refused,
     }

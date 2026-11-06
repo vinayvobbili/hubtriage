@@ -107,6 +107,15 @@ organization, and accuracy measured against live models, come next.
   the agent must be refused, as the agent, and then a note it may write. It refuses to run on
   anything but a GuardDuty sample, since a rule that failed would change the finding. All ten
   attempts came out as expected.
+- **The first live model answered "needs a human" every time.** Claude agreed with 1 of 4 labels: the
+  prompt never defined the verdicts and told it to escalate whatever the records couldn't settle, and
+  one label scored it against where the gate takes a deliberately wrong answer. With the verdicts
+  defined, fifteen generated cases added and two ambiguous cases marked as contested, it agreed with
+  all 19 labels and dismissed nothing it shouldn't have. Those are my labels on my cases, so this says
+  the definitions are clear, not that the model is accurate. The eval now reports false benigns and a
+  label-by-verdict table rather than one number. Its one refused claim was a correct reading with
+  the wrong type (CloudTrail's `readOnly: true` cited as `"true"`), so the prompt now says a value
+  keeps its JSON type.
 - **Not running on real findings yet.** The organization and security account are applied, but the
   agent has not triaged a real finding and the shipped cases are hand-written, so nothing here
   measures how accurate any model is.

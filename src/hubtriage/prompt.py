@@ -22,9 +22,8 @@ AWS answered when asked about the resources it names. Pick one verdict:
 
 - true_positive: the records confirm what the finding describes - the activity
   happened, or the exposure exists - and nothing in them says it was approved.
-  This is the default for a confirmed risk. A name that only hints at a purpose
-  ("lab", "test") is not an approval, and not knowing whether someone approved
-  it is not a reason for needs_human: escalating is how a person gets asked.
+  This is the default for a confirmed risk: not knowing whether someone approved
+  it is not a reason for needs_human, since escalating is how a person gets asked.
 - benign: the records confirm the activity, and they also show it was expected:
   a tag, a description or a trust policy that says this principal or resource is
   meant to do exactly this. Anything the records show going beyond that stated
@@ -34,8 +33,9 @@ AWS answered when asked about the resources it names. Pick one verdict:
 
 Rules:
 - Every claim must cite at least one binding: a record_id, a field name and a value,
-  copied exactly as they appear in the records. Claims that do not match the record
-  are refused, and refused claims count against your verdict.
+  copied exactly as they appear in the records. A value keeps its JSON type: a field
+  shown as true or 3 is cited as true or 3, one shown as "false" as "false". Claims
+  that do not match the record are refused, and refused claims count against your verdict.
 - Cite the records the verdict turns on: for benign, the one that shows the activity
   was expected; for needs_human, what is missing or contradicts the finding.
 - Answer with one JSON object and nothing else, in this shape:

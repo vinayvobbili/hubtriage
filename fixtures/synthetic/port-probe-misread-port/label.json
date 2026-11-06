@@ -1,6 +1,7 @@
 {
   "verdict": "true_positive",
+  "also_correct": ["needs_human"],
   "refused": 1,
   "source": "synthetic: hand-written to exercise the gate",
-  "why": "The RDP claim cites a real rule with the wrong port and is refused. Escalation still stands on the SSH claim, and the RDP sentence never reaches the note."
+  "why": "The RDP claim cites a real rule with the wrong port and is refused. Escalation still stands on the SSH claim, and the RDP sentence never reaches the note. Contested for a live model, like port-probe-ssh-open: the 'lab target, ssh' description makes asking a person defensible too."
 }

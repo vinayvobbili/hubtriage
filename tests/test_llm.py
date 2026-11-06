@@ -115,6 +115,43 @@ def test_no_answer_never_scores_as_correct_on_a_needs_human_case(tmp_path):
     assert summary["correct"] == 0 and summary["no_answer"] == summary["cases"]
 
 
+def scored(label: dict, said: str) -> cases.Outcome:
+    decision = SimpleNamespace(verdict=said, refused=[], outcomes=[])
+    return cases.Outcome(cases.Case("c", Path("."), label), SimpleNamespace(answer="{}", decision=decision))
+
+
+def test_a_contested_case_accepts_its_other_verdict_but_never_a_dismissal():
+    label = {"verdict": "true_positive", "also_correct": ["needs_human"]}
+    assert scored(label, "true_positive").correct and scored(label, "needs_human").correct
+    assert not scored(label, "benign").correct and scored(label, "benign").false_benign
+
+
+def test_the_eval_counts_dismissals_apart_from_cheap_mix_ups():
+    outcomes = [
+        scored({"verdict": "true_positive"}, "needs_human"),  # still reaches a person
+        scored({"verdict": "needs_human"}, "benign"),  # dismissed
+        scored({"verdict": "benign"}, "benign"),
+    ]
+    s = cases.summarize(outcomes)
+    assert (s["correct"], s["false_benign"]) == (1, 1)
+    assert s["confusion"]["true_positive"]["needs_human"] == 1
+    assert s["confusion"]["needs_human"]["benign"] == 1
+
+
+def test_the_eval_prints_false_benigns_and_the_table(monkeypatch, capsys):
+    monkeypatch.setattr(llm, "from_env", lambda env=None, allow_public=False: lambda prompt: "{}")
+    assert cli.main(["eval", "--judge", "env"]) == 0
+    out = capsys.readouterr().out
+    assert "false benign" in out and "said needs_human" in out and "contested" in out
+
+
+def test_the_prompt_tells_the_model_a_value_keeps_its_type():
+    # Claude cited a CloudTrail readOnly=true as "true" and the gate refused a correct reading.
+    from hubtriage import prompt
+
+    assert "keeps its JSON type" in prompt.INSTRUCTIONS
+
+
 class FakeBedrock:
     def __init__(self, reply):
         self.reply = reply

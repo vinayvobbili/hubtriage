@@ -1,6 +1,7 @@
 {
   "verdict": "true_positive",
+  "also_correct": ["needs_human"],
   "refused": 0,
   "source": "synthetic: hand-written to exercise the gate",
-  "why": "Every claim matches its record; an exposed port being probed is a real exposure."
+  "why": "Every claim matches its record; an exposed port being probed is a real exposure. Contested: the group's description reads 'lab target, ssh', which may mean the exposure is deliberate, so asking a person is also defensible. Dismissing it is not: nothing says the whole internet was meant to reach it."
 }
