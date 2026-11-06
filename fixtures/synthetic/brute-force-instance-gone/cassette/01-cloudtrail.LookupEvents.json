@@ -1,0 +1,15 @@
+{
+  "Events": [
+    {
+      "AccessKeyId": "AKIA-EXAMPLE-OPSONCALL",
+      "CloudTrailEvent": "{\"eventVersion\":\"1.09\",\"userIdentity\":{\"type\":\"IAMUser\",\"principalId\":\"AIDACF89F9BD112C50B7A\",\"arn\":\"arn:aws:iam::111122223333:user/ops-oncall\",\"accountId\":\"111122223333\",\"accessKeyId\":\"AKIA-EXAMPLE-OPSONCALL\",\"userName\":\"ops-oncall\"},\"eventTime\":\"2026-10-30T04:22:10Z\",\"eventSource\":\"ec2.amazonaws.com\",\"eventName\":\"TerminateInstances\",\"awsRegion\":\"us-east-1\",\"sourceIPAddress\":\"203.0.113.15\",\"userAgent\":\"aws-cli/2.17.0 md/awscrt#0.20.11 ua/2.0 os/linux#6.1 md/arch#x86_64 lang/python#3.11.9 exec-env/CI\",\"requestParameters\":{\"instancesSet\":{\"items\":[{\"instanceId\":\"i-0c8d9e0f1a2b3c4d5\"}]}},\"responseElements\":{\"instancesSet\":{\"items\":[{\"instanceId\":\"i-0c8d9e0f1a2b3c4d5\",\"currentState\":{\"code\":32,\"name\":\"shutting-down\"}}]}},\"requestID\":\"50660dec-3191-51c7-bb64-368378b99a8c\",\"eventID\":\"b6774ffe-8e69-548a-95c9-9a9bbc8b93ca\",\"readOnly\":false,\"eventType\":\"AwsApiCall\",\"managementEvent\":true,\"recipientAccountId\":\"111122223333\",\"eventCategory\":\"Management\"}",
+      "EventId": "b6774ffe-8e69-548a-95c9-9a9bbc8b93ca",
+      "EventName": "TerminateInstances",
+      "EventSource": "ec2.amazonaws.com",
+      "EventTime": "2026-10-30T04:22:10+00:00",
+      "ReadOnly": "false",
+      "Resources": [],
+      "Username": "ops-oncall"
+    }
+  ]
+}

@@ -10,5 +10,21 @@
     "account_id": "111122223333",
     "region": "us-east-1",
     "file": "00-ec2.DescribeInstances.json"
+  },
+  {
+    "service": "cloudtrail",
+    "operation": "LookupEvents",
+    "params": {
+      "LookupAttributes": [
+        {
+          "AttributeKey": "ResourceName",
+          "AttributeValue": "i-0c8d9e0f1a2b3c4d5"
+        }
+      ],
+      "MaxResults": 50
+    },
+    "account_id": "111122223333",
+    "region": "us-east-1",
+    "file": "01-cloudtrail.LookupEvents.json"
   }
 ]

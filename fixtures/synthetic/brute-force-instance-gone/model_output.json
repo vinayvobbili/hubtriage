@@ -1,6 +1,6 @@
 {
   "verdict": "needs_human",
-  "summary": "DescribeInstances returned nothing for i-0c8d9e0f1a2b3c4d5, so the exposure can't be checked.",
+  "summary": "i-0c8d9e0f1a2b3c4d5 is gone: ops-oncall terminated it 22 minutes after the finding, so the exposure can't be checked.",
   "claims": [
     {
       "text": "The finding names instance i-0c8d9e0f1a2b3c4d5.",
@@ -19,6 +19,26 @@
           "record_id": "b5185adaac48#0000",
           "field": "Reservations",
           "value": "[]"
+        }
+      ]
+    },
+    {
+      "text": "ops-oncall terminated it at 04:22:10 UTC, after the finding.",
+      "bindings": [
+        {
+          "record_id": "0856b71f4d9d#0000",
+          "field": "CloudTrailEvent.eventName",
+          "value": "TerminateInstances"
+        },
+        {
+          "record_id": "0856b71f4d9d#0000",
+          "field": "CloudTrailEvent.userIdentity.userName",
+          "value": "ops-oncall"
+        },
+        {
+          "record_id": "0856b71f4d9d#0000",
+          "field": "CloudTrailEvent.eventTime",
+          "value": "2026-10-30T04:22:10Z"
         }
       ]
     }

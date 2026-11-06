@@ -12,6 +12,22 @@
     "file": "00-ec2.DescribeInstances.json"
   },
   {
+    "service": "cloudtrail",
+    "operation": "LookupEvents",
+    "params": {
+      "LookupAttributes": [
+        {
+          "AttributeKey": "ResourceName",
+          "AttributeValue": "i-0e4f5a6b7c8d9e0f1"
+        }
+      ],
+      "MaxResults": 50
+    },
+    "account_id": "111122223333",
+    "region": "us-east-1",
+    "file": "01-cloudtrail.LookupEvents.json"
+  },
+  {
     "service": "ec2",
     "operation": "DescribeSecurityGroups",
     "params": {
@@ -21,6 +37,6 @@
     },
     "account_id": "111122223333",
     "region": "us-east-1",
-    "file": "01-ec2.DescribeSecurityGroups.json"
+    "file": "02-ec2.DescribeSecurityGroups.json"
   }
 ]

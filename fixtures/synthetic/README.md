@@ -9,7 +9,8 @@ There are two kinds:
 
 - **Gate cases**, typed by hand: `enrich-role-discovery`, `port-probe-ssh-open`, `port-probe-misread-port`
   and `root-login-misread`. Their answers are written to make the gate admit, refuse or downgrade in a
-  known way, some wrong on purpose. When a deliberately wrong answer ends somewhere other than the right
+  known way, some wrong on purpose. Their typed files stay as typed; when the plan grows, `synth_cases.py`
+  adds only the new calls to their cassettes. When a deliberately wrong answer ends somewhere other than the right
   verdict, `label.json` says both: `verdict` is the right one, `replay_verdict` is where the gate takes the
   recorded answer. The two port-probe cases are contested: their group is described as a lab target,
   so `also_correct` lets a live model ask a person there without being marked wrong.
@@ -24,6 +25,10 @@ should, and the write-back request has the right shape. `hubtriage eval --judge 
 instead, and scores it against each label's `verdict` (or `also_correct`). It reports false benigns
 first, then a table of label against verdict given: true_positive and needs_human both reach a person,
 so mixing them up costs little, while a benign the label doesn't allow dismisses a real alert.
+
+The model runs reported in the main README were made before the plan asked for an instance's own
+CloudTrail history (2026-11-06). Every instance case has one more record since, empty unless the spec
+gives one, and `brute-force-instance-gone` now shows who terminated the instance and when.
 
 `../heldout` holds six more generated cases, written before any model answered them, to test a policy
 change made after looking at these. Cases recorded from a real account never go under `fixtures/`: the

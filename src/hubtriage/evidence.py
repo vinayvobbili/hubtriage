@@ -10,7 +10,13 @@ The questions, by resource:
 
 - An EC2 instance: ec2:DescribeInstances, then ec2:DescribeSecurityGroups for
   every group the instance is in - an "unprotected port is being probed" finding
-  is only true if a group really lets the world reach that port.
+  is only true if a group really lets the world reach that port. And the
+  instance's own CloudTrail history (LookupEvents by resource name, no time
+  bounds): who launched, changed or terminated it. An instance that is gone
+  by the time the finding is triaged leaves no description, only that history,
+  and "terminated twenty minutes after the alert, by whom" is the thing a person
+  reviewing it needs first. It is not the record of what happened - the probe or
+  the login attempt is in the finding - so a benign verdict need not cite it.
 - An IAM access key: iam:GetUser or iam:GetRole plus the attached managed
   policies, and cloudtrail:LookupEvents for that key around the finding's window.
   LookupEvents reads the account's 90-day management-event history, which exists
@@ -100,6 +106,22 @@ def _cloudtrail(attribute: str, value: str, finding: Finding) -> Lookup:
     )
 
 
+def _instance_history(instance_id: str) -> Lookup:
+    # Unbounded: a termination after the finding, or a launch long before it, is the point.
+    # Without an EndTime, AWS reads up to now; the params stay the same, so replay still matches.
+    return Lookup(
+        "cloudtrail",
+        "LookupEvents",
+        {
+            "LookupAttributes": [{"AttributeKey": "ResourceName", "AttributeValue": instance_id}],
+            "MaxResults": CLOUDTRAIL_PAGE,
+        },
+        kind="instance_history",
+        records_at="Events",
+        decode_cloudtrail=True,
+    )
+
+
 def plan(finding: Finding) -> list[Lookup]:
     lookups: list[Lookup] = []
     for instance_id in finding.instance_ids():
@@ -112,6 +134,7 @@ def plan(finding: Finding) -> list[Lookup]:
                 records_at="Reservations.0.Instances",
             )
         )
+        lookups.append(_instance_history(instance_id))
     for key in finding.access_keys():
         if key.principal_type == "Root":
             lookups.append(_cloudtrail("Username", "root", finding))

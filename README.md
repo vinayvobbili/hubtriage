@@ -11,8 +11,8 @@ With sound (2 minutes, made from made-up cases):
 https://github.com/user-attachments/assets/e98bdf7e-7714-476e-af27-0a288b598b43
 
 A GuardDuty finding arrives in Security Hub. hubtriage asks AWS a fixed set of questions
-about it — the instance and its security groups, the IAM principal and its policies, the
-CloudTrail events around it — and shows the answers to a model as records. The model
+about it — the instance, its security groups and its CloudTrail history, the IAM principal and
+its policies, the CloudTrail events around it — and shows the answers to a model as records. The model
 returns a verdict and the claims it rests on, each claim citing a record and a field.
 
 Every claim then goes through [witness](https://github.com/vinayvobbili/witness)'s gate,

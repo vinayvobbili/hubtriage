@@ -108,6 +108,25 @@ def test_an_instance_raises_its_security_groups():
     assert follow.params == {"GroupIds": ["sg-0123abcd4567ef890"]}
 
 
+def test_an_instance_s_history_is_asked_with_no_time_bounds():
+    history = evidence.plan(finding("port-probe-ssh-open"))[1]
+    assert (history.operation, history.kind) == ("LookupEvents", "instance_history")
+    assert history.params["LookupAttributes"] == [
+        {"AttributeKey": "ResourceName", "AttributeValue": "i-0a1b2c3d4e5f60718"}
+    ]
+    # A termination after the finding is the point; a window around the finding would miss it.
+    assert "StartTime" not in history.params and "EndTime" not in history.params
+
+
+def test_a_gone_instance_comes_with_who_terminated_it(store):
+    case = SYNTHETIC / "brute-force-instance-gone"
+    found = evidence.collect(store, Cassette(case / "cassette"), Finding.load(case / "finding.json"))
+    assert "ec2_instance_empty" in found.kinds().values()
+    (event,) = store.query_records(kind="instance_history")
+    assert event["fields"]["CloudTrailEvent.eventName"] == "TerminateInstances"
+    assert event["fields"]["CloudTrailEvent.userIdentity.userName"] == "ops-oncall"
+
+
 def test_cloudtrail_bodies_are_decoded_and_traced_to_the_raw_response(store):
     f = finding("root-login-misread")
     ev = evidence.collect(store, Cassette(SYNTHETIC / "root-login-misread/cassette"), f)
@@ -123,11 +142,13 @@ def test_an_empty_answer_is_recorded_not_dropped(store, tmp_path):
         def call(self, service, operation, params, *, account_id, region):
             if operation == "DescribeInstances":
                 return {"Reservations": []}
+            if operation == "LookupEvents":
+                return {"Events": []}
             raise AssertionError("no follow-up for an instance that is not there")
 
     ev = evidence.collect(store, Gone(), finding("port-probe-ssh-open"))
-    (c,) = ev.collected
-    assert c.kind == "ec2_instance_empty"
+    c, history = ev.collected
+    assert (c.kind, history.kind) == ("ec2_instance_empty", "instance_history_empty")
     assert store.get_record(c.record_ids[0])["fields"] == {"Reservations": "[]"}  # witness keeps an empty container as a leaf
 
 
@@ -137,7 +158,7 @@ def test_a_failed_lookup_is_kept_as_an_error(store):
             raise PermissionError("AccessDenied")
 
     ev = evidence.collect(store, Denied(), finding("port-probe-ssh-open"))
-    assert [c.error for c in ev.collected] == ["AccessDenied"]
+    assert [c.error for c in ev.collected] == ["AccessDenied", "AccessDenied"]
 
 
 # ------------------------------------------------------------------ cassettes
@@ -224,6 +245,8 @@ def test_when_cloudtrail_was_asked_a_benign_must_cite_its_answer_even_empty():
     shown = {"f": "finding", "r": "iam_role", "c": "cloudtrail_event_empty"}
     assert verdict.what_happened(shown) == {"cloudtrail_event_empty"}
     assert verdict.what_happened({"f": "finding", "g": "ec2_security_group"}) == {"finding"}
+    # An instance's history says who launched or stopped it, not what the finding saw.
+    assert verdict.what_happened({"f": "finding", "h": "instance_history_empty"}) == {"finding"}
 
 
 def test_a_true_positive_need_not_cite_what_happened(store):

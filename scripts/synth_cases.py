@@ -34,7 +34,7 @@ from botocore.exceptions import ClientError
 from witness.store import Store
 
 from hubtriage import cases, evidence
-from hubtriage.clients import Cassette, Recorder
+from hubtriage.clients import Cassette, CassetteMiss, Recorder
 from hubtriage.findings import Finding
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -356,9 +356,15 @@ class Spec:
     verdict: str
     why: str
     finding: dict
-    answers: dict  # "service.Operation" -> response or Denied
+    answers: dict  # "service.Operation" (or HISTORY) -> response or Denied
     summary: str
     claims: list[tuple[str, list[tuple[str, int, str]]]]  # text, [(record kind, index, field)]
+
+
+# An instance's own CloudTrail history, kept apart from a key's or root's LookupEvents. A spec that says nothing
+# about it gets an empty one: the instance was launched more than 90 days ago and nobody has touched it since.
+HISTORY = "cloudtrail.LookupEvents:ResourceName"
+DEFAULTS = {HISTORY: NO_EVENTS}
 
 
 class Answers:
@@ -370,13 +376,61 @@ class Answers:
 
     def call(self, service: str, operation: str, params: dict, *, account_id: str, region: str) -> dict:
         key = f"{service}.{operation}"
-        if key not in self.answers:
+        attributes = params.get("LookupAttributes") or [{}]
+        if attributes[0].get("AttributeKey") == "ResourceName":
+            key = HISTORY
+        if key not in self.answers and key not in DEFAULTS:
             raise SystemExit(f"the plan asked {key} {params}, and the spec has no answer for it")
         self.asked.add(key)
-        answer = self.answers[key]
+        answer = self.answers.get(key, DEFAULTS.get(key))
         if isinstance(answer, Denied):
             raise ClientError({"Error": {"Code": answer.code, "Message": answer.message}}, operation)
         return answer
+
+
+class TopUp:
+    """Replay a hand-written case's cassette, and record only the calls it lacks, answered from `answers`.
+
+    The plan grows (an instance's history was added after the first cases were typed); this adds the new calls
+    to those cases without rewriting what was typed.
+    """
+
+    def __init__(self, directory: Path, answers: dict):
+        self.cassette = Cassette(directory)
+        self.recorder = Recorder(Answers(answers), directory)
+        self.added: list[str] = []
+
+    def call(self, service: str, operation: str, params: dict, *, account_id: str, region: str) -> dict:
+        try:
+            return self.cassette.call(service, operation, params, account_id=account_id, region=region)
+        except CassetteMiss:
+            self.added.append(f"{service}.{operation}")
+            return self.recorder.call(service, operation, params, account_id=account_id, region=region)
+
+
+# Cases typed by hand, before the generator: what AWS answers the calls their cassettes don't have yet.
+HAND_WRITTEN = {
+    "synthetic/port-probe-ssh-open": {},
+    "synthetic/port-probe-misread-port": {},
+}
+
+
+def top_up(out: Path) -> list[str]:
+    """Add the plan's newer calls to the hand-written cases under `out`. Returns case: call for each one added."""
+    added = []
+    for name, answers in HAND_WRITTEN.items():
+        directory = out / name
+        if not directory.exists():
+            continue
+        client = TopUp(directory / "cassette", answers)
+        with tempfile.TemporaryDirectory() as tmp:
+            store = Store(Path(tmp) / "top-up.db")
+            try:
+                evidence.collect(store, client, Finding.load(directory / "finding.json"), mode="live")
+            finally:
+                store.close()
+        added.extend(f"{name}: {call}" for call in client.added)
+    return added
 
 
 def write(spec: Spec, out: Path, source: str = SOURCE) -> None:
@@ -743,17 +797,31 @@ def specs() -> list[Spec]:
         ),
         Spec(
             "brute-force-instance-gone", HUMAN,
-            "The instance the finding names no longer exists, so neither its exposure nor the attack can be checked.",
+            "The instance the finding names no longer exists, so neither its exposure nor the attack can be checked. "
+            "Its history shows ops-oncall terminated it 22 minutes after the finding; whether that was the response "
+            "or someone clearing up is a question for a person, and now they know whom to ask.",
             finding("brute-force-instance-gone", BRUTE,
                     "198.51.100.91 is performing SSH brute force attacks against i-0c8d9e0f1a2b3c4d5.",
                     ec2_resource("i-0c8d9e0f1a2b3c4d5", "10.0.1.60", "203.0.113.60"),
                     created="2026-10-30T04:00:00.000Z", severity="LOW",
                     product_fields=connection("INBOUND", "198.51.100.91", 22)),
-            {"ec2.DescribeInstances": NO_INSTANCE},
-            "DescribeInstances returned nothing for i-0c8d9e0f1a2b3c4d5, so the exposure can't be checked.",
+            {"ec2.DescribeInstances": NO_INSTANCE,
+             HISTORY: trail(
+                 "brute-force-instance-gone", as_user("ops-oncall", "AKIA-EXAMPLE-OPSONCALL"), "ops-oncall",
+                 "203.0.113.15", CLI,
+                 Call("2026-10-30T04:22:10", "ec2.amazonaws.com", "TerminateInstances", False,
+                      {"instancesSet": {"items": [{"instanceId": "i-0c8d9e0f1a2b3c4d5"}]}},
+                      {"instancesSet": {"items": [{"instanceId": "i-0c8d9e0f1a2b3c4d5",
+                                                   "currentState": {"code": 32, "name": "shutting-down"}}]}}))},
+            "i-0c8d9e0f1a2b3c4d5 is gone: ops-oncall terminated it 22 minutes after the finding, so the exposure "
+            "can't be checked.",
             [
                 ("The finding names instance i-0c8d9e0f1a2b3c4d5.", [("finding", 0, "Resources.0.Id")]),
                 ("DescribeInstances returned no reservations for it.", [("ec2_instance_empty", 0, "Reservations")]),
+                ("ops-oncall terminated it at 04:22:10 UTC, after the finding.",
+                 [("instance_history", 0, "CloudTrailEvent.eventName"),
+                  ("instance_history", 0, "CloudTrailEvent.userIdentity.userName"),
+                  ("instance_history", 0, "CloudTrailEvent.eventTime")]),
             ],
         ),
         _probed(
@@ -980,10 +1048,15 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
     if not args.check:
         names = generate(args.out, args.only)
-        print(f"Wrote {len(names)} cases under {args.out}")
+        added = top_up(args.out)
+        print(f"Wrote {len(names)} cases under {args.out}" + "".join(f"\n  added {a}" for a in added))
         return 0
     with tempfile.TemporaryDirectory() as tmp:
         names = generate(Path(tmp))
+        for name in HAND_WRITTEN:
+            shutil.copytree(args.out / name, Path(tmp) / name)
+        top_up(Path(tmp))
+        names += list(HAND_WRITTEN)
         found = [line for name in names for line in differences(Path(tmp) / name, args.out / name)]
     print("\n".join(found) if found else f"{len(names)} generated cases match {args.out}")
     return 1 if found else 0
