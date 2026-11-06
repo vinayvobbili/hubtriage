@@ -181,7 +181,7 @@ def cmd_scrub(args) -> int:
     from .scrub import ScrubLeft, scrub_case
 
     try:
-        counts = scrub_case(args.case, args.out)
+        counts = scrub_case(args.case, args.out, args.name)
     except ScrubLeft as e:
         print(f"refused: {e}", file=sys.stderr)
         return 1
@@ -332,6 +332,8 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("scrub", help="copy a recorded case with every real identifier replaced")
     p.add_argument("case")
     p.add_argument("out")
+    p.add_argument("--name", action="append", default=[],
+                   help="a name to replace wherever it appears (a sign-in name, a person); repeatable")
     p.set_defaults(fn=cmd_scrub)
 
     p = sub.add_parser("consume", help="live: triage findings from the SQS queue")

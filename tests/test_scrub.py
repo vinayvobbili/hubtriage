@@ -43,6 +43,13 @@ def test_people_and_their_sessions_become_placeholders():
     assert not leftovers(out)
 
 
+def test_names_given_are_replaced_in_any_case_and_checked_for():
+    s = Scrubber(names=["dana.lee", "Dana"])
+    out = s.text("sessionName DANA.LEE, userName dana, role dana-admin")
+    assert out == "sessionName person1, userName person2, role person2-admin"
+    assert leftovers("signed in as Dana", names=["dana"]) == ["Dana"]
+
+
 def test_leftovers_name_what_still_looks_real():
     found = leftovers(f"{REAL_ACCOUNT} 8.8.4.4 {REAL_SSO} sam@globex.com")
     assert set(found) == {REAL_ACCOUNT, "8.8.4.4", REAL_SSO, "sam@globex.com"}

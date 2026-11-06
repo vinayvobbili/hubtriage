@@ -52,8 +52,14 @@ def _routable(text: str) -> bool:
 
 @dataclass
 class Scrubber:
-    """One mapping per kind of identifier, shared by every file of a case."""
+    """One mapping per kind of identifier, shared by every file of a case.
 
+    `names` are the ones no pattern can find - a sign-in name, a person's name in a session -
+    given by whoever runs the scrub, never stored. Each is replaced wherever it appears, in
+    any case, longest first so a full name goes before a part of it.
+    """
+
+    names: list[str] = field(default_factory=list)
     seen: dict[str, dict[str, str]] = field(default_factory=dict)
 
     def _swap(self, kind: str, real: str, make) -> str:
@@ -84,6 +90,9 @@ class Scrubber:
                 return m.group()
             return self._swap("email", m.group(), lambda n: f"person{n + 1}@example.com")
 
+        for name in sorted({n for n in self.names if n}, key=len, reverse=True):
+            text = re.sub(re.escape(name), lambda m, name=name: self._swap(
+                "name", name.lower(), lambda n: f"person{n + 1}"), text, flags=re.IGNORECASE)
         text = SSO.sub(lambda m: self._swap("sso", m.group(), lambda n: f"{m.group(1)}_{n:016x}"), text)
         text = KEY.sub(lambda m: self._swap("key", m.group(), lambda n: f"{m.group(1)}-EXAMPLE-{n + 1}"), text)
         text = ORG.sub(lambda m: self._swap("org", m.group(), lambda n: f"o-exampleorg{n + 1:02d}"), text)
@@ -94,9 +103,10 @@ class Scrubber:
         return ACCOUNT.sub(account, text)
 
 
-def leftovers(text: str) -> list[str]:
+def leftovers(text: str, names: list[str] | None = None) -> list[str]:
     """What still looks real. Empty for a clean case."""
-    found = [m.group() for m in ACCOUNT.finditer(text) if m.group() not in ACCOUNTS]
+    found = [m.group() for n in names or [] if n for m in re.finditer(re.escape(n), text, re.IGNORECASE)]
+    found += [m.group() for m in ACCOUNT.finditer(text) if m.group() not in ACCOUNTS]
     found += [m.group() for m in KEY.finditer(text)]
     found += [m.group() for m in ORG.finditer(text) if not m.group().startswith("o-exampleorg")]
     found += [m.group() for m in HEX32.finditer(text)]
@@ -108,16 +118,16 @@ def leftovers(text: str) -> list[str]:
     return found
 
 
-def scrub_case(source: str | Path, out: str | Path) -> dict[str, int]:
+def scrub_case(source: str | Path, out: str | Path, names: list[str] | None = None) -> dict[str, int]:
     """Copy a recorded case to `out` with every identifier replaced. Returns how many of each kind.
 
     Raises ScrubLeft, and leaves nothing at `out`, if the result still has anything of those shapes.
     """
     source, out = Path(source), Path(out)
-    scrubber = Scrubber()
+    scrubber = Scrubber(names=list(names or []))
     files = sorted(p for p in source.rglob("*.json") if p.is_file())
     scrubbed = {p.relative_to(source): scrubber.text(p.read_text(encoding="utf-8")) for p in files}
-    left = sorted({hit for text in scrubbed.values() for hit in leftovers(text)})
+    left = sorted({hit for text in scrubbed.values() for hit in leftovers(text, names)})
     if left:
         raise ScrubLeft(f"still in the scrubbed case: {', '.join(left[:10])}")
     shutil.rmtree(out, ignore_errors=True)
