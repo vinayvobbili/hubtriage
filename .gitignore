@@ -23,5 +23,8 @@ crash.log
 # Live recordings land here until they are reviewed and moved into fixtures/.
 recordings/
 
+# Model answers kept with `eval --answers runs/<name>`, to re-score with --judge answers:runs/<name>.
+runs/
+
 # The demo video is built here; only docs/ gets the finished one.
 scripts/demo/out/
