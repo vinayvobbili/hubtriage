@@ -158,8 +158,13 @@ def parse(text: str) -> ModelVerdict:
     return ModelVerdict(verdict, str(doc.get("summary") or ""), claims)
 
 
-def decide(store: Store, answer: str, host: str, shown: dict[str, str] | None = None) -> Decision:
-    """`shown` is every record the model saw, id -> kind; a benign verdict has to cite what happened."""
+def decide(store: Store, answer: str, host: str, shown: dict[str, str] | None = None,
+           may_dismiss: bool = True) -> Decision:
+    """`shown` is every record the model saw, id -> kind; a benign verdict has to cite what happened.
+
+    `may_dismiss` is False when the backend that answered is not trusted to close a finding;
+    its benign verdict, however well supported, goes to a person.
+    """
     try:
         model = parse(answer)
     except VerdictError as e:
@@ -191,6 +196,12 @@ def decide(store: Store, answer: str, host: str, shown: dict[str, str] | None = 
                 f"benign, but no admitted claim cites the {' or '.join(sorted(happened))} record,"
                 " which is what happened; a dismissal has to rest on it, not only on what was approved"
             )
+    if decision.verdict == BENIGN and not may_dismiss:
+        decision.verdict = NEEDS_HUMAN
+        decision.reason = (
+            "benign, from a model that may not dismiss findings (HUBTRIAGE_MAY_DISMISS);"
+            " a person decides"
+        )
     return decision
 
 

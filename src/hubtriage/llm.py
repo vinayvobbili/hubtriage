@@ -19,6 +19,13 @@ failure - only one that did not answer.
 A live finding carries real account ids, and its lookups can carry a person's
 name and address from CloudTrail, so it never goes to a public backend. `from_env`
 refuses those unless the caller says the data is made up.
+
+Answering is not the same as being trusted to dismiss. Each answer from `from_env`
+says whether its backend may close the loop on a finding: a benign verdict from one
+that may not goes to a person. Only backends named in HUBTRIAGE_MAY_DISMISS may,
+and the local and Bedrock ones are off until a model they serve passes a held-out
+set it was not tuned on with no false benign. Qwen 9B dismissed a bucket-policy
+rewrite as a backup job in every run.
 """
 
 from __future__ import annotations
@@ -47,6 +54,30 @@ AGY_MODEL = "claude-sonnet-5-5-medium"  # `agy models` lists the ids
 FALLBACK_BETA = "server-side-fallback-2026-07-01"
 
 PUBLIC_BACKENDS = {"claude", "agy"}
+# Who may dismiss when HUBTRIAGE_MAY_DISMISS is unset. The public backends only ever see
+# made-up cases, where measuring their dismissals is the point.
+MAY_DISMISS = "claude,agy"
+
+
+class Answer(str):
+    """A judge's text, and whether the backend that wrote it may dismiss a finding."""
+
+    may_dismiss: bool = True
+
+
+def may_dismiss(answer: str) -> bool:
+    """A plain string - a recorded answer, a test's - comes from no backend, so it is not restricted."""
+    return getattr(answer, "may_dismiss", True)
+
+
+def _trusted(judge: Judge, allowed: bool) -> Judge:
+    def wrapped(prompt: str) -> str:
+        answer = Answer(judge(prompt))
+        answer.may_dismiss = allowed
+        return answer
+
+    wrapped.__name__ = judge.__name__
+    return wrapped
 
 
 class NoJudgeAnswered(RuntimeError):
@@ -220,10 +251,14 @@ def from_env(env: dict | None = None, *, allow_public: bool = False) -> Judge:
     HUBTRIAGE_CLAUDE_MODEL  for the claude backend; made-up cases only
     HUBTRIAGE_CLAUDE_KEYCHAIN macOS Keychain item holding its API key
     HUBTRIAGE_AGY_MODEL     for the agy backend; made-up cases only
+    HUBTRIAGE_MAY_DISMISS   backends whose benign verdicts stand (default "claude,agy"); a benign
+                          from any other goes to a person
     """
     env = os.environ if env is None else env
+    dismissers = {b.strip() for b in env.get("HUBTRIAGE_MAY_DISMISS", MAY_DISMISS).split(",") if b.strip()}
     chain: list[Judge] = []
     for backend in [b.strip() for b in env.get("HUBTRIAGE_LLM", "local,bedrock").split(",") if b.strip()]:
+        before = len(chain)
         if backend in PUBLIC_BACKENDS and not allow_public:
             raise PublicBackendRefused(
                 f"{backend} is a public API, so it only runs on the made-up cases in fixtures/;"
@@ -248,6 +283,7 @@ def from_env(env: dict | None = None, *, allow_public: bool = False) -> Judge:
                 chain.append(bedrock(env["HUBTRIAGE_BEDROCK_MODEL"], region=env.get("AWS_REGION")))
         else:
             raise ValueError(f"unknown backend {backend!r}; known: local, bedrock, claude, agy")
+        chain[before:] = [_trusted(j, backend in dismissers) for j in chain[before:]]
     if not chain:
         raise ValueError(
             "no judge configured: set HUBTRIAGE_LOCAL_URLS and HUBTRIAGE_LOCAL_MODEL,"

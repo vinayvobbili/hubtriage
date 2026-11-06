@@ -176,6 +176,35 @@ def test_the_answer_schema_accepts_what_the_parser_accepts():
         jsonschema.validate(answer, verdict.JSON_SCHEMA)
 
 
+LOCAL = {"HUBTRIAGE_LLM": "local", "HUBTRIAGE_LOCAL_URLS": "http://a/v1", "HUBTRIAGE_LOCAL_MODEL": "m"}
+
+
+def local_saying(monkeypatch, text):
+    monkeypatch.setattr(llm, "openai_compatible", lambda url, model, timeout=120.0: lambda prompt: text)
+
+
+def test_the_local_model_may_answer_but_not_dismiss_unless_named(monkeypatch):
+    local_saying(monkeypatch, "{}")
+    assert llm.from_env(LOCAL)("p") == "{}" and not llm.may_dismiss(llm.from_env(LOCAL)("p"))
+    assert llm.may_dismiss(llm.from_env({**LOCAL, "HUBTRIAGE_MAY_DISMISS": "local"})("p"))
+    assert llm.may_dismiss("a recorded answer")
+
+
+def test_a_benign_from_a_model_that_may_not_dismiss_goes_to_a_person(monkeypatch):
+    benign = next(c for c in cases.discover(cli.FIXTURES) if c.name == "web-https-approved")
+    local_saying(monkeypatch, (benign.directory / "model_output.json").read_text(encoding="utf-8"))
+    held = cases.run(benign, llm.from_env(LOCAL)).result.decision
+    trusted = cases.run(benign, llm.from_env({**LOCAL, "HUBTRIAGE_MAY_DISMISS": "local"})).result.decision
+    assert (held.verdict, held.model_verdict) == ("needs_human", "benign") and "may not dismiss" in held.reason
+    assert trusted.verdict == "benign"
+
+
+def test_an_escalation_from_a_model_that_may_not_dismiss_still_stands(monkeypatch):
+    tp = next(c for c in cases.discover(cli.FIXTURES) if c.name == "ssh-brute-force-open")
+    local_saying(monkeypatch, (tp.directory / "model_output.json").read_text(encoding="utf-8"))
+    assert cases.run(tp, llm.from_env(LOCAL)).result.decision.verdict == "true_positive"
+
+
 def test_a_queued_local_server_can_be_given_longer_to_answer(monkeypatch):
     seen = []
     def fake(url, model, timeout=120.0):

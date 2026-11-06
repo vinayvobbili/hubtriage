@@ -10,7 +10,7 @@ from . import evidence as ev
 from . import prompt, verdict
 from .clients import Client
 from .findings import Finding
-from .llm import Judge
+from .llm import Judge, may_dismiss
 from .writeback import build_update
 
 
@@ -47,5 +47,6 @@ def triage(
         answer = ""
         decision = verdict.Decision(verdict.NEEDS_HUMAN, None, "", reason=f"no model answered: {e}")
     else:
-        decision = verdict.decide(store, answer, host=finding.account_id, shown=evidence.kinds())
+        decision = verdict.decide(store, answer, host=finding.account_id, shown=evidence.kinds(),
+                                  may_dismiss=may_dismiss(answer))
     return Result(finding, evidence, text, answer, decision, build_update(finding, decision, store.head()))

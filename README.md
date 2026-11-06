@@ -25,6 +25,7 @@ is decided by what survived:
 | true positive | at least one claim admitted | `TRUE_POSITIVE`, admitted claims in the note |
 | benign | every claim admitted, one of them citing what happened | `BENIGN_POSITIVE` |
 | benign | any claim refused, or none cites what happened | `UNKNOWN`: needs a human |
+| benign | from a model not trusted to dismiss (`HUBTRIAGE_MAY_DISMISS`) | `UNKNOWN`: needs a human |
 | anything | no claim admitted, or unparseable | `UNKNOWN`: needs a human |
 
 The asymmetry is deliberate. A benign verdict closes the loop on an alert, so it has to rest
@@ -181,6 +182,14 @@ HUBTRIAGE_LLM=claude,agy,local hubtriage eval --judge env
 
 Live findings cannot. They carry real account ids, and a CloudTrail lookup can carry a person's
 name and address, so `pull` and `consume` refuse `claude` and `agy` and run on local or Bedrock.
+
+Neither of those may dismiss a finding yet. A benign verdict from a backend not named in
+`HUBTRIAGE_MAY_DISMISS` (default `claude,agy`, which only ever see made-up cases) goes to a person,
+like any other `needs_human`. Qwen 9B, the local model, dismissed a backup role rewriting its
+bucket's policy in every run, citing the right records and drawing the wrong conclusion, which no
+check on the evidence can catch. A backend is added once a model it serves passes a held-out set
+written after the last change, with no false benign. A shared local server queues requests from
+other programs, so `HUBTRIAGE_LOCAL_TIMEOUT` (seconds, default 120) counts the wait too.
 
 ## Status
 
