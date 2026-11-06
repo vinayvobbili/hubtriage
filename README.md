@@ -27,6 +27,7 @@ is decided by what survived:
 | benign | any claim refused, or none cites what happened | `UNKNOWN`: needs a human |
 | benign | from a model not trusted to dismiss (`HUBTRIAGE_MAY_DISMISS`) | `UNKNOWN`: needs a human |
 | anything | no claim admitted, or unparseable | `UNKNOWN`: needs a human |
+| not asked | GuardDuty marked it a sample | `FALSE_POSITIVE`, no lookups, no email |
 
 The asymmetry is deliberate. A benign verdict closes the loop on an alert, so it has to rest
 entirely on evidence; an escalation that also misread one detail is still an escalation.
@@ -131,6 +132,13 @@ organization, and accuracy measured against live models, come next.
   records (attached policies) that say neither what happened nor whether it was approved. The rule
   was shaped on those answers, so it was tested on six cases in `fixtures/heldout` written before
   any model saw them.
+- **Sample findings went to the model.** The first findings pulled from the account were
+  GuardDuty samples, and every one of them was set to go through the lookups and the local model.
+  Their resources don't exist, so the honest answer was always needs_human, which emails a person
+  about something that never happened. GuardDuty marks its samples
+  (`ProductFields."aws/guardduty/service/additionalInfo/sample"`), so that check now runs
+  first and writes `FALSE_POSITIVE` without a lookup or a model. Only the mark counts: the
+  placeholder names in a sample's resources are something an attacker could pick too.
 - **Not running on real findings yet.** The organization and security account are applied, but the
   agent has not triaged a real finding and the shipped cases are hand-written, so nothing here
   measures how accurate any model is.

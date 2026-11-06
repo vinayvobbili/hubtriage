@@ -106,9 +106,9 @@ def cmd_eval(args) -> int:
         print(f"\nno accuracy to report: {s['no_answer']} of {s['cases']} cases got no answer")
         return 1
     print(f"\nfalse benign (dismissed a finding that should reach a person): {s['false_benign']}")
-    print(f"\n{'label':14} " + " ".join(f"{'said ' + v:>18}" for v in cases.VERDICTS))
+    print(f"\n{'label':14} " + " ".join(f"{'said ' + v:>18}" for v in cases.OUTCOMES))
     for label, said in s["confusion"].items():
-        print(f"{label:14} " + " ".join(f"{said[v]:>18}" for v in cases.VERDICTS))
+        print(f"{label:14} " + " ".join(f"{said[v]:>18}" for v in cases.OUTCOMES))
     contested = f" ({s['contested']} contested, where another verdict also counts)" if s["contested"] else ""
     print(
         f"\n{s['correct']}/{s['cases']} verdicts correct{contested};"

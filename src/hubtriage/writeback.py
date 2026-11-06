@@ -15,7 +15,7 @@ are a person's call, and the same IAM policy denies them to the agent's role.
 from __future__ import annotations
 
 from .findings import Finding
-from .verdict import BENIGN, NEEDS_HUMAN, TRUE_POSITIVE, Decision
+from .verdict import BENIGN, NEEDS_HUMAN, SAMPLE, TRUE_POSITIVE, Decision
 
 NOTE_LIMIT = 512  # Note.Text maximum, in characters
 UPDATED_BY = "hubtriage"
@@ -24,6 +24,7 @@ VERIFICATION_STATE = {
     TRUE_POSITIVE: "TRUE_POSITIVE",
     BENIGN: "BENIGN_POSITIVE",
     NEEDS_HUMAN: "UNKNOWN",
+    SAMPLE: "FALSE_POSITIVE",  # GuardDuty made it up on request; nothing happened
 }
 
 

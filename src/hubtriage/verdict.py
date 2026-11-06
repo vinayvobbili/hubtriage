@@ -38,6 +38,9 @@ TRUE_POSITIVE = "true_positive"
 BENIGN = "benign"
 NEEDS_HUMAN = "needs_human"
 VERDICTS = (TRUE_POSITIVE, BENIGN, NEEDS_HUMAN)
+# Decided before any lookup or model, so never a model's answer: a GuardDuty sample.
+SAMPLE = "sample"
+OUTCOMES = (*VERDICTS, SAMPLE)
 
 SCHEMA = {
     "verdict": f"one of {', '.join(VERDICTS)}",

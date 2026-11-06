@@ -38,7 +38,7 @@ from .clients import Cassette, Client, Recorder
 from .findings import Finding
 from .llm import Judge, recorded
 from .triage import Result, triage
-from .verdict import VERDICTS
+from .verdict import OUTCOMES, SAMPLE
 
 
 @dataclass
@@ -59,7 +59,7 @@ class Outcome:
 
     @property
     def answered(self) -> bool:
-        return bool(self.result.answer)
+        return bool(self.result.answer) or self.result.decision.verdict == SAMPLE
 
     @property
     def acceptable(self) -> set[str]:
@@ -158,7 +158,7 @@ def summarize(outcomes: list[Outcome]) -> dict:
     """
     claims = sum(len(o.result.decision.outcomes) for o in outcomes)
     refused = sum(len(o.result.decision.refused) for o in outcomes)
-    confusion = {label: dict.fromkeys(VERDICTS, 0) for label in VERDICTS}
+    confusion = {label: dict.fromkeys(OUTCOMES, 0) for label in OUTCOMES}
     for o in outcomes:
         if o.answered:
             confusion[o.case.label["verdict"]][o.result.decision.verdict] += 1

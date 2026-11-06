@@ -31,7 +31,7 @@ class NoModelAnswered(RuntimeError):
 def require_answer(result: Result) -> Result:
     """For live findings. Writing back would take the finding out of NEW, and the agent
     only picks up NEW, so a model outage would quietly end its triage for good."""
-    if not result.answer:
+    if not result.answer and result.decision.verdict != verdict.SAMPLE:
         raise NoModelAnswered(result.decision.reason or "the model's answer was empty")
     return result
 
@@ -39,6 +39,11 @@ def require_answer(result: Result) -> Result:
 def triage(
     store: Store, client: Client, judge: Judge, finding: Finding, *, mode: str = "replay"
 ) -> Result:
+    if finding.is_sample:
+        # Decided by GuardDuty's own mark: no lookup, no model, no one emailed.
+        evidence = ev.Evidence(finding_record_id=ev.ingest_finding(store, finding))
+        decision = verdict.Decision(verdict.SAMPLE, None, "", reason="a GuardDuty sample finding; nothing to triage")
+        return Result(finding, evidence, "", "", decision, build_update(finding, decision, store.head()))
     evidence = ev.collect(store, client, finding, mode=mode)
     text = prompt.build(store, finding, evidence)
     try:

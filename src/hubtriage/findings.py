@@ -16,6 +16,8 @@ import json
 from dataclasses import dataclass, field
 from pathlib import Path
 
+SAMPLE_FIELD = "aws/guardduty/service/additionalInfo/sample"
+
 
 @dataclass(frozen=True)
 class Resource:
@@ -76,6 +78,19 @@ class Finding:
     @classmethod
     def load(cls, path: str | Path) -> "Finding":
         return cls.from_asff(json.loads(Path(path).read_text(encoding="utf-8")))
+
+    @property
+    def is_sample(self) -> bool:
+        """GuardDuty's own mark on what CreateSampleFindings made: nothing to look up or judge.
+
+        Only this field is trusted. A sample's resources carry placeholder names
+        (GeneratedFindingUserName, i-99999999), but anyone can give a real user such a
+        name, and a check on names would let them dismiss a real finding. Not every
+        sample type sets it - Discovery:IAMUser/AnomalousBehavior's does not - and those
+        go through triage like any finding.
+        """
+        fields = self.raw.get("ProductFields") or {}
+        return str(fields.get(SAMPLE_FIELD, "")).lower() == "true"
 
     def instance_ids(self) -> list[str]:
         out = []

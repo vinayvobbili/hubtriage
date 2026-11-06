@@ -10,7 +10,8 @@ from witness.store import Store
 
 from hubtriage import evidence, verdict
 from hubtriage.clients import Cassette, CassetteMiss, Recorder
-from hubtriage.findings import Finding
+from hubtriage.findings import SAMPLE_FIELD, Finding
+from hubtriage.triage import NoModelAnswered, require_answer, triage
 from hubtriage.writeback import NOTE_LIMIT, build_update
 
 SYNTHETIC = Path(__file__).resolve().parents[1] / "fixtures" / "synthetic"
@@ -43,6 +44,44 @@ def test_reads_resources_from_asff():
 def test_refuses_a_document_that_is_not_a_finding():
     with pytest.raises(ValueError, match="AwsAccountId"):
         Finding.from_asff({"Id": "x", "ProductArn": "y"})
+
+
+def sample_of(case: str, mark: str | None = "true", **changes) -> Finding:
+    doc = json.loads((SYNTHETIC / case / "finding.json").read_text())
+    if mark is not None:
+        doc.setdefault("ProductFields", {})[SAMPLE_FIELD] = mark
+    return Finding.from_asff({**doc, **changes})
+
+
+def test_only_guardduty_s_mark_makes_a_sample():
+    assert sample_of("port-probe-ssh-open").is_sample
+    assert not sample_of("port-probe-ssh-open", mark="false").is_sample
+    # A placeholder name is something an attacker can choose; the mark is GuardDuty's.
+    assert not sample_of("port-probe-ssh-open", mark=None, Title="GeneratedFindingInstanceId").is_sample
+
+
+def test_a_sample_is_decided_before_any_lookup_or_model(store):
+    def nobody(*_):
+        raise AssertionError("a sample must not reach AWS or a model")
+
+    class NoAws:
+        def __getattr__(self, name):
+            return nobody
+
+    result = triage(store, NoAws(), nobody, sample_of("port-probe-ssh-open"), mode="live")
+    assert result.decision.verdict == verdict.SAMPLE
+    assert result.answer == "" and require_answer(result) is result
+    assert result.update["VerificationState"] == "FALSE_POSITIVE"
+    assert result.update["Workflow"] == {"Status": "NOTIFIED"}
+    assert result.update["UserDefinedFields"]["hubtriage_verdict"] == "sample"
+    assert list(result.evidence.kinds().values()) == ["finding"]
+
+
+def test_a_finding_with_no_answer_still_stops_a_live_triage(store):
+    result = triage(store, Cassette(SYNTHETIC / "port-probe-ssh-open" / "cassette"),
+                    lambda prompt: "", finding("port-probe-ssh-open"))
+    with pytest.raises(NoModelAnswered):
+        require_answer(result)
 
 
 # ------------------------------------------------------------------ the plan
