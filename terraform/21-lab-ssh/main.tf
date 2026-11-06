@@ -11,6 +11,12 @@
 # so every attempt fails at sshd. No outbound rule either: if something did get in, it
 # could not reach anything. No instance profile, so no credentials on the box.
 #
+# Everything the model can read about it is neutral on purpose: the group's description,
+# the tags, and the session name, which CloudTrail keeps on RunInstances in the instance's
+# history. A "lab" or "to draw findings" anywhere in those records answers the question
+# for the model, the way the "lab target" group did in the hand-typed port-probe cases.
+# This comment and the directory name are not in any record; they are for the reader.
+#
 # It costs money while it runs (an instance and a public IPv4 address, roughly a
 # cent an hour together). Destroy it when there are enough findings:
 #   terraform -chdir=21-lab-ssh destroy
@@ -24,10 +30,10 @@ provider "aws" {
   region = var.region
   assume_role {
     role_arn     = "arn:aws:iam::${data.terraform_remote_state.org.outputs.workload_account_id}:role/OrganizationAccountAccessRole"
-    session_name = "terraform-21-lab-ssh"
+    session_name = "terraform"
   }
   default_tags {
-    tags = { Project = "hubtriage", ManagedBy = "terraform", Stage = "21-lab-ssh" }
+    tags = { ManagedBy = "terraform" }
   }
 }
 
@@ -44,15 +50,21 @@ data "aws_ssm_parameter" "al2023_arm64" {
 }
 
 resource "aws_security_group" "ssh_open" {
-  name        = "hubtriage-lab-ssh-open"
-  description = "SSH from anywhere, to draw GuardDuty findings. No egress."
+  name        = "ssh-access"
+  description = "SSH access"
   vpc_id      = data.aws_vpc.default.id
   # No egress block: Terraform then removes the default allow-all egress rule.
+
+  # A description cannot change in place, so a new group comes first and the old one goes
+  # once nothing uses it.
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_vpc_security_group_ingress_rule" "ssh_from_anywhere" {
   security_group_id = aws_security_group.ssh_open.id
-  description       = "SSH from the internet"
+  description       = "SSH"
   ip_protocol       = "tcp"
   from_port         = 22
   to_port           = 22
@@ -77,5 +89,5 @@ resource "aws_instance" "target" {
     encrypted   = true
   }
 
-  tags = { Name = "hubtriage-lab-ssh" }
+  tags = { Name = "ssh-host" }
 }
