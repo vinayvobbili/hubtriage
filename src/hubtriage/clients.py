@@ -71,6 +71,15 @@ _NOT_AN_ANSWER = {
 }
 
 
+class EnrichRoleUnavailable(RuntimeError):
+    """The enrichment role could not be assumed, so the lookup was never asked.
+
+    Usually the wrong caller: only the agent's role may assume it. AWS refusing the
+    AssumeRole says nothing about the resource, and recorded as a refusal it would
+    tell the model a lookup was denied - with the caller's own name in the message.
+    """
+
+
 def is_unavailable(error: Exception) -> bool:
     """True when a failed call says nothing about the account: no network, no session, throttled.
 
@@ -79,6 +88,8 @@ def is_unavailable(error: Exception) -> bool:
     would look like a question AWS could not answer, and could change the verdict
     or the accuracy measured from a recorded case.
     """
+    if isinstance(error, EnrichRoleUnavailable):
+        return True
     try:
         from botocore.exceptions import BotoCoreError, ClientError
     except ImportError:
@@ -212,11 +223,17 @@ class AwsClient:
         if cached is None or cached[1] - datetime.now(timezone.utc) < timedelta(minutes=2):
             import boto3
 
-            creds = self.session.client("sts").assume_role(
-                RoleArn=f"arn:aws:iam::{account_id}:role/{self.enrich_role}",
-                RoleSessionName="hubtriage",
-                DurationSeconds=900,
-            )["Credentials"]
+            try:
+                creds = self.session.client("sts").assume_role(
+                    RoleArn=f"arn:aws:iam::{account_id}:role/{self.enrich_role}",
+                    RoleSessionName="hubtriage",
+                    DurationSeconds=900,
+                )["Credentials"]
+            except Exception as e:  # noqa: BLE001 - whatever stopped it, no lookup was asked
+                raise EnrichRoleUnavailable(
+                    f"could not assume {self.enrich_role} in {account_id}: run as the agent's role"
+                    f" (AWS_PROFILE for hubtriage-agent): {type(e).__name__}"
+                ) from e
             session = boto3.Session(
                 aws_access_key_id=creds["AccessKeyId"],
                 aws_secret_access_key=creds["SecretAccessKey"],

@@ -43,6 +43,25 @@ def test_an_answer_replays_as_recorded(tmp_path):
     assert Cassette(tmp_path).call("iam", "GetUser", {"UserName": "a"}, **WHERE) == {"User": {"UserName": "a"}}
 
 
+class RefusingSts:
+    def client(self, name):
+        return self
+
+    def assume_role(self, **kwargs):
+        raise exceptions.ClientError({"Error": {"Code": "AccessDenied", "Message": "User: someone is not"
+                                                " authorized to perform: sts:AssumeRole"}}, "AssumeRole")
+
+
+def test_a_role_that_cannot_be_assumed_stops_the_recording_instead_of_becoming_evidence(tmp_path):
+    from hubtriage.clients import AwsClient, EnrichRoleUnavailable, is_unavailable
+
+    pytest.importorskip("boto3")
+    with pytest.raises(EnrichRoleUnavailable) as stopped:
+        Recorder(AwsClient(session=RefusingSts()), tmp_path).call("iam", "GetUser", {"UserName": "a"}, **WHERE)
+    assert is_unavailable(stopped.value) and "someone" not in str(stopped.value)
+    assert not (tmp_path / "index.json").exists()
+
+
 def test_an_expired_login_tells_you_to_sign_in_instead_of_a_traceback(monkeypatch, capsys):
     from hubtriage import cli, live
 
