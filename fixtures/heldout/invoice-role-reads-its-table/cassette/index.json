@@ -1,0 +1,40 @@
+[
+  {
+    "service": "iam",
+    "operation": "GetRole",
+    "params": {
+      "RoleName": "invoice-api"
+    },
+    "account_id": "111122223333",
+    "region": "us-east-1",
+    "file": "00-iam.GetRole.json"
+  },
+  {
+    "service": "iam",
+    "operation": "ListAttachedRolePolicies",
+    "params": {
+      "RoleName": "invoice-api"
+    },
+    "account_id": "111122223333",
+    "region": "us-east-1",
+    "file": "01-iam.ListAttachedRolePolicies.json"
+  },
+  {
+    "service": "cloudtrail",
+    "operation": "LookupEvents",
+    "params": {
+      "LookupAttributes": [
+        {
+          "AttributeKey": "AccessKeyId",
+          "AttributeValue": "ASIA-EXAMPLE-INVOICE"
+        }
+      ],
+      "StartTime": "2026-11-02T08:06:00+00:00",
+      "EndTime": "2026-11-02T10:06:00+00:00",
+      "MaxResults": 50
+    },
+    "account_id": "111122223333",
+    "region": "us-east-1",
+    "file": "02-cloudtrail.LookupEvents.json"
+  }
+]

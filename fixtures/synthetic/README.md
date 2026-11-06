@@ -25,4 +25,6 @@ instead, and scores it against each label's `verdict` (or `also_correct`). It re
 first, then a table of label against verdict given: true_positive and needs_human both reach a person,
 so mixing them up costs little, while a benign the label doesn't allow dismisses a real alert.
 
-Cases recorded from a real account live beside this directory and say so in their `label.json`.
+`../heldout` holds six more generated cases, written before any model answered them, to test a policy
+change made after looking at these. Cases recorded from a real account never go under `fixtures/`: the
+public backends may read anything here, and a test keeps it to made-up cases.

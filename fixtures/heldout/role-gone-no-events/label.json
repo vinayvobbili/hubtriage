@@ -1,0 +1,6 @@
+{
+  "verdict": "needs_human",
+  "refused": 0,
+  "source": "synthetic, held out: written by scripts/synth_cases.py on 2026-11-06 before any model answered it",
+  "why": "The role no longer exists and CloudTrail has no event for its key in the window: nothing the finding describes can be seen."
+}

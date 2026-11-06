@@ -1,0 +1,36 @@
+{
+  "verdict": "true_positive",
+  "summary": "invoice-api listed the tables and described payroll-example and customers-example, not the one table it is for.",
+  "claims": [
+    {
+      "text": "The role is for the invoices-example table.",
+      "bindings": [
+        {
+          "record_id": "cb8814cba374#0000",
+          "field": "Description",
+          "value": "Reads the invoices-example DynamoDB table for the invoice API"
+        }
+      ]
+    },
+    {
+      "text": "It listed tables and described payroll-example and customers-example.",
+      "bindings": [
+        {
+          "record_id": "bf20a96a725c#0000",
+          "field": "CloudTrailEvent.eventName",
+          "value": "ListTables"
+        },
+        {
+          "record_id": "bf20a96a725c#0001",
+          "field": "CloudTrailEvent.requestParameters.tableName",
+          "value": "payroll-example"
+        },
+        {
+          "record_id": "bf20a96a725c#0002",
+          "field": "CloudTrailEvent.requestParameters.tableName",
+          "value": "customers-example"
+        }
+      ]
+    }
+  ]
+}

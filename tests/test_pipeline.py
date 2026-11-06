@@ -170,6 +170,30 @@ def test_benign_needs_every_claim(store):
     assert d.verdict == verdict.NEEDS_HUMAN and d.model_verdict == "benign"
 
 
+@pytest.mark.parametrize(("shown_kind", "stands"), [
+    ("finding", True),  # no CloudTrail asked: the finding is what happened, and it was cited
+    ("iam_role", False),  # what was approved, cited alone
+])
+def test_benign_must_cite_what_happened(store, shown_kind, stands):
+    rid = ingest_one(store)
+    d = verdict.decide(store, answer("benign", ("ok", "port", 22), rid=rid), host="h", shown={rid: shown_kind})
+    assert (d.verdict == verdict.BENIGN) is stands
+    assert stands or "what happened" in d.reason
+
+
+def test_when_cloudtrail_was_asked_a_benign_must_cite_its_answer_even_empty():
+    shown = {"f": "finding", "r": "iam_role", "c": "cloudtrail_event_empty"}
+    assert verdict.what_happened(shown) == {"cloudtrail_event_empty"}
+    assert verdict.what_happened({"f": "finding", "g": "ec2_security_group"}) == {"finding"}
+
+
+def test_a_true_positive_need_not_cite_what_happened(store):
+    rid = ingest_one(store)
+    d = verdict.decide(store, answer("true_positive", ("ok", "port", 22), rid=rid), host="h",
+                       shown={rid: "iam_role", "other": "cloudtrail_event"})
+    assert d.verdict == verdict.TRUE_POSITIVE
+
+
 def test_true_positive_survives_a_refused_claim(store):
     rid = ingest_one(store)
     d = verdict.decide(store, answer("true_positive", ("ok", "port", 22), ("bad", "port", 23), rid=rid), host="h")

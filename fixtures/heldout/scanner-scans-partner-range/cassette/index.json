@@ -1,0 +1,26 @@
+[
+  {
+    "service": "ec2",
+    "operation": "DescribeInstances",
+    "params": {
+      "InstanceIds": [
+        "i-0a1f2e3d4c5b6a7f8"
+      ]
+    },
+    "account_id": "111122223333",
+    "region": "us-east-1",
+    "file": "00-ec2.DescribeInstances.json"
+  },
+  {
+    "service": "ec2",
+    "operation": "DescribeSecurityGroups",
+    "params": {
+      "GroupIds": [
+        "sg-0f6a7b8c9d0e1f2a3"
+      ]
+    },
+    "account_id": "111122223333",
+    "region": "us-east-1",
+    "file": "01-ec2.DescribeSecurityGroups.json"
+  }
+]

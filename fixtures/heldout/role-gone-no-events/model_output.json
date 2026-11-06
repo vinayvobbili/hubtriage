@@ -1,0 +1,26 @@
+{
+  "verdict": "needs_human",
+  "summary": "temp-audit no longer exists and CloudTrail shows none of its calls, so the finding can't be checked.",
+  "claims": [
+    {
+      "text": "The finding is about the role temp-audit.",
+      "bindings": [
+        {
+          "record_id": "736091f2c90b#0000",
+          "field": "Resources.0.Details.AwsIamAccessKey.PrincipalName",
+          "value": "temp-audit"
+        }
+      ]
+    },
+    {
+      "text": "CloudTrail returned no events for the key in the window.",
+      "bindings": [
+        {
+          "record_id": "7ed11321be00#0000",
+          "field": "Events",
+          "value": "[]"
+        }
+      ]
+    }
+  ]
+}

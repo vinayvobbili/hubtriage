@@ -68,6 +68,13 @@ class Evidence:
     finding_record_id: str
     collected: list[Collected] = field(default_factory=list)
 
+    def kinds(self) -> dict[str, str]:
+        """Every record the model was shown, by id, with its kind (the finding included)."""
+        shown = {self.finding_record_id: "finding"}
+        for c in self.collected:
+            shown.update(dict.fromkeys(c.record_ids, c.kind))
+        return shown
+
 
 def _window(finding: Finding) -> dict:
     def parse(ts: str) -> datetime:

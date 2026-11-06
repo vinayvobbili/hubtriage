@@ -1,0 +1,6 @@
+{
+  "verdict": "true_positive",
+  "refused": 0,
+  "source": "synthetic, held out: written by scripts/synth_cases.py on 2026-11-06 before any model answered it",
+  "why": "A role described as reading one table listed every table and described two others: discovery past its stated purpose."
+}

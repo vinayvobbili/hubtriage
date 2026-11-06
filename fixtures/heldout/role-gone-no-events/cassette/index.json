@@ -1,0 +1,46 @@
+[
+  {
+    "service": "iam",
+    "operation": "GetRole",
+    "params": {
+      "RoleName": "temp-audit"
+    },
+    "account_id": "111122223333",
+    "region": "us-east-1",
+    "error": {
+      "code": "NoSuchEntity",
+      "message": "An error occurred (NoSuchEntity) when calling the GetRole operation: The role with name temp-audit cannot be found."
+    }
+  },
+  {
+    "service": "iam",
+    "operation": "ListAttachedRolePolicies",
+    "params": {
+      "RoleName": "temp-audit"
+    },
+    "account_id": "111122223333",
+    "region": "us-east-1",
+    "error": {
+      "code": "NoSuchEntity",
+      "message": "An error occurred (NoSuchEntity) when calling the ListAttachedRolePolicies operation: The role with name temp-audit cannot be found."
+    }
+  },
+  {
+    "service": "cloudtrail",
+    "operation": "LookupEvents",
+    "params": {
+      "LookupAttributes": [
+        {
+          "AttributeKey": "AccessKeyId",
+          "AttributeValue": "ASIA-EXAMPLE-TEMPAUDIT"
+        }
+      ],
+      "StartTime": "2026-11-05T12:40:00+00:00",
+      "EndTime": "2026-11-05T14:40:00+00:00",
+      "MaxResults": 50
+    },
+    "account_id": "111122223333",
+    "region": "us-east-1",
+    "file": "02-cloudtrail.LookupEvents.json"
+  }
+]

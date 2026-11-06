@@ -36,8 +36,10 @@ Rules:
   copied exactly as they appear in the records. A value keeps its JSON type: a field
   shown as true or 3 is cited as true or 3, one shown as "false" as "false". Claims
   that do not match the record are refused, and refused claims count against your verdict.
-- Cite the records the verdict turns on: for benign, the one that shows the activity
-  was expected; for needs_human, what is missing or contradicts the finding.
+- Cite the records the verdict turns on. For benign, both what happened (the CloudTrail
+  events, or the empty CloudTrail answer, when there is one; otherwise the finding) and
+  what shows it was expected; a benign that does not cite what happened goes to a person.
+  For needs_human, what is missing or contradicts the finding.
 - Answer with one JSON object and nothing else, in this shape:
 """
 

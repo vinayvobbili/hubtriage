@@ -1,0 +1,15 @@
+{
+  "Events": [
+    {
+      "AccessKeyId": "ASIA-EXAMPLE-BACKUP2",
+      "CloudTrailEvent": "{\"eventVersion\":\"1.09\",\"userIdentity\":{\"type\":\"AssumedRole\",\"principalId\":\"AROAF8745DA893415853B:nightly-copy\",\"arn\":\"arn:aws:sts::111122223333:assumed-role/nightly-copy/nightly-copy\",\"accountId\":\"111122223333\",\"accessKeyId\":\"ASIA-EXAMPLE-BACKUP2\",\"sessionContext\":{\"sessionIssuer\":{\"type\":\"Role\",\"principalId\":\"AROAF8745DA893415853B\",\"arn\":\"arn:aws:iam::111122223333:role/nightly-copy\",\"accountId\":\"111122223333\",\"userName\":\"nightly-copy\"},\"attributes\":{\"creationDate\":\"2026-11-04T02:00:01Z\",\"mfaAuthenticated\":\"false\"}}},\"eventTime\":\"2026-11-04T02:00:07Z\",\"eventSource\":\"s3.amazonaws.com\",\"eventName\":\"PutBucketPolicy\",\"awsRegion\":\"us-east-1\",\"sourceIPAddress\":\"203.0.113.201\",\"userAgent\":\"Boto3/1.40.0 md/Botocore#1.40.0 ua/2.1 os/linux exec-env/AWS_Lambda_python3.12\",\"requestParameters\":{\"bucketName\":\"ledger-example\"},\"responseElements\":null,\"requestID\":\"6fe093ec-5b03-5b5c-9221-8e48a53e33ac\",\"eventID\":\"562cbf52-2275-5914-943e-4a99cdd7e12f\",\"readOnly\":false,\"eventType\":\"AwsApiCall\",\"managementEvent\":true,\"recipientAccountId\":\"111122223333\",\"eventCategory\":\"Management\"}",
+      "EventId": "562cbf52-2275-5914-943e-4a99cdd7e12f",
+      "EventName": "PutBucketPolicy",
+      "EventSource": "s3.amazonaws.com",
+      "EventTime": "2026-11-04T02:00:07+00:00",
+      "ReadOnly": "false",
+      "Resources": [],
+      "Username": "nightly-copy"
+    }
+  ]
+}

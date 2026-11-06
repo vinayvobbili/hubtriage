@@ -7,7 +7,14 @@ final verdict is then decided by a policy that is asymmetric on purpose:
 - **benign** closes the loop on an alert, so it is the expensive direction to be
   wrong in. It stands only if every claim the model made was admitted. One
   refused claim means the model misread the evidence somewhere, and a dismissal
-  built on a misreading is sent to a human.
+  built on a misreading is sent to a human. It must also cite the record of
+  what happened - CloudTrail's answer when CloudTrail was asked, empty or not,
+  and otherwise the finding itself - because the gate can check that a claim is
+  true but not that the model left nothing out. A dismissal that cites an
+  approved scanner's tag and never the address it scanned, or a role's purpose
+  and never the empty CloudTrail answer, has every claim admitted and is still
+  wrong. Records that only say what a principal could do (its attached
+  policies) are not required: they neither show the activity nor approve it.
 - **true_positive** escalates, which is the cheap direction. It stands if at
   least one claim was admitted; refused claims are dropped from the note and
   counted.
@@ -113,7 +120,8 @@ def parse(text: str) -> ModelVerdict:
     return ModelVerdict(verdict, str(doc.get("summary") or ""), claims)
 
 
-def decide(store: Store, answer: str, host: str) -> Decision:
+def decide(store: Store, answer: str, host: str, shown: dict[str, str] | None = None) -> Decision:
+    """`shown` is every record the model saw, id -> kind; a benign verdict has to cite what happened."""
     try:
         model = parse(answer)
     except VerdictError as e:
@@ -136,4 +144,18 @@ def decide(store: Store, answer: str, host: str) -> Decision:
             f"benign, but {len(decision.refused)} of {len(outcomes)} claim(s) were refused;"
             " a dismissal built on a misread record goes to a human"
         )
+    elif model.verdict == BENIGN and shown:
+        happened = what_happened(shown)
+        cited = {shown.get(b.record_id) for o in decision.admitted for b in o.claim.bindings}
+        if not cited & happened:
+            decision.verdict = NEEDS_HUMAN
+            decision.reason = (
+                f"benign, but no admitted claim cites the {' or '.join(sorted(happened))} record,"
+                " which is what happened; a dismissal has to rest on it, not only on what was approved"
+            )
     return decision
+
+
+def what_happened(shown: dict[str, str]) -> set[str]:
+    """The record kinds that show the activity: CloudTrail's answer if it was asked, else the finding."""
+    return {kind for kind in shown.values() if kind.startswith("cloudtrail_event")} or {"finding"}

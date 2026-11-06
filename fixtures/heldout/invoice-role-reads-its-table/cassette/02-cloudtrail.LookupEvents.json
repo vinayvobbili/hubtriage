@@ -1,0 +1,15 @@
+{
+  "Events": [
+    {
+      "AccessKeyId": "ASIA-EXAMPLE-INVOICE",
+      "CloudTrailEvent": "{\"eventVersion\":\"1.09\",\"userIdentity\":{\"type\":\"AssumedRole\",\"principalId\":\"AROA9CFE1FB450485368A:invoice-api\",\"arn\":\"arn:aws:sts::111122223333:assumed-role/invoice-api/invoice-api\",\"accountId\":\"111122223333\",\"accessKeyId\":\"ASIA-EXAMPLE-INVOICE\",\"sessionContext\":{\"sessionIssuer\":{\"type\":\"Role\",\"principalId\":\"AROA9CFE1FB450485368A\",\"arn\":\"arn:aws:iam::111122223333:role/invoice-api\",\"accountId\":\"111122223333\",\"userName\":\"invoice-api\"},\"attributes\":{\"creationDate\":\"2026-11-02T09:00:01Z\",\"mfaAuthenticated\":\"false\"}}},\"eventTime\":\"2026-11-02T09:00:04Z\",\"eventSource\":\"dynamodb.amazonaws.com\",\"eventName\":\"DescribeTable\",\"awsRegion\":\"us-east-1\",\"sourceIPAddress\":\"203.0.113.210\",\"userAgent\":\"Boto3/1.40.0 md/Botocore#1.40.0 ua/2.1 os/linux exec-env/AWS_Lambda_python3.12\",\"requestParameters\":{\"tableName\":\"invoices-example\"},\"responseElements\":null,\"requestID\":\"12799c95-a9ff-50e8-a199-14f3888ce0b3\",\"eventID\":\"4414051a-b45d-5741-810a-7a7e969641e2\",\"readOnly\":true,\"eventType\":\"AwsApiCall\",\"managementEvent\":true,\"recipientAccountId\":\"111122223333\",\"eventCategory\":\"Management\"}",
+      "EventId": "4414051a-b45d-5741-810a-7a7e969641e2",
+      "EventName": "DescribeTable",
+      "EventSource": "dynamodb.amazonaws.com",
+      "EventTime": "2026-11-02T09:00:04+00:00",
+      "ReadOnly": "true",
+      "Resources": [],
+      "Username": "invoice-api"
+    }
+  ]
+}

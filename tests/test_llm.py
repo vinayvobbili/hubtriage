@@ -145,6 +145,17 @@ def test_the_eval_prints_false_benigns_and_the_table(monkeypatch, capsys):
     assert "false benign" in out and "said needs_human" in out and "contested" in out
 
 
+def test_saved_answers_can_be_rescored_without_a_model(monkeypatch, tmp_path, capsys):
+    def no_model(env=None, allow_public=False):
+        raise AssertionError("re-scoring must not ask a model")
+
+    monkeypatch.setattr(llm, "from_env", no_model)
+    for case in cases.discover(cli.FIXTURES):
+        (tmp_path / f"{case.name}.json").write_bytes((case.directory / "model_output.json").read_bytes())
+    assert cli.main(["eval", "--judge", f"answers:{tmp_path}"]) == 0
+    assert "false benign" in capsys.readouterr().out
+
+
 def test_the_prompt_tells_the_model_a_value_keeps_its_type():
     # Claude cited a CloudTrail readOnly=true as "true" and the gate refused a correct reading.
     from hubtriage import prompt
@@ -214,5 +225,7 @@ def test_the_live_commands_refuse_a_public_backend(monkeypatch, command):
         cli.main(command)
 
 
-def test_the_fixtures_directory_holds_only_the_synthetic_set():
-    assert [p.name for p in Path(cli.FIXTURES).iterdir() if p.is_dir()] == ["synthetic"]
+def test_the_fixtures_directory_holds_only_made_up_cases():
+    # Public backends may read anything under fixtures/, so nothing recorded from a real account goes there.
+    assert sorted(p.name for p in Path(cli.FIXTURES).iterdir() if p.is_dir()) == ["heldout", "synthetic"]
+    assert all(case.label["source"].startswith("synthetic") for case in cases.discover(cli.FIXTURES))

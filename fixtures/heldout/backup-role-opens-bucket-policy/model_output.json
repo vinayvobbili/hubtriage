@@ -1,0 +1,31 @@
+{
+  "verdict": "true_positive",
+  "summary": "nightly-copy, a role for copying ledger-example, replaced that bucket's policy.",
+  "claims": [
+    {
+      "text": "The role copies ledger-example each night.",
+      "bindings": [
+        {
+          "record_id": "2fcb7e2e0aa1#0000",
+          "field": "Description",
+          "value": "Copies the ledger-example bucket to the backup account each night"
+        }
+      ]
+    },
+    {
+      "text": "It called PutBucketPolicy on ledger-example.",
+      "bindings": [
+        {
+          "record_id": "00a5e4cdc7bc#0000",
+          "field": "CloudTrailEvent.eventName",
+          "value": "PutBucketPolicy"
+        },
+        {
+          "record_id": "00a5e4cdc7bc#0000",
+          "field": "CloudTrailEvent.requestParameters.bucketName",
+          "value": "ledger-example"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "verdict": "true_positive",
+  "summary": "Port 8080 on the storefront web server is open to the internet and probed; only 443 is approved.",
+  "claims": [
+    {
+      "text": "The probed port is 8080.",
+      "bindings": [
+        {
+          "record_id": "6d1178b55cfd#0000",
+          "field": "ProductFields.action/portProbeAction/portProbeDetails/0/localPortDetails/port",
+          "value": "8080"
+        }
+      ]
+    },
+    {
+      "text": "The group opens 8080 to 0.0.0.0/0.",
+      "bindings": [
+        {
+          "record_id": "0d44889f4926#0000",
+          "field": "IpPermissions.1.FromPort",
+          "value": 8080
+        },
+        {
+          "record_id": "0d44889f4926#0000",
+          "field": "IpPermissions.1.IpRanges.0.CidrIp",
+          "value": "0.0.0.0/0"
+        }
+      ]
+    },
+    {
+      "text": "The approval tag names port 443 only.",
+      "bindings": [
+        {
+          "record_id": "0d44889f4926#0000",
+          "field": "Tags.0.Value",
+          "value": "approved: public HTTPS on port 443"
+        }
+      ]
+    }
+  ]
+}

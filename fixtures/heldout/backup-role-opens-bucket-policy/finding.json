@@ -1,0 +1,41 @@
+{
+  "SchemaVersion": "2018-10-08",
+  "Id": "arn:aws:guardduty:us-east-1:111122223333:detector/12abc34d567e8fa901bc2d34eexample/finding/9cec6bb94d4e502ba1474dd9aexample",
+  "ProductArn": "arn:aws:securityhub:us-east-1::product/aws/guardduty",
+  "ProductName": "GuardDuty",
+  "CompanyName": "Amazon",
+  "GeneratorId": "arn:aws:guardduty:us-east-1:111122223333:detector/12abc34d567e8fa901bc2d34eexample",
+  "AwsAccountId": "111122223333",
+  "Region": "us-east-1",
+  "Types": [
+    "TTPs/Persistence/Persistence:IAMUser-AnomalousBehavior"
+  ],
+  "CreatedAt": "2026-11-04T02:09:00.000Z",
+  "UpdatedAt": "2026-11-04T02:09:00.000Z",
+  "Severity": {
+    "Label": "MEDIUM",
+    "Normalized": 50,
+    "Product": 5
+  },
+  "Title": "API PutBucketPolicy was invoked using an anomalous identity.",
+  "Description": "API PutBucketPolicy was invoked using an anomalous identity.",
+  "Resources": [
+    {
+      "Type": "AwsIamAccessKey",
+      "Id": "AWS::IAM::AccessKey:ASIA-EXAMPLE-BACKUP2",
+      "Partition": "aws",
+      "Region": "us-east-1",
+      "Details": {
+        "AwsIamAccessKey": {
+          "PrincipalId": "AROAF8745DA893415853B:nightly-copy",
+          "PrincipalName": "nightly-copy",
+          "PrincipalType": "AssumedRole"
+        }
+      }
+    }
+  ],
+  "Workflow": {
+    "Status": "NEW"
+  },
+  "RecordState": "ACTIVE"
+}

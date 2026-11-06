@@ -1,0 +1,45 @@
+{
+  "Reservations": [
+    {
+      "Groups": [],
+      "Instances": [
+        {
+          "ImageId": "ami-0abcdef1234567890",
+          "InstanceId": "i-0a1f2e3d4c5b6a7f8",
+          "InstanceType": "t3.small",
+          "LaunchTime": "2026-10-01T12:00:00+00:00",
+          "MetadataOptions": {
+            "HttpEndpoint": "enabled",
+            "HttpTokens": "required",
+            "State": "applied"
+          },
+          "PrivateIpAddress": "10.0.4.11",
+          "SecurityGroups": [
+            {
+              "GroupId": "sg-0f6a7b8c9d0e1f2a3",
+              "GroupName": "scanner"
+            }
+          ],
+          "State": {
+            "Code": 16,
+            "Name": "running"
+          },
+          "SubnetId": "subnet-0123456789abcdef0",
+          "Tags": [
+            {
+              "Key": "Name",
+              "Value": "partner-scanner"
+            },
+            {
+              "Key": "Purpose",
+              "Value": "Approved scanner; scans 10.0.0.0/16 and the partner VPN range 198.51.100.0/24"
+            }
+          ],
+          "VpcId": "vpc-0123456789abcdef0"
+        }
+      ],
+      "OwnerId": "111122223333",
+      "ReservationId": "r-07f8b57f70a0d5185"
+    }
+  ]
+}

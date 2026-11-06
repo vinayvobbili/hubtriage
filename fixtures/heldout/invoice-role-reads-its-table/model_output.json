@@ -1,0 +1,36 @@
+{
+  "verdict": "benign",
+  "summary": "invoice-api described invoices-example, the one table its description says it reads.",
+  "claims": [
+    {
+      "text": "The role reads the invoices-example table for the invoice API.",
+      "bindings": [
+        {
+          "record_id": "cb8814cba374#0000",
+          "field": "Description",
+          "value": "Reads the invoices-example DynamoDB table for the invoice API"
+        }
+      ]
+    },
+    {
+      "text": "Its one call was DescribeTable on invoices-example, read-only.",
+      "bindings": [
+        {
+          "record_id": "8564c9396c42#0000",
+          "field": "CloudTrailEvent.eventName",
+          "value": "DescribeTable"
+        },
+        {
+          "record_id": "8564c9396c42#0000",
+          "field": "CloudTrailEvent.requestParameters.tableName",
+          "value": "invoices-example"
+        },
+        {
+          "record_id": "8564c9396c42#0000",
+          "field": "CloudTrailEvent.readOnly",
+          "value": true
+        }
+      ]
+    }
+  ]
+}

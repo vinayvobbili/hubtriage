@@ -25,6 +25,13 @@ def test_each_verdict_has_cases_that_must_be_told_apart():
     assert {v: verdicts.count(v) for v in set(verdicts)} == {"benign": 4, "true_positive": 7, "needs_human": 4}
 
 
+def test_the_held_out_set_has_each_verdict_and_its_own_directory():
+    held = synth.held_out()
+    assert {s.verdict for s in held} == {"benign", "true_positive", "needs_human"}
+    assert not {s.name for s in held} & {s.name for s in synth.specs()}
+    assert all((ROOT / "fixtures" / "heldout" / s.name / "label.json").exists() for s in held)
+
+
 def test_the_scanner_twins_differ_only_in_the_host_they_scanned():
     twins = {s.name: s for s in synth.specs() if s.name.startswith("scanner-")}
     inside, outside = twins["scanner-scans-in-scope"], twins["scanner-scans-out-of-scope"]

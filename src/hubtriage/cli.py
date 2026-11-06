@@ -75,10 +75,13 @@ def cmd_demo(args) -> int:
 
 def cmd_eval(args) -> int:
     found = cases.discover(args.fixtures)
-    judge = _judge(args.judge, args.fixtures)
+    # answers:<dir> re-scores answers kept with --answers, without asking a model:
+    # the way to see what a change to the gate or the policy does to a past run.
+    saved = Path(args.judge.removeprefix("answers:")) if args.judge.startswith("answers:") else None
+    judge = None if saved else _judge(args.judge, args.fixtures)
     outcomes = []
     for case in found:
-        outcome = cases.run(case, judge)
+        outcome = cases.run(case, llm.recorded(saved / f"{case.name}.json") if saved else judge)
         outcomes.append(outcome)
         if args.save_answers and judge is not None:
             (case.directory / "model_output.json").write_text(
@@ -94,7 +97,7 @@ def cmd_eval(args) -> int:
             f" expected {case.label['verdict']:14}"
             f" refused {len(outcome.result.decision.refused)}/{len(outcome.result.decision.outcomes)}"
         )
-        if not outcome.answered:
+        if outcome.result.decision.reason:  # no answer, or the policy overruled the model
             print(f"  {outcome.result.decision.reason[:300]}")
     s = cases.summarize(outcomes)
     if args.json:
@@ -268,7 +271,8 @@ def main(argv: list[str] | None = None) -> int:
 
     p = sub.add_parser("eval", help="verdict accuracy and gate refusals over the labeled set")
     p.add_argument("--fixtures", default=FIXTURES)
-    p.add_argument("--judge", default="recorded", help="recorded (default) or env")
+    p.add_argument("--judge", default="recorded",
+                   help="recorded (default), env, or answers:<dir> to re-score answers kept with --answers")
     p.add_argument("--save-answers", action="store_true", help="keep live answers as recordings")
     p.add_argument("--answers", help="also write each model answer to this directory, to read")
     p.add_argument("--json", help="also write the summary here")

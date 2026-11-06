@@ -1,0 +1,41 @@
+{
+  "SchemaVersion": "2018-10-08",
+  "Id": "arn:aws:guardduty:us-east-1:111122223333:detector/12abc34d567e8fa901bc2d34eexample/finding/210953f56ec8503981c8ea570example",
+  "ProductArn": "arn:aws:securityhub:us-east-1::product/aws/guardduty",
+  "ProductName": "GuardDuty",
+  "CompanyName": "Amazon",
+  "GeneratorId": "arn:aws:guardduty:us-east-1:111122223333:detector/12abc34d567e8fa901bc2d34eexample",
+  "AwsAccountId": "111122223333",
+  "Region": "us-east-1",
+  "Types": [
+    "TTPs/Discovery/Discovery:IAMUser-AnomalousBehavior"
+  ],
+  "CreatedAt": "2026-11-05T13:40:00.000Z",
+  "UpdatedAt": "2026-11-05T13:40:00.000Z",
+  "Severity": {
+    "Label": "LOW",
+    "Normalized": 20,
+    "Product": 2
+  },
+  "Title": "API GetBucketAcl was invoked using an anomalous identity.",
+  "Description": "API GetBucketAcl was invoked using an anomalous identity.",
+  "Resources": [
+    {
+      "Type": "AwsIamAccessKey",
+      "Id": "AWS::IAM::AccessKey:ASIA-EXAMPLE-TEMPAUDIT",
+      "Partition": "aws",
+      "Region": "us-east-1",
+      "Details": {
+        "AwsIamAccessKey": {
+          "PrincipalId": "AROAC0BBA115760958DBB:temp-audit",
+          "PrincipalName": "temp-audit",
+          "PrincipalType": "AssumedRole"
+        }
+      }
+    }
+  ],
+  "Workflow": {
+    "Status": "NEW"
+  },
+  "RecordState": "ACTIVE"
+}

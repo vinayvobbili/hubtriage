@@ -47,5 +47,5 @@ def triage(
         answer = ""
         decision = verdict.Decision(verdict.NEEDS_HUMAN, None, "", reason=f"no model answered: {e}")
     else:
-        decision = verdict.decide(store, answer, host=finding.account_id)
+        decision = verdict.decide(store, answer, host=finding.account_id, shown=evidence.kinds())
     return Result(finding, evidence, text, answer, decision, build_update(finding, decision, store.head()))

@@ -1,0 +1,26 @@
+{
+  "verdict": "benign",
+  "summary": "The approved scanner scanned 198.51.100.12, inside the partner range its tag names.",
+  "claims": [
+    {
+      "text": "The scanned host is 198.51.100.12.",
+      "bindings": [
+        {
+          "record_id": "073f193f327b#0000",
+          "field": "ProductFields.action/networkConnectionAction/remoteIpDetails/ipAddressV4",
+          "value": "198.51.100.12"
+        }
+      ]
+    },
+    {
+      "text": "The instance is approved to scan 10.0.0.0/16 and 198.51.100.0/24.",
+      "bindings": [
+        {
+          "record_id": "5fb2cfdba897#0000",
+          "field": "Tags.1.Value",
+          "value": "Approved scanner; scans 10.0.0.0/16 and the partner VPN range 198.51.100.0/24"
+        }
+      ]
+    }
+  ]
+}

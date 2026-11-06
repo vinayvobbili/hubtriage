@@ -1,0 +1,9 @@
+{
+  "AttachedPolicies": [
+    {
+      "PolicyArn": "arn:aws:iam::111122223333:policy/nightly-copy-rw",
+      "PolicyName": "nightly-copy-rw"
+    }
+  ],
+  "IsTruncated": false
+}

@@ -1,0 +1,6 @@
+{
+  "verdict": "true_positive",
+  "refused": 0,
+  "source": "synthetic, held out: written by scripts/synth_cases.py on 2026-11-06 before any model answered it",
+  "why": "The group's approval covers port 443, but the probed port is 8080, which the same group also opens to the internet without any approval."
+}
