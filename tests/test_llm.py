@@ -9,7 +9,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from hubtriage import cases, cli, llm
+from hubtriage import cases, cli, llm, verdict
 
 
 def block(kind: str, text: str = "") -> SimpleNamespace:
@@ -143,6 +143,37 @@ def test_the_eval_prints_false_benigns_and_the_table(monkeypatch, capsys):
     assert cli.main(["eval", "--judge", "env"]) == 0
     out = capsys.readouterr().out
     assert "false benign" in out and "said needs_human" in out and "contested" in out
+
+
+def test_a_local_server_is_sent_the_answer_schema_with_its_caps(monkeypatch):
+    sent = {}
+
+    class Reply:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+        def read(self):
+            return json.dumps({"choices": [{"message": {"content": "{}"}}]}).encode()
+
+    def urlopen(request, timeout):
+        sent.update(json.loads(request.data))
+        return Reply()
+
+    monkeypatch.setattr(llm.urllib.request, "urlopen", urlopen)
+    assert llm.openai_compatible("http://a/v1", "m")("p") == "{}"
+    schema = sent["response_format"]["json_schema"]["schema"]
+    assert schema["properties"]["verdict"]["enum"] == list(verdict.VERDICTS)
+    assert schema["properties"]["summary"]["maxLength"] and list(schema["properties"])[:2] == ["verdict", "claims"]
+
+
+def test_the_answer_schema_accepts_what_the_parser_accepts():
+    jsonschema = pytest.importorskip("jsonschema")
+    for case in cases.discover(cli.FIXTURES):
+        answer = json.loads((case.directory / "model_output.json").read_text(encoding="utf-8"))
+        jsonschema.validate(answer, verdict.JSON_SCHEMA)
 
 
 def test_a_queued_local_server_can_be_given_longer_to_answer(monkeypatch):

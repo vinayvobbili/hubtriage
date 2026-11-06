@@ -51,6 +51,44 @@ SCHEMA = {
 }
 
 
+# The same shape as a JSON Schema, for servers that enforce one while decoding. The caps are the
+# point: a small model can repeat one sentence until it runs out of tokens, inside a string, and
+# the answer never closes. Claims come before the summary so a long summary cannot crowd them out.
+JSON_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "verdict": {"enum": list(VERDICTS)},
+        "claims": {
+            "type": "array",
+            "maxItems": 8,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "text": {"type": "string", "maxLength": 300},
+                    "bindings": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 6,
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "record_id": {"type": "string", "maxLength": 64},
+                                "field": {"type": "string", "maxLength": 200},
+                                "value": {"type": ["string", "number", "boolean", "null"]},
+                            },
+                            "required": ["record_id", "field", "value"],
+                        },
+                    },
+                },
+                "required": ["text", "bindings"],
+            },
+        },
+        "summary": {"type": "string", "maxLength": 400},
+    },
+    "required": ["verdict", "claims", "summary"],
+}
+
+
 class VerdictError(ValueError):
     pass
 

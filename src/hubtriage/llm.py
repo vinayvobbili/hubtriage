@@ -32,6 +32,8 @@ import urllib.request
 from pathlib import Path
 from typing import Any, Callable
 
+from .verdict import JSON_SCHEMA
+
 Judge = Callable[[str], str]
 
 MAX_TOKENS = 2048
@@ -69,7 +71,12 @@ def openai_compatible(base_url: str, model: str, *, timeout: float = 120.0, api_
                 "messages": [{"role": "user", "content": prompt}],
                 "temperature": 0,
                 "max_tokens": MAX_TOKENS,
-                "response_format": {"type": "json_object"},
+                # Enforced while decoding by servers that support it (vLLM, vllm-mlx, llama.cpp);
+                # others treat it as a JSON request.
+                "response_format": {
+                    "type": "json_schema",
+                    "json_schema": {"name": "triage_answer", "schema": JSON_SCHEMA, "strict": True},
+                },
             }
         ).encode()
         headers = {"Content-Type": "application/json"}
