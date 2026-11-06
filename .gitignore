@@ -17,6 +17,8 @@ build/
 !*.tfvars.example
 crash.log
 .terraform.tfstate.lock.info
+# A saved plan carries the same ids and emails as the state.
+*.tfplan
 
 # Live recordings land here until they are reviewed and moved into fixtures/.
 recordings/

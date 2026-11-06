@@ -88,6 +88,41 @@ resource "aws_guardduty_detector_feature" "off" {
   }
 }
 
+# ALL skips the management account: GuardDuty must already be on there before
+# the delegated administrator can add it, and nothing turns it on. Without this
+# the account that owns the organization - and its root user - is watched by
+# nobody. Its paid plans go off before it joins, like everyone else's.
+resource "aws_guardduty_detector" "management" {
+  provider = aws.management
+  enable   = true
+}
+
+resource "aws_guardduty_detector_feature" "management_off" {
+  provider    = aws.management
+  for_each    = toset(local.paid_protection_plans)
+  detector_id = aws_guardduty_detector.management.id
+  name        = each.value
+  status      = "DISABLED"
+  lifecycle {
+    ignore_changes = [additional_configuration]
+  }
+}
+
+data "aws_organizations_organization" "this" {
+  provider = aws.management
+}
+
+resource "aws_guardduty_member" "management" {
+  account_id  = local.org.management_account_id
+  detector_id = data.aws_guardduty_detector.this.id
+  email       = data.aws_organizations_organization.this.master_account_email
+  depends_on  = [aws_guardduty_detector_feature.management_off]
+  # An organization account is associated, not invited; nothing to accept.
+  lifecycle {
+    ignore_changes = [invite, email]
+  }
+}
+
 # ------------------------------------------------------------- Security Hub
 #
 # LOCAL configuration: no standard is switched on, because every CSPM control

@@ -91,7 +91,9 @@ organization, and accuracy measured against live models, come next.
 - **`terraform validate` passed; the first real apply did not.** Delegated-admin registrations
   conflict when they run in parallel. Delegating to an account whose hub is off switches it on with
   the default standards, so the hub now comes first, without them. Security Hub's `auto_enable`
-  skips accounts that already exist, so those are enrolled as members. A delegated administrator
+  skips accounts that already exist, so those are enrolled as members. GuardDuty's `ALL` skips the
+  management account, a day later it still wasn't watched, and it can only be added once GuardDuty is
+  on there, so stage 10 turns it on and adds it. A delegated administrator
   cannot read back the organization trail it created, because the ARN names the management account,
   so the trail is managed from there.
 - **The event can arrive before the finding can be read.** On the first live run a finding was
