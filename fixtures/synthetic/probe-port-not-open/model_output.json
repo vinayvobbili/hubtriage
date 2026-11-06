@@ -1,0 +1,31 @@
+{
+  "verdict": "needs_human",
+  "summary": "GuardDuty reports probes of port 3389, but the instance's group only allows 5432 from 10.0.0.0/16.",
+  "claims": [
+    {
+      "text": "The probed port is 3389.",
+      "bindings": [
+        {
+          "record_id": "ff111357067d#0000",
+          "field": "ProductFields.action/portProbeAction/portProbeDetails/0/localPortDetails/port",
+          "value": "3389"
+        }
+      ]
+    },
+    {
+      "text": "The instance's only security group allows port 5432 from 10.0.0.0/16, and nothing else.",
+      "bindings": [
+        {
+          "record_id": "b2a28ee56ecf#0000",
+          "field": "IpPermissions.0.FromPort",
+          "value": 5432
+        },
+        {
+          "record_id": "b2a28ee56ecf#0000",
+          "field": "IpPermissions.0.IpRanges.0.CidrIp",
+          "value": "10.0.0.0/16"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "SchemaVersion": "2018-10-08",
+  "Id": "arn:aws:guardduty:us-east-1:111122223333:detector/12abc34d567e8fa901bc2d34eexample/finding/162a652a4d97525bb88bd53aeexample",
+  "ProductArn": "arn:aws:securityhub:us-east-1::product/aws/guardduty",
+  "ProductName": "GuardDuty",
+  "CompanyName": "Amazon",
+  "GeneratorId": "arn:aws:guardduty:us-east-1:111122223333:detector/12abc34d567e8fa901bc2d34eexample",
+  "AwsAccountId": "111122223333",
+  "Region": "us-east-1",
+  "Types": [
+    "TTPs/Command and Control/CryptoCurrency:EC2-BitcoinTool.B!DNS"
+  ],
+  "CreatedAt": "2026-10-25T19:40:00.000Z",
+  "UpdatedAt": "2026-10-25T19:40:00.000Z",
+  "Severity": {
+    "Label": "HIGH",
+    "Normalized": 70,
+    "Product": 8
+  },
+  "Title": "EC2 instance i-0a6b7c8d9e0f1a2b3 is querying a domain name associated with Bitcoin activity.",
+  "Description": "EC2 instance i-0a6b7c8d9e0f1a2b3 is querying a domain name associated with Bitcoin activity.",
+  "Resources": [
+    {
+      "Type": "AwsEc2Instance",
+      "Id": "arn:aws:ec2:us-east-1:111122223333:instance/i-0a6b7c8d9e0f1a2b3",
+      "Partition": "aws",
+      "Region": "us-east-1",
+      "Details": {
+        "AwsEc2Instance": {
+          "Type": "t3.small",
+          "ImageId": "ami-0abcdef1234567890",
+          "IpV4Addresses": [
+            "10.0.3.21"
+          ],
+          "VpcId": "vpc-0123456789abcdef0",
+          "SubnetId": "subnet-0123456789abcdef0"
+        }
+      }
+    }
+  ],
+  "Workflow": {
+    "Status": "NEW"
+  },
+  "RecordState": "ACTIVE",
+  "ProductFields": {
+    "action/actionType": "DNS_REQUEST",
+    "action/dnsRequestAction/domain": "pool.mining.example"
+  }
+}

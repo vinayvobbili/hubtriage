@@ -1,0 +1,15 @@
+{
+  "User": {
+    "Arn": "arn:aws:iam::111122223333:user/service/ci-deployer",
+    "CreateDate": "2026-09-01T12:00:00+00:00",
+    "Path": "/service/",
+    "Tags": [
+      {
+        "Key": "Purpose",
+        "Value": "Deploys the orders CloudFormation stack from CI"
+      }
+    ],
+    "UserId": "AIDA85E90874FEE457A9B",
+    "UserName": "ci-deployer"
+  }
+}

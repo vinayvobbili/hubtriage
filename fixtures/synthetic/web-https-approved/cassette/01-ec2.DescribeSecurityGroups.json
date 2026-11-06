@@ -1,0 +1,45 @@
+{
+  "SecurityGroups": [
+    {
+      "Description": "Public HTTPS for the storefront",
+      "GroupId": "sg-0a1b2c3d4e5f60789",
+      "GroupName": "storefront-https",
+      "IpPermissions": [
+        {
+          "FromPort": 443,
+          "IpProtocol": "tcp",
+          "IpRanges": [
+            {
+              "CidrIp": "0.0.0.0/0"
+            }
+          ],
+          "Ipv6Ranges": [],
+          "PrefixListIds": [],
+          "ToPort": 443,
+          "UserIdGroupPairs": []
+        }
+      ],
+      "IpPermissionsEgress": [
+        {
+          "IpProtocol": "-1",
+          "IpRanges": [
+            {
+              "CidrIp": "0.0.0.0/0"
+            }
+          ],
+          "Ipv6Ranges": [],
+          "PrefixListIds": [],
+          "UserIdGroupPairs": []
+        }
+      ],
+      "OwnerId": "111122223333",
+      "Tags": [
+        {
+          "Key": "Exposure",
+          "Value": "approved: public HTTPS on port 443"
+        }
+      ],
+      "VpcId": "vpc-0123456789abcdef0"
+    }
+  ]
+}

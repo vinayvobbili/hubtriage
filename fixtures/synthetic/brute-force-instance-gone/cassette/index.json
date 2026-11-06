@@ -1,0 +1,14 @@
+[
+  {
+    "service": "ec2",
+    "operation": "DescribeInstances",
+    "params": {
+      "InstanceIds": [
+        "i-0c8d9e0f1a2b3c4d5"
+      ]
+    },
+    "account_id": "111122223333",
+    "region": "us-east-1",
+    "file": "00-ec2.DescribeInstances.json"
+  }
+]

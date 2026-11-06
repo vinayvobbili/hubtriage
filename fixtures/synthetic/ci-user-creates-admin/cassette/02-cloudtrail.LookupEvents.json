@@ -1,0 +1,37 @@
+{
+  "Events": [
+    {
+      "AccessKeyId": "AKIA-EXAMPLE-CIDEPLOY",
+      "CloudTrailEvent": "{\"eventVersion\":\"1.09\",\"userIdentity\":{\"type\":\"IAMUser\",\"principalId\":\"AIDA85E90874FEE457A9B\",\"arn\":\"arn:aws:iam::111122223333:user/ci-deployer\",\"accountId\":\"111122223333\",\"accessKeyId\":\"AKIA-EXAMPLE-CIDEPLOY\",\"userName\":\"ci-deployer\"},\"eventTime\":\"2026-10-22T14:21:07Z\",\"eventSource\":\"iam.amazonaws.com\",\"eventName\":\"CreateUser\",\"awsRegion\":\"us-east-1\",\"sourceIPAddress\":\"203.0.113.120\",\"userAgent\":\"aws-cli/2.17.0 md/awscrt#0.20.11 ua/2.0 os/linux#6.1 md/arch#x86_64 lang/python#3.11.9 exec-env/CI\",\"requestParameters\":{\"userName\":\"maint-admin\"},\"responseElements\":null,\"requestID\":\"2806ef20-7ddd-5fee-9343-be84e1582f49\",\"eventID\":\"93f0cf03-f98e-5672-8855-55399c7bc9bf\",\"readOnly\":false,\"eventType\":\"AwsApiCall\",\"managementEvent\":true,\"recipientAccountId\":\"111122223333\",\"eventCategory\":\"Management\"}",
+      "EventId": "93f0cf03-f98e-5672-8855-55399c7bc9bf",
+      "EventName": "CreateUser",
+      "EventSource": "iam.amazonaws.com",
+      "EventTime": "2026-10-22T14:21:07+00:00",
+      "ReadOnly": "false",
+      "Resources": [],
+      "Username": "ci-deployer"
+    },
+    {
+      "AccessKeyId": "AKIA-EXAMPLE-CIDEPLOY",
+      "CloudTrailEvent": "{\"eventVersion\":\"1.09\",\"userIdentity\":{\"type\":\"IAMUser\",\"principalId\":\"AIDA85E90874FEE457A9B\",\"arn\":\"arn:aws:iam::111122223333:user/ci-deployer\",\"accountId\":\"111122223333\",\"accessKeyId\":\"AKIA-EXAMPLE-CIDEPLOY\",\"userName\":\"ci-deployer\"},\"eventTime\":\"2026-10-22T14:21:09Z\",\"eventSource\":\"iam.amazonaws.com\",\"eventName\":\"AttachUserPolicy\",\"awsRegion\":\"us-east-1\",\"sourceIPAddress\":\"203.0.113.120\",\"userAgent\":\"aws-cli/2.17.0 md/awscrt#0.20.11 ua/2.0 os/linux#6.1 md/arch#x86_64 lang/python#3.11.9 exec-env/CI\",\"requestParameters\":{\"userName\":\"maint-admin\",\"policyArn\":\"arn:aws:iam::aws:policy/AdministratorAccess\"},\"responseElements\":null,\"requestID\":\"bfb6c72a-9598-5521-8884-7ddf35dcadb3\",\"eventID\":\"eed39679-2c65-5b7c-95c4-5b553c514294\",\"readOnly\":false,\"eventType\":\"AwsApiCall\",\"managementEvent\":true,\"recipientAccountId\":\"111122223333\",\"eventCategory\":\"Management\"}",
+      "EventId": "eed39679-2c65-5b7c-95c4-5b553c514294",
+      "EventName": "AttachUserPolicy",
+      "EventSource": "iam.amazonaws.com",
+      "EventTime": "2026-10-22T14:21:09+00:00",
+      "ReadOnly": "false",
+      "Resources": [],
+      "Username": "ci-deployer"
+    },
+    {
+      "AccessKeyId": "AKIA-EXAMPLE-CIDEPLOY",
+      "CloudTrailEvent": "{\"eventVersion\":\"1.09\",\"userIdentity\":{\"type\":\"IAMUser\",\"principalId\":\"AIDA85E90874FEE457A9B\",\"arn\":\"arn:aws:iam::111122223333:user/ci-deployer\",\"accountId\":\"111122223333\",\"accessKeyId\":\"AKIA-EXAMPLE-CIDEPLOY\",\"userName\":\"ci-deployer\"},\"eventTime\":\"2026-10-22T14:21:11Z\",\"eventSource\":\"iam.amazonaws.com\",\"eventName\":\"CreateAccessKey\",\"awsRegion\":\"us-east-1\",\"sourceIPAddress\":\"203.0.113.120\",\"userAgent\":\"aws-cli/2.17.0 md/awscrt#0.20.11 ua/2.0 os/linux#6.1 md/arch#x86_64 lang/python#3.11.9 exec-env/CI\",\"requestParameters\":{\"userName\":\"maint-admin\"},\"responseElements\":null,\"requestID\":\"e3884fa7-0a90-563a-b619-b9caacc2bbad\",\"eventID\":\"cd3b199c-ece3-562a-805c-4a3ab100a27e\",\"readOnly\":false,\"eventType\":\"AwsApiCall\",\"managementEvent\":true,\"recipientAccountId\":\"111122223333\",\"eventCategory\":\"Management\"}",
+      "EventId": "cd3b199c-ece3-562a-805c-4a3ab100a27e",
+      "EventName": "CreateAccessKey",
+      "EventSource": "iam.amazonaws.com",
+      "EventTime": "2026-10-22T14:21:11+00:00",
+      "ReadOnly": "false",
+      "Resources": [],
+      "Username": "ci-deployer"
+    }
+  ]
+}

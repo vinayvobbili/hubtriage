@@ -1,0 +1,26 @@
+{
+  "Events": [
+    {
+      "AccessKeyId": "ASIA-EXAMPLE-ORDERSAPP",
+      "CloudTrailEvent": "{\"eventVersion\":\"1.09\",\"userIdentity\":{\"type\":\"AssumedRole\",\"principalId\":\"AROA0E15459D97BB585D9:i-0b7c8d9e0f1a2b3c4\",\"arn\":\"arn:aws:sts::111122223333:assumed-role/orders-app/i-0b7c8d9e0f1a2b3c4\",\"accountId\":\"111122223333\",\"accessKeyId\":\"ASIA-EXAMPLE-ORDERSAPP\",\"sessionContext\":{\"sessionIssuer\":{\"type\":\"Role\",\"principalId\":\"AROA0E15459D97BB585D9\",\"arn\":\"arn:aws:iam::111122223333:role/orders-app\",\"accountId\":\"111122223333\",\"userName\":\"orders-app\"},\"attributes\":{\"creationDate\":\"2026-10-27T20:31:00Z\",\"mfaAuthenticated\":\"false\"}}},\"eventTime\":\"2026-10-27T21:01:13Z\",\"eventSource\":\"s3.amazonaws.com\",\"eventName\":\"ListBuckets\",\"awsRegion\":\"us-east-1\",\"sourceIPAddress\":\"198.51.100.23\",\"userAgent\":\"aws-cli/2.17.0 os/linux#6.5 lang/python#3.11.9\",\"requestParameters\":null,\"responseElements\":null,\"requestID\":\"43f325a2-da41-50a6-a138-fc95f9591e91\",\"eventID\":\"38e472c8-df9e-549d-b50f-31bc0ea8a13b\",\"readOnly\":true,\"eventType\":\"AwsApiCall\",\"managementEvent\":true,\"recipientAccountId\":\"111122223333\",\"eventCategory\":\"Management\"}",
+      "EventId": "38e472c8-df9e-549d-b50f-31bc0ea8a13b",
+      "EventName": "ListBuckets",
+      "EventSource": "s3.amazonaws.com",
+      "EventTime": "2026-10-27T21:01:13+00:00",
+      "ReadOnly": "true",
+      "Resources": [],
+      "Username": "orders-app"
+    },
+    {
+      "AccessKeyId": "ASIA-EXAMPLE-ORDERSAPP",
+      "CloudTrailEvent": "{\"eventVersion\":\"1.09\",\"userIdentity\":{\"type\":\"AssumedRole\",\"principalId\":\"AROA0E15459D97BB585D9:i-0b7c8d9e0f1a2b3c4\",\"arn\":\"arn:aws:sts::111122223333:assumed-role/orders-app/i-0b7c8d9e0f1a2b3c4\",\"accountId\":\"111122223333\",\"accessKeyId\":\"ASIA-EXAMPLE-ORDERSAPP\",\"sessionContext\":{\"sessionIssuer\":{\"type\":\"Role\",\"principalId\":\"AROA0E15459D97BB585D9\",\"arn\":\"arn:aws:iam::111122223333:role/orders-app\",\"accountId\":\"111122223333\",\"userName\":\"orders-app\"},\"attributes\":{\"creationDate\":\"2026-10-27T20:31:00Z\",\"mfaAuthenticated\":\"false\"}}},\"eventTime\":\"2026-10-27T21:01:20Z\",\"eventSource\":\"s3.amazonaws.com\",\"eventName\":\"GetBucketPolicy\",\"awsRegion\":\"us-east-1\",\"sourceIPAddress\":\"198.51.100.23\",\"userAgent\":\"aws-cli/2.17.0 os/linux#6.5 lang/python#3.11.9\",\"requestParameters\":{\"bucketName\":\"orders-data-example\"},\"responseElements\":null,\"requestID\":\"76bbbab3-ea7a-598a-ade4-0b0b56a378c9\",\"eventID\":\"a3a6e8ed-68ab-56a8-93e3-a35a7ba54563\",\"readOnly\":true,\"eventType\":\"AwsApiCall\",\"managementEvent\":true,\"recipientAccountId\":\"111122223333\",\"eventCategory\":\"Management\"}",
+      "EventId": "a3a6e8ed-68ab-56a8-93e3-a35a7ba54563",
+      "EventName": "GetBucketPolicy",
+      "EventSource": "s3.amazonaws.com",
+      "EventTime": "2026-10-27T21:01:20+00:00",
+      "ReadOnly": "true",
+      "Resources": [],
+      "Username": "orders-app"
+    }
+  ]
+}

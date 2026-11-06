@@ -1,0 +1,31 @@
+{
+  "verdict": "true_positive",
+  "summary": "The build runner queried pool.mining.example, a mining pool domain, and is still running.",
+  "claims": [
+    {
+      "text": "The queried domain is pool.mining.example.",
+      "bindings": [
+        {
+          "record_id": "64ce7c07be57#0000",
+          "field": "ProductFields.action/dnsRequestAction/domain",
+          "value": "pool.mining.example"
+        }
+      ]
+    },
+    {
+      "text": "The instance is a running CI build runner.",
+      "bindings": [
+        {
+          "record_id": "eeb9f7fefa6c#0000",
+          "field": "Tags.0.Value",
+          "value": "build-runner"
+        },
+        {
+          "record_id": "eeb9f7fefa6c#0000",
+          "field": "State.Name",
+          "value": "running"
+        }
+      ]
+    }
+  ]
+}

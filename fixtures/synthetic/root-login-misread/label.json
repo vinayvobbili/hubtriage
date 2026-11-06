@@ -1,6 +1,7 @@
 {
-  "verdict": "needs_human",
+  "verdict": "true_positive",
+  "replay_verdict": "needs_human",
   "refused": 2,
   "source": "synthetic: hand-written to exercise the gate",
-  "why": "The model dismisses root usage on an address and an MFA state the record contradicts. Both claims are refused, so the benign verdict is sent to a human instead of closing a root session without MFA from an unknown address."
+  "why": "Root was used without MFA from an address nothing in the records approves, so a correct reading escalates. The recorded answer dismisses it on an address and an MFA state the record contradicts; both claims are refused, so that benign verdict is sent to a human instead of closing the finding."
 }

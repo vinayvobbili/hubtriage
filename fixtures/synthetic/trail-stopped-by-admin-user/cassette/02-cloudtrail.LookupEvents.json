@@ -1,0 +1,15 @@
+{
+  "Events": [
+    {
+      "AccessKeyId": "AKIA-EXAMPLE-OPSTEMP",
+      "CloudTrailEvent": "{\"eventVersion\":\"1.09\",\"userIdentity\":{\"type\":\"IAMUser\",\"principalId\":\"AIDA9203777EC11C57BE8\",\"arn\":\"arn:aws:iam::111122223333:user/ops-temp\",\"accountId\":\"111122223333\",\"accessKeyId\":\"AKIA-EXAMPLE-OPSTEMP\",\"userName\":\"ops-temp\"},\"eventTime\":\"2026-10-28T23:44:52Z\",\"eventSource\":\"cloudtrail.amazonaws.com\",\"eventName\":\"StopLogging\",\"awsRegion\":\"us-east-1\",\"sourceIPAddress\":\"203.0.113.150\",\"userAgent\":\"aws-cli/2.17.0 os/macos#14 lang/python#3.11.9\",\"requestParameters\":{\"name\":\"arn:aws:cloudtrail:us-east-1:111122223333:trail/org-trail\"},\"responseElements\":null,\"requestID\":\"56365dfd-5b12-5365-a15b-39d51fd5e82c\",\"eventID\":\"4a479bb0-90df-554c-82f2-2f6df7783ed0\",\"readOnly\":false,\"eventType\":\"AwsApiCall\",\"managementEvent\":true,\"recipientAccountId\":\"111122223333\",\"eventCategory\":\"Management\"}",
+      "EventId": "4a479bb0-90df-554c-82f2-2f6df7783ed0",
+      "EventName": "StopLogging",
+      "EventSource": "cloudtrail.amazonaws.com",
+      "EventTime": "2026-10-28T23:44:52+00:00",
+      "ReadOnly": "false",
+      "Resources": [],
+      "Username": "ops-temp"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "SchemaVersion": "2018-10-08",
+  "Id": "arn:aws:guardduty:us-east-1:111122223333:detector/12abc34d567e8fa901bc2d34eexample/finding/8be4160de4385544a1659efd0example",
+  "ProductArn": "arn:aws:securityhub:us-east-1::product/aws/guardduty",
+  "ProductName": "GuardDuty",
+  "CompanyName": "Amazon",
+  "GeneratorId": "arn:aws:guardduty:us-east-1:111122223333:detector/12abc34d567e8fa901bc2d34eexample",
+  "AwsAccountId": "111122223333",
+  "Region": "us-east-1",
+  "Types": [
+    "Software and Configuration Checks/AWS Security Best Practices/Policy:IAMUser-RootCredentialUsage"
+  ],
+  "CreatedAt": "2026-10-26T06:15:00.000Z",
+  "UpdatedAt": "2026-10-26T06:15:00.000Z",
+  "Severity": {
+    "Label": "LOW",
+    "Normalized": 20,
+    "Product": 2
+  },
+  "Title": "API CreateAccessKey was invoked using root credentials.",
+  "Description": "API CreateAccessKey was invoked using root credentials.",
+  "Resources": [
+    {
+      "Type": "AwsIamAccessKey",
+      "Id": "AWS::IAM::AccessKey:ASIA-EXAMPLE-ROOTKEY",
+      "Partition": "aws",
+      "Region": "us-east-1",
+      "Details": {
+        "AwsIamAccessKey": {
+          "PrincipalId": "111122223333",
+          "PrincipalName": "root",
+          "PrincipalType": "Root"
+        }
+      }
+    }
+  ],
+  "Workflow": {
+    "Status": "NEW"
+  },
+  "RecordState": "ACTIVE"
+}

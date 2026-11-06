@@ -1,0 +1,9 @@
+{
+  "AttachedPolicies": [
+    {
+      "PolicyArn": "arn:aws:iam::aws:policy/AdministratorAccess",
+      "PolicyName": "AdministratorAccess"
+    }
+  ],
+  "IsTruncated": false
+}

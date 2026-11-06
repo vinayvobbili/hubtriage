@@ -1,0 +1,45 @@
+{
+  "Reservations": [
+    {
+      "Groups": [],
+      "Instances": [
+        {
+          "ImageId": "ami-0abcdef1234567890",
+          "InstanceId": "i-0a6b7c8d9e0f1a2b3",
+          "InstanceType": "t3.small",
+          "LaunchTime": "2026-10-01T12:00:00+00:00",
+          "MetadataOptions": {
+            "HttpEndpoint": "enabled",
+            "HttpTokens": "required",
+            "State": "applied"
+          },
+          "PrivateIpAddress": "10.0.3.21",
+          "SecurityGroups": [
+            {
+              "GroupId": "sg-0e5f6a7b8c9d0e1f2",
+              "GroupName": "build-runner"
+            }
+          ],
+          "State": {
+            "Code": 16,
+            "Name": "running"
+          },
+          "SubnetId": "subnet-0123456789abcdef0",
+          "Tags": [
+            {
+              "Key": "Name",
+              "Value": "build-runner"
+            },
+            {
+              "Key": "Team",
+              "Value": "platform"
+            }
+          ],
+          "VpcId": "vpc-0123456789abcdef0"
+        }
+      ],
+      "OwnerId": "111122223333",
+      "ReservationId": "r-039f197282681555c"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "verdict": "true_positive",
+  "summary": "The orders-app instance role's session was used from 198.51.100.23 to list buckets and read a bucket policy.",
+  "claims": [
+    {
+      "text": "The role trusts only EC2.",
+      "bindings": [
+        {
+          "record_id": "9da33ea6a4fa#0000",
+          "field": "AssumeRolePolicyDocument.Statement.0.Principal.Service",
+          "value": "ec2.amazonaws.com"
+        }
+      ]
+    },
+    {
+      "text": "Its instance session made the calls from 198.51.100.23.",
+      "bindings": [
+        {
+          "record_id": "dff6dd5a0f2c#0000",
+          "field": "CloudTrailEvent.userIdentity.arn",
+          "value": "arn:aws:sts::111122223333:assumed-role/orders-app/i-0b7c8d9e0f1a2b3c4"
+        },
+        {
+          "record_id": "dff6dd5a0f2c#0000",
+          "field": "CloudTrailEvent.sourceIPAddress",
+          "value": "198.51.100.23"
+        }
+      ]
+    }
+  ]
+}

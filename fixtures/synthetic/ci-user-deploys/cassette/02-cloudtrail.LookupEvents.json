@@ -1,0 +1,26 @@
+{
+  "Events": [
+    {
+      "AccessKeyId": "AKIA-EXAMPLE-CIDEPLOY",
+      "CloudTrailEvent": "{\"eventVersion\":\"1.09\",\"userIdentity\":{\"type\":\"IAMUser\",\"principalId\":\"AIDA85E90874FEE457A9B\",\"arn\":\"arn:aws:iam::111122223333:user/ci-deployer\",\"accountId\":\"111122223333\",\"accessKeyId\":\"AKIA-EXAMPLE-CIDEPLOY\",\"userName\":\"ci-deployer\"},\"eventTime\":\"2026-10-22T14:21:07Z\",\"eventSource\":\"cloudformation.amazonaws.com\",\"eventName\":\"DescribeStacks\",\"awsRegion\":\"us-east-1\",\"sourceIPAddress\":\"203.0.113.120\",\"userAgent\":\"aws-cli/2.17.0 md/awscrt#0.20.11 ua/2.0 os/linux#6.1 md/arch#x86_64 lang/python#3.11.9 exec-env/CI\",\"requestParameters\":{\"stackName\":\"orders\"},\"responseElements\":null,\"requestID\":\"591947b7-baed-5244-b92e-9c6518d6112e\",\"eventID\":\"eea07341-a747-53e9-a466-572bfae1851d\",\"readOnly\":true,\"eventType\":\"AwsApiCall\",\"managementEvent\":true,\"recipientAccountId\":\"111122223333\",\"eventCategory\":\"Management\"}",
+      "EventId": "eea07341-a747-53e9-a466-572bfae1851d",
+      "EventName": "DescribeStacks",
+      "EventSource": "cloudformation.amazonaws.com",
+      "EventTime": "2026-10-22T14:21:07+00:00",
+      "ReadOnly": "true",
+      "Resources": [],
+      "Username": "ci-deployer"
+    },
+    {
+      "AccessKeyId": "AKIA-EXAMPLE-CIDEPLOY",
+      "CloudTrailEvent": "{\"eventVersion\":\"1.09\",\"userIdentity\":{\"type\":\"IAMUser\",\"principalId\":\"AIDA85E90874FEE457A9B\",\"arn\":\"arn:aws:iam::111122223333:user/ci-deployer\",\"accountId\":\"111122223333\",\"accessKeyId\":\"AKIA-EXAMPLE-CIDEPLOY\",\"userName\":\"ci-deployer\"},\"eventTime\":\"2026-10-22T14:21:12Z\",\"eventSource\":\"cloudformation.amazonaws.com\",\"eventName\":\"UpdateStack\",\"awsRegion\":\"us-east-1\",\"sourceIPAddress\":\"203.0.113.120\",\"userAgent\":\"aws-cli/2.17.0 md/awscrt#0.20.11 ua/2.0 os/linux#6.1 md/arch#x86_64 lang/python#3.11.9 exec-env/CI\",\"requestParameters\":{\"stackName\":\"orders\",\"capabilities\":[\"CAPABILITY_IAM\"]},\"responseElements\":null,\"requestID\":\"638fd8e0-9f55-57df-b29e-60ff94d23b4b\",\"eventID\":\"5b94d4ff-773e-5f6c-8f84-fc30d85ab175\",\"readOnly\":false,\"eventType\":\"AwsApiCall\",\"managementEvent\":true,\"recipientAccountId\":\"111122223333\",\"eventCategory\":\"Management\"}",
+      "EventId": "5b94d4ff-773e-5f6c-8f84-fc30d85ab175",
+      "EventName": "UpdateStack",
+      "EventSource": "cloudformation.amazonaws.com",
+      "EventTime": "2026-10-22T14:21:12+00:00",
+      "ReadOnly": "false",
+      "Resources": [],
+      "Username": "ci-deployer"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "verdict": "benign",
+  "summary": "ci-deployer updated the orders stack, which its Purpose tag says it exists to do.",
+  "claims": [
+    {
+      "text": "ci-deployer is tagged to deploy the orders CloudFormation stack from CI.",
+      "bindings": [
+        {
+          "record_id": "843c0b6fce75#0000",
+          "field": "Tags.0.Value",
+          "value": "Deploys the orders CloudFormation stack from CI"
+        }
+      ]
+    },
+    {
+      "text": "Its calls were DescribeStacks and UpdateStack, both on the orders stack.",
+      "bindings": [
+        {
+          "record_id": "0ebfdd34be1c#0000",
+          "field": "CloudTrailEvent.eventName",
+          "value": "DescribeStacks"
+        },
+        {
+          "record_id": "0ebfdd34be1c#0000",
+          "field": "CloudTrailEvent.requestParameters.stackName",
+          "value": "orders"
+        },
+        {
+          "record_id": "0ebfdd34be1c#0001",
+          "field": "CloudTrailEvent.eventName",
+          "value": "UpdateStack"
+        },
+        {
+          "record_id": "0ebfdd34be1c#0001",
+          "field": "CloudTrailEvent.requestParameters.stackName",
+          "value": "orders"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "verdict": "benign",
+  "summary": "The approved vulnerability scanner scanned 10.0.2.15, inside the range its tag allows.",
+  "claims": [
+    {
+      "text": "The scanned host is 10.0.2.15.",
+      "bindings": [
+        {
+          "record_id": "3ef264fc0d51#0000",
+          "field": "ProductFields.action/networkConnectionAction/remoteIpDetails/ipAddressV4",
+          "value": "10.0.2.15"
+        }
+      ]
+    },
+    {
+      "text": "The instance is tagged as the approved scanner for 10.0.0.0/16 only.",
+      "bindings": [
+        {
+          "record_id": "b405c8aabc8e#0000",
+          "field": "Tags.1.Value",
+          "value": "Approved vulnerability scanner; scans 10.0.0.0/16 only"
+        }
+      ]
+    }
+  ]
+}

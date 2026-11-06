@@ -61,9 +61,10 @@ def cmd_demo(args) -> int:
     failures = 0
     for case in found:
         outcome = cases.run(case)
-        ok = outcome.correct and outcome.refused_as_expected
+        ok = outcome.answered and outcome.replayed_as_labeled
         failures += not ok
-        print(f"{'ok  ' if ok else 'FAIL'} {case.name}  expected {case.label['verdict']}")
+        expected = case.label.get("replay_verdict", case.label["verdict"])
+        print(f"{'ok  ' if ok else 'FAIL'} {case.name}  expected {expected}")
         _print_decision(outcome.result)
         if args.verbose:
             print(json.dumps(outcome.result.update, indent=2))

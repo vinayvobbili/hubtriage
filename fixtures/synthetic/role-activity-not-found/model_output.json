@@ -1,0 +1,26 @@
+{
+  "verdict": "needs_human",
+  "summary": "nightly-reports is documented as the nightly reports job, but CloudTrail shows none of its calls.",
+  "claims": [
+    {
+      "text": "The role runs the nightly reports job.",
+      "bindings": [
+        {
+          "record_id": "7810c82a7de3#0000",
+          "field": "Description",
+          "value": "Runs the nightly reports job"
+        }
+      ]
+    },
+    {
+      "text": "CloudTrail returned no events for the key in the window.",
+      "bindings": [
+        {
+          "record_id": "7ed11321be00#0000",
+          "field": "Events",
+          "value": "[]"
+        }
+      ]
+    }
+  ]
+}

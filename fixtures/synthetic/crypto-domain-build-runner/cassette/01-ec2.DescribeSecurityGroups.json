@@ -1,0 +1,25 @@
+{
+  "SecurityGroups": [
+    {
+      "Description": "CI build runners",
+      "GroupId": "sg-0e5f6a7b8c9d0e1f2",
+      "GroupName": "build-runner",
+      "IpPermissions": [],
+      "IpPermissionsEgress": [
+        {
+          "IpProtocol": "-1",
+          "IpRanges": [
+            {
+              "CidrIp": "0.0.0.0/0"
+            }
+          ],
+          "Ipv6Ranges": [],
+          "PrefixListIds": [],
+          "UserIdGroupPairs": []
+        }
+      ],
+      "OwnerId": "111122223333",
+      "VpcId": "vpc-0123456789abcdef0"
+    }
+  ]
+}

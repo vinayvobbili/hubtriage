@@ -1,0 +1,26 @@
+{
+  "verdict": "needs_human",
+  "summary": "Nothing could be looked up about data-sync, and CloudTrail shows no calls with its key in the window.",
+  "claims": [
+    {
+      "text": "The finding is about the IAM user data-sync.",
+      "bindings": [
+        {
+          "record_id": "855f03563b7b#0000",
+          "field": "Resources.0.Details.AwsIamAccessKey.PrincipalName",
+          "value": "data-sync"
+        }
+      ]
+    },
+    {
+      "text": "CloudTrail returned no events for the key in the window.",
+      "bindings": [
+        {
+          "record_id": "7ed11321be00#0000",
+          "field": "Events",
+          "value": "[]"
+        }
+      ]
+    }
+  ]
+}

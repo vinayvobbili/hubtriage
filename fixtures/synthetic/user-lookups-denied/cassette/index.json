@@ -1,0 +1,46 @@
+[
+  {
+    "service": "iam",
+    "operation": "GetUser",
+    "params": {
+      "UserName": "data-sync"
+    },
+    "account_id": "111122223333",
+    "region": "us-east-1",
+    "error": {
+      "code": "AccessDenied",
+      "message": "An error occurred (AccessDenied) when calling the GetUser operation: User: arn:aws:sts::111122223333:assumed-role/hubtriage-enrich/hubtriage is not authorized to perform: iam:GetUser on resource: user data-sync"
+    }
+  },
+  {
+    "service": "iam",
+    "operation": "ListAttachedUserPolicies",
+    "params": {
+      "UserName": "data-sync"
+    },
+    "account_id": "111122223333",
+    "region": "us-east-1",
+    "error": {
+      "code": "AccessDenied",
+      "message": "An error occurred (AccessDenied) when calling the ListAttachedUserPolicies operation: User: arn:aws:sts::111122223333:assumed-role/hubtriage-enrich/hubtriage is not authorized to perform: iam:ListAttachedUserPolicies on resource: user data-sync"
+    }
+  },
+  {
+    "service": "cloudtrail",
+    "operation": "LookupEvents",
+    "params": {
+      "LookupAttributes": [
+        {
+          "AttributeKey": "AccessKeyId",
+          "AttributeValue": "AKIA-EXAMPLE-DATASYNC"
+        }
+      ],
+      "StartTime": "2026-10-29T09:20:00+00:00",
+      "EndTime": "2026-10-29T11:20:00+00:00",
+      "MaxResults": 50
+    },
+    "account_id": "111122223333",
+    "region": "us-east-1",
+    "file": "02-cloudtrail.LookupEvents.json"
+  }
+]

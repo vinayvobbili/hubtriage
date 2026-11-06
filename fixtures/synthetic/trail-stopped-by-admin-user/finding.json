@@ -1,0 +1,41 @@
+{
+  "SchemaVersion": "2018-10-08",
+  "Id": "arn:aws:guardduty:us-east-1:111122223333:detector/12abc34d567e8fa901bc2d34eexample/finding/bc2e5c78656354979866efeedexample",
+  "ProductArn": "arn:aws:securityhub:us-east-1::product/aws/guardduty",
+  "ProductName": "GuardDuty",
+  "CompanyName": "Amazon",
+  "GeneratorId": "arn:aws:guardduty:us-east-1:111122223333:detector/12abc34d567e8fa901bc2d34eexample",
+  "AwsAccountId": "111122223333",
+  "Region": "us-east-1",
+  "Types": [
+    "TTPs/Defense Evasion/Stealth:IAMUser-CloudTrailLoggingDisabled"
+  ],
+  "CreatedAt": "2026-10-28T23:47:00.000Z",
+  "UpdatedAt": "2026-10-28T23:47:00.000Z",
+  "Severity": {
+    "Label": "LOW",
+    "Normalized": 20,
+    "Product": 2
+  },
+  "Title": "AWS CloudTrail trail org-trail was disabled.",
+  "Description": "AWS CloudTrail trail org-trail was disabled.",
+  "Resources": [
+    {
+      "Type": "AwsIamAccessKey",
+      "Id": "AWS::IAM::AccessKey:AKIA-EXAMPLE-OPSTEMP",
+      "Partition": "aws",
+      "Region": "us-east-1",
+      "Details": {
+        "AwsIamAccessKey": {
+          "PrincipalId": "AIDA9203777EC11C57BE8",
+          "PrincipalName": "ops-temp",
+          "PrincipalType": "IAMUser"
+        }
+      }
+    }
+  ],
+  "Workflow": {
+    "Status": "NEW"
+  },
+  "RecordState": "ACTIVE"
+}

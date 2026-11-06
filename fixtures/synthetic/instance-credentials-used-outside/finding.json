@@ -1,0 +1,41 @@
+{
+  "SchemaVersion": "2018-10-08",
+  "Id": "arn:aws:guardduty:us-east-1:111122223333:detector/12abc34d567e8fa901bc2d34eexample/finding/39e695890f0859fbaa564c253example",
+  "ProductArn": "arn:aws:securityhub:us-east-1::product/aws/guardduty",
+  "ProductName": "GuardDuty",
+  "CompanyName": "Amazon",
+  "GeneratorId": "arn:aws:guardduty:us-east-1:111122223333:detector/12abc34d567e8fa901bc2d34eexample",
+  "AwsAccountId": "111122223333",
+  "Region": "us-east-1",
+  "Types": [
+    "TTPs/Initial Access/UnauthorizedAccess:IAMUser-InstanceCredentialExfiltration.OutsideAWS"
+  ],
+  "CreatedAt": "2026-10-27T21:05:00.000Z",
+  "UpdatedAt": "2026-10-27T21:05:00.000Z",
+  "Severity": {
+    "Label": "HIGH",
+    "Normalized": 70,
+    "Product": 8
+  },
+  "Title": "Credentials for instance role orders-app used from an external IP address.",
+  "Description": "Credentials for instance role orders-app used from an external IP address.",
+  "Resources": [
+    {
+      "Type": "AwsIamAccessKey",
+      "Id": "AWS::IAM::AccessKey:ASIA-EXAMPLE-ORDERSAPP",
+      "Partition": "aws",
+      "Region": "us-east-1",
+      "Details": {
+        "AwsIamAccessKey": {
+          "PrincipalId": "AROA0E15459D97BB585D9:i-0b7c8d9e0f1a2b3c4",
+          "PrincipalName": "orders-app",
+          "PrincipalType": "AssumedRole"
+        }
+      }
+    }
+  ],
+  "Workflow": {
+    "Status": "NEW"
+  },
+  "RecordState": "ACTIVE"
+}

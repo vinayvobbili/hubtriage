@@ -1,0 +1,45 @@
+{
+  "Reservations": [
+    {
+      "Groups": [],
+      "Instances": [
+        {
+          "ImageId": "ami-0abcdef1234567890",
+          "InstanceId": "i-0e4f5a6b7c8d9e0f1",
+          "InstanceType": "t3.small",
+          "LaunchTime": "2026-10-01T12:00:00+00:00",
+          "MetadataOptions": {
+            "HttpEndpoint": "enabled",
+            "HttpTokens": "required",
+            "State": "applied"
+          },
+          "PrivateIpAddress": "10.0.4.10",
+          "SecurityGroups": [
+            {
+              "GroupId": "sg-0c3d4e5f6a7b8c9d0",
+              "GroupName": "scanner"
+            }
+          ],
+          "State": {
+            "Code": 16,
+            "Name": "running"
+          },
+          "SubnetId": "subnet-0123456789abcdef0",
+          "Tags": [
+            {
+              "Key": "Name",
+              "Value": "vuln-scanner"
+            },
+            {
+              "Key": "Purpose",
+              "Value": "Approved vulnerability scanner; scans 10.0.0.0/16 only"
+            }
+          ],
+          "VpcId": "vpc-0123456789abcdef0"
+        }
+      ],
+      "OwnerId": "111122223333",
+      "ReservationId": "r-07b6d2fb7a0c25743"
+    }
+  ]
+}

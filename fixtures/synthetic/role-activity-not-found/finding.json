@@ -1,0 +1,41 @@
+{
+  "SchemaVersion": "2018-10-08",
+  "Id": "arn:aws:guardduty:us-east-1:111122223333:detector/12abc34d567e8fa901bc2d34eexample/finding/16c7623eb70a5ccab4640d2edexample",
+  "ProductArn": "arn:aws:securityhub:us-east-1::product/aws/guardduty",
+  "ProductName": "GuardDuty",
+  "CompanyName": "Amazon",
+  "GeneratorId": "arn:aws:guardduty:us-east-1:111122223333:detector/12abc34d567e8fa901bc2d34eexample",
+  "AwsAccountId": "111122223333",
+  "Region": "us-east-1",
+  "Types": [
+    "TTPs/Discovery/Discovery:IAMUser-AnomalousBehavior"
+  ],
+  "CreatedAt": "2026-10-31T03:30:00.000Z",
+  "UpdatedAt": "2026-10-31T03:30:00.000Z",
+  "Severity": {
+    "Label": "LOW",
+    "Normalized": 20,
+    "Product": 2
+  },
+  "Title": "API DescribeDBInstances was invoked using an anomalous identity.",
+  "Description": "API DescribeDBInstances was invoked using an anomalous identity.",
+  "Resources": [
+    {
+      "Type": "AwsIamAccessKey",
+      "Id": "AWS::IAM::AccessKey:ASIA-EXAMPLE-REPORTS",
+      "Partition": "aws",
+      "Region": "us-east-1",
+      "Details": {
+        "AwsIamAccessKey": {
+          "PrincipalId": "AROA67A081917C875B69A:nightly-reports",
+          "PrincipalName": "nightly-reports",
+          "PrincipalType": "AssumedRole"
+        }
+      }
+    }
+  ],
+  "Workflow": {
+    "Status": "NEW"
+  },
+  "RecordState": "ACTIVE"
+}

@@ -1,0 +1,42 @@
+{
+  "Reservations": [
+    {
+      "Groups": [],
+      "Instances": [
+        {
+          "ImageId": "ami-0abcdef1234567890",
+          "InstanceId": "i-0f5a6b7c8d9e0f1a2",
+          "InstanceType": "t3.small",
+          "LaunchTime": "2026-10-01T12:00:00+00:00",
+          "MetadataOptions": {
+            "HttpEndpoint": "enabled",
+            "HttpTokens": "required",
+            "State": "applied"
+          },
+          "PrivateIpAddress": "10.0.1.50",
+          "PublicIpAddress": "203.0.113.50",
+          "SecurityGroups": [
+            {
+              "GroupId": "sg-0d4e5f6a7b8c9d0e1",
+              "GroupName": "orders-api"
+            }
+          ],
+          "State": {
+            "Code": 16,
+            "Name": "running"
+          },
+          "SubnetId": "subnet-0123456789abcdef0",
+          "Tags": [
+            {
+              "Key": "Name",
+              "Value": "orders-api"
+            }
+          ],
+          "VpcId": "vpc-0123456789abcdef0"
+        }
+      ],
+      "OwnerId": "111122223333",
+      "ReservationId": "r-0ad574733a19b5f8e"
+    }
+  ]
+}

@@ -7,7 +7,12 @@ A case is a directory:
     model_output.json   a model's answer, replayed by the `recorded` judge
     label.json          {"verdict": ..., "refused": n, "source": ...}
 
-`label.json` says what the case *should* come to and where it came from. Cases
+`label.json` says what the case *should* come to and where it came from.
+`verdict` is the right triage verdict, which a live model is scored against.
+`refused`, and `replay_verdict` when it differs from `verdict`, are what the
+recorded answer must come to: a case written to show the gate catching a
+misread has an answer that is wrong on purpose, so its replay ends somewhere
+else than a correct reading would. Cases
 under fixtures/synthetic were written by hand to exercise the gate - their model
 answers are not a model's, and nothing measured on them is a statement about
 any model. Cases recorded from a real account say so in `source`.
@@ -62,6 +67,12 @@ class Outcome:
     def refused_as_expected(self) -> bool:
         expected = self.case.label.get("refused")
         return expected is None or expected == len(self.result.decision.refused)
+
+    @property
+    def replayed_as_labeled(self) -> bool:
+        """For the recorded answer: did the gate take it where the label says it goes."""
+        expected = self.case.label.get("replay_verdict", self.case.label["verdict"])
+        return self.result.decision.verdict == expected and self.refused_as_expected
 
 
 def discover(root: str | Path) -> list[Case]:

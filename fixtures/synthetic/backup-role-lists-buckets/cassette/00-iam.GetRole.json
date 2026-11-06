@@ -1,0 +1,23 @@
+{
+  "Role": {
+    "Arn": "arn:aws:iam::111122223333:role/nightly-backup",
+    "AssumeRolePolicyDocument": {
+      "Statement": [
+        {
+          "Action": "sts:AssumeRole",
+          "Effect": "Allow",
+          "Principal": {
+            "Service": "lambda.amazonaws.com"
+          }
+        }
+      ],
+      "Version": "2012-10-17"
+    },
+    "CreateDate": "2026-09-01T12:00:00+00:00",
+    "Description": "Copies the orders-data-example bucket to the backup account each night",
+    "MaxSessionDuration": 3600,
+    "Path": "/",
+    "RoleId": "AROA6F63818A59685DEFA",
+    "RoleName": "nightly-backup"
+  }
+}

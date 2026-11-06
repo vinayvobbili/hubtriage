@@ -1,0 +1,51 @@
+{
+  "SchemaVersion": "2018-10-08",
+  "Id": "arn:aws:guardduty:us-east-1:111122223333:detector/12abc34d567e8fa901bc2d34eexample/finding/0e36ed939e1a5c88b0010a13dexample",
+  "ProductArn": "arn:aws:securityhub:us-east-1::product/aws/guardduty",
+  "ProductName": "GuardDuty",
+  "CompanyName": "Amazon",
+  "GeneratorId": "arn:aws:guardduty:us-east-1:111122223333:detector/12abc34d567e8fa901bc2d34eexample",
+  "AwsAccountId": "111122223333",
+  "Region": "us-east-1",
+  "Types": [
+    "TTPs/Discovery/Recon:EC2-Portscan"
+  ],
+  "CreatedAt": "2026-10-21T02:10:00.000Z",
+  "UpdatedAt": "2026-10-21T02:10:00.000Z",
+  "Severity": {
+    "Label": "MEDIUM",
+    "Normalized": 50,
+    "Product": 5
+  },
+  "Title": "EC2 instance i-0d3e4f5a6b7c8d9e0 is performing outbound port scans against a remote host.",
+  "Description": "EC2 instance i-0d3e4f5a6b7c8d9e0 is performing outbound port scans against a remote host.",
+  "Resources": [
+    {
+      "Type": "AwsEc2Instance",
+      "Id": "arn:aws:ec2:us-east-1:111122223333:instance/i-0d3e4f5a6b7c8d9e0",
+      "Partition": "aws",
+      "Region": "us-east-1",
+      "Details": {
+        "AwsEc2Instance": {
+          "Type": "t3.small",
+          "ImageId": "ami-0abcdef1234567890",
+          "IpV4Addresses": [
+            "10.0.4.10"
+          ],
+          "VpcId": "vpc-0123456789abcdef0",
+          "SubnetId": "subnet-0123456789abcdef0"
+        }
+      }
+    }
+  ],
+  "Workflow": {
+    "Status": "NEW"
+  },
+  "RecordState": "ACTIVE",
+  "ProductFields": {
+    "action/actionType": "NETWORK_CONNECTION",
+    "action/networkConnectionAction/connectionDirection": "OUTBOUND",
+    "action/networkConnectionAction/remoteIpDetails/ipAddressV4": "10.0.2.15",
+    "action/networkConnectionAction/remotePortDetails/port": "22"
+  }
+}

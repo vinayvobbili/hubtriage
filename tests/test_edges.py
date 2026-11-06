@@ -119,8 +119,7 @@ def test_every_labeled_case_comes_out_as_labeled():
     assert found, "no labeled cases found"
     for case in found:
         outcome = cases.run(case)
-        assert outcome.correct, case.name
-        assert outcome.refused_as_expected, case.name
+        assert outcome.answered and outcome.replayed_as_labeled, case.name
 
 
 def test_demo_exits_zero(capsys):

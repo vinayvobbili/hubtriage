@@ -1,0 +1,9 @@
+{
+  "AttachedPolicies": [
+    {
+      "PolicyArn": "arn:aws:iam::111122223333:policy/reports-read",
+      "PolicyName": "reports-read"
+    }
+  ],
+  "IsTruncated": false
+}

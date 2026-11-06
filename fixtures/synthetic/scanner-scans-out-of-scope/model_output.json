@@ -1,0 +1,26 @@
+{
+  "verdict": "true_positive",
+  "summary": "The vulnerability scanner scanned 198.51.100.40, outside the 10.0.0.0/16 range it is approved for.",
+  "claims": [
+    {
+      "text": "The scanned host is 198.51.100.40.",
+      "bindings": [
+        {
+          "record_id": "5cb88e55a51a#0000",
+          "field": "ProductFields.action/networkConnectionAction/remoteIpDetails/ipAddressV4",
+          "value": "198.51.100.40"
+        }
+      ]
+    },
+    {
+      "text": "The instance's approval covers 10.0.0.0/16 only.",
+      "bindings": [
+        {
+          "record_id": "d19af53c0e24#0000",
+          "field": "Tags.1.Value",
+          "value": "Approved vulnerability scanner; scans 10.0.0.0/16 only"
+        }
+      ]
+    }
+  ]
+}

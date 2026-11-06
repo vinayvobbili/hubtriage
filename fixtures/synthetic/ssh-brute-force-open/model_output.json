@@ -1,0 +1,31 @@
+{
+  "verdict": "true_positive",
+  "summary": "orders-api allows SSH from 0.0.0.0/0, and 198.51.100.77 is brute-forcing it.",
+  "claims": [
+    {
+      "text": "The attacking address is 198.51.100.77.",
+      "bindings": [
+        {
+          "record_id": "18f30747d5d1#0000",
+          "field": "ProductFields.action/networkConnectionAction/remoteIpDetails/ipAddressV4",
+          "value": "198.51.100.77"
+        }
+      ]
+    },
+    {
+      "text": "The instance's security group allows port 22 from 0.0.0.0/0.",
+      "bindings": [
+        {
+          "record_id": "63458f516832#0000",
+          "field": "IpPermissions.0.FromPort",
+          "value": 22
+        },
+        {
+          "record_id": "63458f516832#0000",
+          "field": "IpPermissions.0.IpRanges.0.CidrIp",
+          "value": "0.0.0.0/0"
+        }
+      ]
+    }
+  ]
+}

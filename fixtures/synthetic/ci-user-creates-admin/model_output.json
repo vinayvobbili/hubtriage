@@ -1,0 +1,46 @@
+{
+  "verdict": "true_positive",
+  "summary": "ci-deployer created maint-admin with AdministratorAccess and an access key, far outside its deploy-only purpose.",
+  "claims": [
+    {
+      "text": "ci-deployer is tagged to deploy the orders CloudFormation stack.",
+      "bindings": [
+        {
+          "record_id": "843c0b6fce75#0000",
+          "field": "Tags.0.Value",
+          "value": "Deploys the orders CloudFormation stack from CI"
+        }
+      ]
+    },
+    {
+      "text": "It created the user maint-admin.",
+      "bindings": [
+        {
+          "record_id": "f8e0d8a6ee05#0000",
+          "field": "CloudTrailEvent.eventName",
+          "value": "CreateUser"
+        },
+        {
+          "record_id": "f8e0d8a6ee05#0000",
+          "field": "CloudTrailEvent.requestParameters.userName",
+          "value": "maint-admin"
+        }
+      ]
+    },
+    {
+      "text": "It attached AdministratorAccess to maint-admin and created an access key for it.",
+      "bindings": [
+        {
+          "record_id": "f8e0d8a6ee05#0001",
+          "field": "CloudTrailEvent.requestParameters.policyArn",
+          "value": "arn:aws:iam::aws:policy/AdministratorAccess"
+        },
+        {
+          "record_id": "f8e0d8a6ee05#0002",
+          "field": "CloudTrailEvent.eventName",
+          "value": "CreateAccessKey"
+        }
+      ]
+    }
+  ]
+}

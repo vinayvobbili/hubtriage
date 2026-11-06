@@ -1,0 +1,40 @@
+[
+  {
+    "service": "iam",
+    "operation": "GetUser",
+    "params": {
+      "UserName": "ci-deployer"
+    },
+    "account_id": "111122223333",
+    "region": "us-east-1",
+    "file": "00-iam.GetUser.json"
+  },
+  {
+    "service": "iam",
+    "operation": "ListAttachedUserPolicies",
+    "params": {
+      "UserName": "ci-deployer"
+    },
+    "account_id": "111122223333",
+    "region": "us-east-1",
+    "file": "01-iam.ListAttachedUserPolicies.json"
+  },
+  {
+    "service": "cloudtrail",
+    "operation": "LookupEvents",
+    "params": {
+      "LookupAttributes": [
+        {
+          "AttributeKey": "AccessKeyId",
+          "AttributeValue": "AKIA-EXAMPLE-CIDEPLOY"
+        }
+      ],
+      "StartTime": "2026-10-22T13:30:00+00:00",
+      "EndTime": "2026-10-22T15:30:00+00:00",
+      "MaxResults": 50
+    },
+    "account_id": "111122223333",
+    "region": "us-east-1",
+    "file": "02-cloudtrail.LookupEvents.json"
+  }
+]

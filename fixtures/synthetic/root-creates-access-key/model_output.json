@@ -1,0 +1,41 @@
+{
+  "verdict": "true_positive",
+  "summary": "Root created a new access key from 198.51.100.23 in a session without MFA.",
+  "claims": [
+    {
+      "text": "Root called CreateAccessKey.",
+      "bindings": [
+        {
+          "record_id": "2ff4d8abed89#0000",
+          "field": "CloudTrailEvent.userIdentity.type",
+          "value": "Root"
+        },
+        {
+          "record_id": "2ff4d8abed89#0000",
+          "field": "CloudTrailEvent.eventName",
+          "value": "CreateAccessKey"
+        }
+      ]
+    },
+    {
+      "text": "The root session was not MFA-authenticated.",
+      "bindings": [
+        {
+          "record_id": "2ff4d8abed89#0000",
+          "field": "CloudTrailEvent.userIdentity.sessionContext.attributes.mfaAuthenticated",
+          "value": "false"
+        }
+      ]
+    },
+    {
+      "text": "The call came from 198.51.100.23.",
+      "bindings": [
+        {
+          "record_id": "2ff4d8abed89#0000",
+          "field": "CloudTrailEvent.sourceIPAddress",
+          "value": "198.51.100.23"
+        }
+      ]
+    }
+  ]
+}

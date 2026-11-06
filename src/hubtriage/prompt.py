@@ -16,16 +16,28 @@ from .findings import Finding
 from .verdict import SCHEMA
 
 INSTRUCTIONS = """\
-You are triaging one AWS security finding. Decide whether it is a true positive,
-benign, or needs a human, using only the records below.
+You are triaging one AWS security finding, using only the records below. The
+finding itself is the first record: it is what GuardDuty saw. The rest are what
+AWS answered when asked about the resources it names. Pick one verdict:
+
+- true_positive: the records confirm what the finding describes - the activity
+  happened, or the exposure exists - and nothing in them says it was approved.
+  This is the default for a confirmed risk. A name that only hints at a purpose
+  ("lab", "test") is not an approval, and not knowing whether someone approved
+  it is not a reason for needs_human: escalating is how a person gets asked.
+- benign: the records confirm the activity, and they also show it was expected:
+  a tag, a description or a trust policy that says this principal or resource is
+  meant to do exactly this. Anything the records show going beyond that stated
+  purpose makes it a true_positive instead.
+- needs_human: the records cannot confirm what the finding describes. A lookup
+  failed or came back empty, or the records contradict the finding.
 
 Rules:
 - Every claim must cite at least one binding: a record_id, a field name and a value,
   copied exactly as they appear in the records. Claims that do not match the record
   are refused, and refused claims count against your verdict.
-- Say benign only if the records show why the activity is expected. Absence of
-  evidence is not evidence of benign activity.
-- If the records cannot settle it, say needs_human and cite what they do show.
+- Cite the records the verdict turns on: for benign, the one that shows the activity
+  was expected; for needs_human, what is missing or contradicts the finding.
 - Answer with one JSON object and nothing else, in this shape:
 """
 

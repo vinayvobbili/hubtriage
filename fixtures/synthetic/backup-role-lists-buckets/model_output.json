@@ -1,0 +1,56 @@
+{
+  "verdict": "benign",
+  "summary": "nightly-backup made two read-only S3 calls that fit its described job of copying the orders bucket.",
+  "claims": [
+    {
+      "text": "The role's description says it copies the orders-data-example bucket each night.",
+      "bindings": [
+        {
+          "record_id": "24e47d697b9b#0000",
+          "field": "Description",
+          "value": "Copies the orders-data-example bucket to the backup account each night"
+        }
+      ]
+    },
+    {
+      "text": "Only Lambda can assume the role.",
+      "bindings": [
+        {
+          "record_id": "24e47d697b9b#0000",
+          "field": "AssumeRolePolicyDocument.Statement.0.Principal.Service",
+          "value": "lambda.amazonaws.com"
+        }
+      ]
+    },
+    {
+      "text": "Its calls were ListBuckets and GetBucketLocation on orders-data-example, both read-only.",
+      "bindings": [
+        {
+          "record_id": "84f02e78c7b6#0000",
+          "field": "CloudTrailEvent.eventName",
+          "value": "ListBuckets"
+        },
+        {
+          "record_id": "84f02e78c7b6#0000",
+          "field": "CloudTrailEvent.readOnly",
+          "value": true
+        },
+        {
+          "record_id": "84f02e78c7b6#0001",
+          "field": "CloudTrailEvent.eventName",
+          "value": "GetBucketLocation"
+        },
+        {
+          "record_id": "84f02e78c7b6#0001",
+          "field": "CloudTrailEvent.requestParameters.bucketName",
+          "value": "orders-data-example"
+        },
+        {
+          "record_id": "84f02e78c7b6#0001",
+          "field": "CloudTrailEvent.readOnly",
+          "value": true
+        }
+      ]
+    }
+  ]
+}

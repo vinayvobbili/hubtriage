@@ -1,0 +1,46 @@
+{
+  "verdict": "benign",
+  "summary": "Probes of port 443 on the storefront web server, whose security group is tagged as an approved public HTTPS exposure.",
+  "claims": [
+    {
+      "text": "The probed port is 443.",
+      "bindings": [
+        {
+          "record_id": "bca362b3053a#0000",
+          "field": "ProductFields.action/portProbeAction/portProbeDetails/0/localPortDetails/port",
+          "value": "443"
+        }
+      ]
+    },
+    {
+      "text": "The instance's only security group opens port 443, and only that port, to the internet.",
+      "bindings": [
+        {
+          "record_id": "cbc7968ecc23#0000",
+          "field": "IpPermissions.0.FromPort",
+          "value": 443
+        },
+        {
+          "record_id": "cbc7968ecc23#0000",
+          "field": "IpPermissions.0.ToPort",
+          "value": 443
+        },
+        {
+          "record_id": "cbc7968ecc23#0000",
+          "field": "IpPermissions.0.IpRanges.0.CidrIp",
+          "value": "0.0.0.0/0"
+        }
+      ]
+    },
+    {
+      "text": "The group is tagged as an approved public HTTPS exposure.",
+      "bindings": [
+        {
+          "record_id": "cbc7968ecc23#0000",
+          "field": "Tags.0.Value",
+          "value": "approved: public HTTPS on port 443"
+        }
+      ]
+    }
+  ]
+}

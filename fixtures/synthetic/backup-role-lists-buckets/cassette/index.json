@@ -1,0 +1,40 @@
+[
+  {
+    "service": "iam",
+    "operation": "GetRole",
+    "params": {
+      "RoleName": "nightly-backup"
+    },
+    "account_id": "111122223333",
+    "region": "us-east-1",
+    "file": "00-iam.GetRole.json"
+  },
+  {
+    "service": "iam",
+    "operation": "ListAttachedRolePolicies",
+    "params": {
+      "RoleName": "nightly-backup"
+    },
+    "account_id": "111122223333",
+    "region": "us-east-1",
+    "file": "01-iam.ListAttachedRolePolicies.json"
+  },
+  {
+    "service": "cloudtrail",
+    "operation": "LookupEvents",
+    "params": {
+      "LookupAttributes": [
+        {
+          "AttributeKey": "AccessKeyId",
+          "AttributeValue": "ASIA-EXAMPLE-BACKUP"
+        }
+      ],
+      "StartTime": "2026-10-23T01:04:00+00:00",
+      "EndTime": "2026-10-23T03:04:00+00:00",
+      "MaxResults": 50
+    },
+    "account_id": "111122223333",
+    "region": "us-east-1",
+    "file": "02-cloudtrail.LookupEvents.json"
+  }
+]

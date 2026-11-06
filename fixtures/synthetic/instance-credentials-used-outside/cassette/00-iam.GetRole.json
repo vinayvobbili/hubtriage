@@ -1,0 +1,23 @@
+{
+  "Role": {
+    "Arn": "arn:aws:iam::111122223333:role/orders-app",
+    "AssumeRolePolicyDocument": {
+      "Statement": [
+        {
+          "Action": "sts:AssumeRole",
+          "Effect": "Allow",
+          "Principal": {
+            "Service": "ec2.amazonaws.com"
+          }
+        }
+      ],
+      "Version": "2012-10-17"
+    },
+    "CreateDate": "2026-09-01T12:00:00+00:00",
+    "Description": "Instance role for the orders app servers",
+    "MaxSessionDuration": 3600,
+    "Path": "/",
+    "RoleId": "AROA0E15459D97BB585D9",
+    "RoleName": "orders-app"
+  }
+}

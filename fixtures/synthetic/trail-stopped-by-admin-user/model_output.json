@@ -1,0 +1,31 @@
+{
+  "verdict": "true_positive",
+  "summary": "ops-temp, a user with AdministratorAccess, stopped logging on org-trail.",
+  "claims": [
+    {
+      "text": "ops-temp called StopLogging on org-trail.",
+      "bindings": [
+        {
+          "record_id": "7eb1733657c8#0000",
+          "field": "CloudTrailEvent.eventName",
+          "value": "StopLogging"
+        },
+        {
+          "record_id": "7eb1733657c8#0000",
+          "field": "CloudTrailEvent.requestParameters.name",
+          "value": "arn:aws:cloudtrail:us-east-1:111122223333:trail/org-trail"
+        }
+      ]
+    },
+    {
+      "text": "ops-temp has AdministratorAccess attached.",
+      "bindings": [
+        {
+          "record_id": "291172a3a10b#0000",
+          "field": "PolicyName",
+          "value": "AdministratorAccess"
+        }
+      ]
+    }
+  ]
+}

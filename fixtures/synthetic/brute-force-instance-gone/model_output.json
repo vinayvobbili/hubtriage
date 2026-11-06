@@ -1,0 +1,26 @@
+{
+  "verdict": "needs_human",
+  "summary": "DescribeInstances returned nothing for i-0c8d9e0f1a2b3c4d5, so the exposure can't be checked.",
+  "claims": [
+    {
+      "text": "The finding names instance i-0c8d9e0f1a2b3c4d5.",
+      "bindings": [
+        {
+          "record_id": "b16e51029df1#0000",
+          "field": "Resources.0.Id",
+          "value": "arn:aws:ec2:us-east-1:111122223333:instance/i-0c8d9e0f1a2b3c4d5"
+        }
+      ]
+    },
+    {
+      "text": "DescribeInstances returned no reservations for it.",
+      "bindings": [
+        {
+          "record_id": "b5185adaac48#0000",
+          "field": "Reservations",
+          "value": "[]"
+        }
+      ]
+    }
+  ]
+}
