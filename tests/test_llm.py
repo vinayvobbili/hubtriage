@@ -145,6 +145,19 @@ def test_the_eval_prints_false_benigns_and_the_table(monkeypatch, capsys):
     assert "false benign" in out and "said needs_human" in out and "contested" in out
 
 
+def test_a_queued_local_server_can_be_given_longer_to_answer(monkeypatch):
+    seen = []
+    def fake(url, model, timeout=120.0):
+        seen.append(timeout)
+        return lambda prompt: "{}"
+
+    monkeypatch.setattr(llm, "openai_compatible", fake)
+    env = {"HUBTRIAGE_LLM": "local", "HUBTRIAGE_LOCAL_URLS": "http://a/v1", "HUBTRIAGE_LOCAL_MODEL": "m"}
+    llm.from_env(env)
+    llm.from_env({**env, "HUBTRIAGE_LOCAL_TIMEOUT": "900"})
+    assert seen == [120.0, 900.0]
+
+
 def test_saved_answers_can_be_rescored_without_a_model(monkeypatch, tmp_path, capsys):
     def no_model(env=None, allow_public=False):
         raise AssertionError("re-scoring must not ask a model")

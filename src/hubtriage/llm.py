@@ -207,6 +207,8 @@ def from_env(env: dict | None = None, *, allow_public: bool = False) -> Judge:
     HUBTRIAGE_LLM        order of backends, e.g. "local,bedrock" (the default) or "bedrock"
     HUBTRIAGE_LOCAL_URLS comma-separated OpenAI-compatible base URLs, tried in order
     HUBTRIAGE_LOCAL_MODEL model name the local servers serve
+    HUBTRIAGE_LOCAL_TIMEOUT seconds to wait for one answer (default 120); raise it for a server
+                          that queues requests from other programs, where waiting counts too
     HUBTRIAGE_BEDROCK_MODEL Bedrock model or inference-profile id
     HUBTRIAGE_CLAUDE_MODEL  for the claude backend; made-up cases only
     HUBTRIAGE_CLAUDE_KEYCHAIN macOS Keychain item holding its API key
@@ -231,8 +233,9 @@ def from_env(env: dict | None = None, *, allow_public: bool = False) -> Judge:
             chain.append(agy(env.get("HUBTRIAGE_AGY_MODEL", AGY_MODEL)))
         elif backend == "local":
             model = env.get("HUBTRIAGE_LOCAL_MODEL", "")
+            timeout = float(env.get("HUBTRIAGE_LOCAL_TIMEOUT") or 120)
             for url in [u.strip() for u in env.get("HUBTRIAGE_LOCAL_URLS", "").split(",") if u.strip()]:
-                chain.append(openai_compatible(url, model))
+                chain.append(openai_compatible(url, model, timeout=timeout))
         elif backend == "bedrock":
             if env.get("HUBTRIAGE_BEDROCK_MODEL"):
                 chain.append(bedrock(env["HUBTRIAGE_BEDROCK_MODEL"], region=env.get("AWS_REGION")))
