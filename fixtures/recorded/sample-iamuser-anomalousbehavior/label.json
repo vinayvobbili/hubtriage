@@ -1,0 +1,6 @@
+{
+  "verdict": "sample",
+  "refused": 0,
+  "source": "scrubbed: a GuardDuty sample from the project's test account (2026-11-06), through `hubtriage scrub`, read by hand before commit",
+  "why": "CreateSampleFindings made it. This type carries ASFF's Sample but not GuardDuty's own sample field, so it is the case that shows either mark is enough; no lookup or model is asked."
+}

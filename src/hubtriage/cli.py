@@ -83,11 +83,13 @@ def cmd_eval(args) -> int:
     for case in found:
         outcome = cases.run(case, llm.recorded(saved / f"{case.name}.json") if saved else judge)
         outcomes.append(outcome)
-        if args.save_answers and judge is not None:
+        if outcome.result.decision.verdict == cases.SAMPLE:
+            pass  # decided before any model: there is no answer to keep
+        elif args.save_answers and judge is not None:
             (case.directory / "model_output.json").write_text(
                 outcome.result.answer, encoding="utf-8"
             )
-        if args.answers:
+        elif args.answers:
             Path(args.answers).mkdir(parents=True, exist_ok=True)
             (Path(args.answers) / f"{case.name}.json").write_text(
                 outcome.result.answer, encoding="utf-8"

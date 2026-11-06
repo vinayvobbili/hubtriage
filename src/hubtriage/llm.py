@@ -211,10 +211,9 @@ def agy(model: str = AGY_MODEL, *, timeout: float = 180.0, run: Callable = subpr
 
 
 def recorded(path: str | Path) -> Judge:
-    text = Path(path).read_text(encoding="utf-8")
-
+    # Read when asked: a case decided before any model (a sample) has no answer file.
     def judge(prompt: str) -> str:
-        return text
+        return Path(path).read_text(encoding="utf-8")
 
     judge.__name__ = f"recorded({Path(path).name})"
     return judge

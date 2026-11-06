@@ -1,0 +1,185 @@
+{
+  "SchemaVersion": "2018-10-08",
+  "Id": "arn:aws:guardduty:us-east-1:111122223333:detector/example0000000000000000000000000/finding/example0000000000000000000000001",
+  "ProductArn": "arn:aws:securityhub:us-east-1::product/aws/guardduty",
+  "ProductName": "GuardDuty",
+  "CompanyName": "Amazon",
+  "Region": "us-east-1",
+  "GeneratorId": "arn:aws:guardduty:us-east-1:111122223333:detector/example0000000000000000000000000",
+  "AwsAccountId": "111122223333",
+  "Types": [
+    "TTPs/Discovery/IAMUser-AnomalousBehavior"
+  ],
+  "FirstObservedAt": "2026-11-06T15:51:07.000Z",
+  "LastObservedAt": "2026-11-06T15:51:07.000Z",
+  "CreatedAt": "2026-11-06T15:51:07.858Z",
+  "UpdatedAt": "2026-11-06T15:51:07.858Z",
+  "Severity": {
+    "Product": 2.0,
+    "Label": "LOW",
+    "Normalized": 40
+  },
+  "Title": "The user IAMUser : GeneratedFindingUserName is anomalously invoking APIs commonly used in Discovery tactics.",
+  "Description": "APIs commonly used in Discovery tactics were invoked by user IAMUser : GeneratedFindingUserName under unusual circumstances. Such activity is not typically seen from this user.",
+  "SourceUrl": "https://us-east-1.console.aws.amazon.com/guardduty/home?region=us-east-1#/findings?macros=current&fId=example0000000000000000000000001",
+  "ProductFields": {
+    "aws/guardduty/service/serviceName": "guardduty",
+    "aws/guardduty/service/detectorId": "example0000000000000000000000000",
+    "aws/guardduty/service/featureName": "CloudTrailManagementEvent",
+    "aws/guardduty/service/action/actionType": "AWS_API_CALL",
+    "aws/guardduty/service/action/awsApiCallAction/api": "GeneratedFindingAPIName",
+    "aws/guardduty/service/action/awsApiCallAction/serviceName": "GeneratedFindingAPIServiceName",
+    "aws/guardduty/service/action/awsApiCallAction/callerType": "Remote IP",
+    "aws/guardduty/service/action/awsApiCallAction/errorCode": "AccessDenied",
+    "aws/guardduty/service/action/awsApiCallAction/remoteIpDetails/ipAddressV4": "198.51.100.0",
+    "aws/guardduty/service/action/awsApiCallAction/remoteIpDetails/organization/asn": "-1",
+    "aws/guardduty/service/action/awsApiCallAction/remoteIpDetails/organization/asnOrg": "GeneratedFindingASNOrg",
+    "aws/guardduty/service/action/awsApiCallAction/remoteIpDetails/organization/isp": "GeneratedFindingISP",
+    "aws/guardduty/service/action/awsApiCallAction/remoteIpDetails/organization/org": "GeneratedFindingOrg",
+    "aws/guardduty/service/action/awsApiCallAction/remoteIpDetails/country/countryName": "GeneratedFindingCountryName",
+    "aws/guardduty/service/action/awsApiCallAction/remoteIpDetails/city/cityName": "GeneratedFindingCityName",
+    "aws/guardduty/service/action/awsApiCallAction/remoteIpDetails/geoLocation/lat": "0",
+    "aws/guardduty/service/action/awsApiCallAction/remoteIpDetails/geoLocation/lon": "0",
+    "aws/guardduty/service/action/awsApiCallAction/remoteIpDetails/ipAddressV6": "2001:db8::1",
+    "aws/guardduty/service/action/awsApiCallAction/affectedResources": "",
+    "aws/guardduty/service/resourceRole": "TARGET",
+    "aws/guardduty/service/additionalInfo/userAgent/fullUserAgent": "GeneratedFindingFullUserAgent",
+    "aws/guardduty/service/additionalInfo/userAgent/userAgentCategory": "GeneratedFindingUserAgentCategory",
+    "aws/guardduty/service/additionalInfo/anomalies/anomalousAPIs": "GeneratedFindingAPIServiceName:[GeneratedFindingAPIName:AccessDenied , GeneratedFindingAPINameTwo:AccessDenied] , GeneratedFindingAPIServiceNameThree:[GeneratedFindingAPINameThree:success] , GeneratedFindingAPIServiceNameFour:[GeneratedFindingAPINameFour:success]",
+    "aws/guardduty/service/additionalInfo/profiledBehavior/rareProfiledAPIsAccountProfiling": "GeneratedFindingAPINameTwo , GeneratedFindingAPINameThree",
+    "aws/guardduty/service/additionalInfo/profiledBehavior/infrequentProfiledAPIsAccountProfiling": "GeneratedFindingAPINameFour",
+    "aws/guardduty/service/additionalInfo/profiledBehavior/frequentProfiledAPIsAccountProfiling": "GeneratedFindingAPINameFive , GeneratedFindingAPINameSix",
+    "aws/guardduty/service/additionalInfo/profiledBehavior/rareProfiledAPIsUserIdentityProfiling": "GeneratedFindingAPINameTwo",
+    "aws/guardduty/service/additionalInfo/profiledBehavior/infrequentProfiledAPIsUserIdentityProfiling": "GeneratedFindingAPINameSix",
+    "aws/guardduty/service/additionalInfo/profiledBehavior/frequentProfiledAPIsUserIdentityProfiling": "GeneratedFindingAPINameFive",
+    "aws/guardduty/service/additionalInfo/profiledBehavior/rareProfiledUserTypesAccountProfiling": "GeneratedFindingUserType",
+    "aws/guardduty/service/additionalInfo/profiledBehavior/infrequentProfiledUserTypesAccountProfiling": "",
+    "aws/guardduty/service/additionalInfo/profiledBehavior/frequentProfiledUserTypesAccountProfiling": "ASSUMED_ROLE",
+    "aws/guardduty/service/additionalInfo/profiledBehavior/rareProfiledUserNamesAccountProfiling": "GeneratedFindingUserName , GeneratedFindingUserNameTwo",
+    "aws/guardduty/service/additionalInfo/profiledBehavior/infrequentProfiledUserNamesAccountProfiling": "",
+    "aws/guardduty/service/additionalInfo/profiledBehavior/frequentProfiledUserNamesAccountProfiling": "GeneratedFindingUserNameTwoThree",
+    "aws/guardduty/service/additionalInfo/profiledBehavior/rareProfiledASNsAccountProfiling": "",
+    "aws/guardduty/service/additionalInfo/profiledBehavior/infrequentProfiledASNsAccountProfiling": "",
+    "aws/guardduty/service/additionalInfo/profiledBehavior/frequentProfiledASNsAccountProfiling": "asnNumber: GeneratedFindingASNOne asnOrg: GeneratedFindingASNOrgOne",
+    "aws/guardduty/service/additionalInfo/profiledBehavior/rareProfiledASNsUserIdentityProfiling": "asnNumber: GeneratedFindingASNOne asnOrg: GeneratedFindingASNOrgOne",
+    "aws/guardduty/service/additionalInfo/profiledBehavior/infrequentProfiledASNsUserIdentityProfiling": "",
+    "aws/guardduty/service/additionalInfo/profiledBehavior/frequentProfiledASNsUserIdentityProfiling": "",
+    "aws/guardduty/service/additionalInfo/profiledBehavior/rareProfiledUserAgentsAccountProfiling": "GeneratedFindingUserAgentOne , GeneratedFindingUserAgentTwo , GeneratedFindingUserAgentThree",
+    "aws/guardduty/service/additionalInfo/profiledBehavior/infrequentProfiledUserAgentsAccountProfiling": "",
+    "aws/guardduty/service/additionalInfo/profiledBehavior/frequentProfiledUserAgentsAccountProfiling": "AWS Service , AWS Internal",
+    "aws/guardduty/service/additionalInfo/profiledBehavior/rareProfiledUserAgentsUserIdentityProfiling": "GeneratedFindingUserAgentOne",
+    "aws/guardduty/service/additionalInfo/profiledBehavior/infrequentProfiledUserAgentsUserIdentityProfiling": "",
+    "aws/guardduty/service/additionalInfo/profiledBehavior/frequentProfiledUserAgentsUserIdentityProfiling": "",
+    "aws/guardduty/service/additionalInfo/unusualBehavior/unusualAPIsAccountProfiling": "GeneratedFindingAPIName",
+    "aws/guardduty/service/additionalInfo/unusualBehavior/unusualAPIsUserIdentityProfiling": "GeneratedFindingAPIName",
+    "aws/guardduty/service/additionalInfo/unusualBehavior/unusualUserTypesAccountProfiling": "",
+    "aws/securityhub/FindingId": "arn:aws:securityhub:us-east-1::product/aws/guardduty/arn:aws:guardduty:us-east-1:111122223333:detector/example0000000000000000000000000/finding/example0000000000000000000000001",
+    "aws/securityhub/ProductName": "GuardDuty",
+    "aws/securityhub/CompanyName": "Amazon"
+  },
+  "Resources": [
+    {
+      "Type": "AwsEc2Instance",
+      "Id": "arn:aws:ec2:us-east-1:111122223333:instance/i-99999999",
+      "Partition": "aws",
+      "Region": "us-east-1",
+      "Provider": "AWS",
+      "Owner": {
+        "Account": {
+          "Id": "111122223333"
+        }
+      },
+      "Tags": {
+        "GeneratedFindingInstaceTag1": "GeneratedFindingInstaceValue1",
+        "GeneratedFindingInstaceTag2": "GeneratedFindingInstaceTagValue2",
+        "GeneratedFindingInstaceTag3": "GeneratedFindingInstaceTagValue3",
+        "GeneratedFindingInstaceTag4": "GeneratedFindingInstaceTagValue4",
+        "GeneratedFindingInstaceTag5": "GeneratedFindingInstaceTagValue5",
+        "GeneratedFindingInstaceTag6": "GeneratedFindingInstaceTagValue6",
+        "GeneratedFindingInstaceTag7": "GeneratedFindingInstaceTagValue7",
+        "GeneratedFindingInstaceTag8": "GeneratedFindingInstaceTagValue8",
+        "GeneratedFindingInstaceTag9": "GeneratedFindingInstaceTagValue9"
+      },
+      "Details": {
+        "AwsEc2Instance": {
+          "Type": "m3.xlarge",
+          "ImageId": "ami-99999999",
+          "IpV4Addresses": [
+            "198.51.100.1",
+            "198.51.100.2",
+            "198.51.100.3",
+            "198.51.100.4",
+            "10.0.0.4",
+            "10.0.0.3",
+            "10.0.0.2",
+            "10.0.0.1"
+          ],
+          "IamInstanceProfileArn": "arn:aws:iam::111122223333:instance-profile/generated",
+          "VpcId": "vpc-generatedvpcid1",
+          "SubnetId": "GeneratedFindingSubnetId1",
+          "LaunchedAt": "2016-08-02T02:05:06.000Z"
+        }
+      }
+    },
+    {
+      "Type": "AwsIamAccessKey",
+      "Id": "AWS::IAM::AccessKey:GeneratedFindingAccessKeyId",
+      "Partition": "aws",
+      "Region": "us-east-1",
+      "Provider": "AWS",
+      "Owner": {
+        "Account": {
+          "Id": "111122223333"
+        }
+      },
+      "Details": {
+        "AwsIamAccessKey": {
+          "PrincipalId": "GeneratedFindingPrincipalId",
+          "PrincipalType": "IAMUser",
+          "PrincipalName": "GeneratedFindingUserName"
+        }
+      }
+    }
+  ],
+  "WorkflowState": "NEW",
+  "Workflow": {
+    "Status": "NEW"
+  },
+  "RecordState": "ACTIVE",
+  "Action": {
+    "ActionType": "AWS_API_CALL",
+    "AwsApiCallAction": {
+      "Api": "GeneratedFindingAPIName",
+      "ServiceName": "GeneratedFindingAPIServiceName",
+      "CallerType": "remoteIp",
+      "RemoteIpDetails": {
+        "IpAddressV4": "198.51.100.0",
+        "Organization": {
+          "AsnOrg": "GeneratedFindingASNOrg",
+          "Isp": "GeneratedFindingISP",
+          "Org": "GeneratedFindingOrg"
+        },
+        "Country": {
+          "CountryName": "GeneratedFindingCountryName"
+        },
+        "City": {
+          "CityName": "GeneratedFindingCityName"
+        },
+        "GeoLocation": {
+          "Lon": 0.0,
+          "Lat": 0.0
+        }
+      }
+    }
+  },
+  "FindingProviderFields": {
+    "Severity": {
+      "Label": "LOW"
+    },
+    "Types": [
+      "TTPs/Discovery/IAMUser-AnomalousBehavior"
+    ]
+  },
+  "Sample": true,
+  "ProcessedAt": "2026-11-06T15:51:14.713Z"
+}

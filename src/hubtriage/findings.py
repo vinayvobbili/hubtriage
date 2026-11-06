@@ -81,14 +81,18 @@ class Finding:
 
     @property
     def is_sample(self) -> bool:
-        """GuardDuty's own mark on what CreateSampleFindings made: nothing to look up or judge.
+        """The product's own mark on a sample finding: nothing to look up or judge.
 
-        Only this field is trusted. A sample's resources carry placeholder names
-        (GeneratedFindingUserName, i-99999999), but anyone can give a real user such a
-        name, and a check on names would let them dismiss a real finding. Not every
-        sample type sets it - Discovery:IAMUser/AnomalousBehavior's does not - and those
-        go through triage like any finding.
+        ASFF's `Sample` is set by the product that imported the finding, and
+        BatchUpdateFindings cannot change it, so neither a customer nor this agent can
+        put it on a real finding. GuardDuty also sets its own field in ProductFields,
+        but not on every sample type (Discovery:IAMUser/AnomalousBehavior's lacks it),
+        so either counts. Only these marks are trusted. A sample's resources carry
+        placeholder names (GeneratedFindingUserName, i-99999999), but anyone can give a
+        real user such a name, and a check on names would let them dismiss a real finding.
         """
+        if self.raw.get("Sample") is True:
+            return True
         fields = self.raw.get("ProductFields") or {}
         return str(fields.get(SAMPLE_FIELD, "")).lower() == "true"
 

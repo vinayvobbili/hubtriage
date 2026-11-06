@@ -9,7 +9,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from hubtriage import cases, cli, llm, verdict
+from hubtriage import cases, cli, llm, scrub, verdict
 
 
 def block(kind: str, text: str = "") -> SimpleNamespace:
@@ -110,9 +110,12 @@ def test_no_answer_never_scores_as_correct_on_a_needs_human_case(tmp_path):
         raise llm.NoAnswer("out of credits")
 
     outcomes = [cases.run(case, down) for case in cases.discover(cli.FIXTURES)]
-    assert any(o.case.label["verdict"] == "needs_human" for o in outcomes)
-    summary = cases.summarize(outcomes)
+    asked = [o for o in outcomes if o.case.label["verdict"] != "sample"]
+    assert any(o.case.label["verdict"] == "needs_human" for o in asked)
+    summary = cases.summarize(asked)
     assert summary["correct"] == 0 and summary["no_answer"] == summary["cases"]
+    # A sample never needed the model, so a model outage changes nothing about it.
+    assert all(o.correct for o in outcomes if o.case.label["verdict"] == "sample")
 
 
 def scored(label: dict, said: str) -> cases.Outcome:
@@ -171,9 +174,8 @@ def test_a_local_server_is_sent_the_answer_schema_with_its_caps(monkeypatch):
 
 def test_the_answer_schema_accepts_what_the_parser_accepts():
     jsonschema = pytest.importorskip("jsonschema")
-    for case in cases.discover(cli.FIXTURES):
-        answer = json.loads((case.directory / "model_output.json").read_text(encoding="utf-8"))
-        jsonschema.validate(answer, verdict.JSON_SCHEMA)
+    for path in Path(cli.FIXTURES).rglob("model_output.json"):
+        jsonschema.validate(json.loads(path.read_text(encoding="utf-8")), verdict.JSON_SCHEMA)
 
 
 LOCAL = {"HUBTRIAGE_LLM": "local", "HUBTRIAGE_LOCAL_URLS": "http://a/v1", "HUBTRIAGE_LOCAL_MODEL": "m"}
@@ -223,8 +225,8 @@ def test_saved_answers_can_be_rescored_without_a_model(monkeypatch, tmp_path, ca
         raise AssertionError("re-scoring must not ask a model")
 
     monkeypatch.setattr(llm, "from_env", no_model)
-    for case in cases.discover(cli.FIXTURES):
-        (tmp_path / f"{case.name}.json").write_bytes((case.directory / "model_output.json").read_bytes())
+    for path in Path(cli.FIXTURES).rglob("model_output.json"):
+        (tmp_path / f"{path.parent.name}.json").write_bytes(path.read_bytes())
     assert cli.main(["eval", "--judge", f"answers:{tmp_path}"]) == 0
     assert "false benign" in capsys.readouterr().out
 
@@ -299,6 +301,13 @@ def test_the_live_commands_refuse_a_public_backend(monkeypatch, command):
 
 
 def test_the_fixtures_directory_holds_only_made_up_cases():
-    # Public backends may read anything under fixtures/, so nothing recorded from a real account goes there.
-    assert sorted(p.name for p in Path(cli.FIXTURES).iterdir() if p.is_dir()) == ["heldout", "synthetic"]
-    assert all(case.label["source"].startswith("synthetic") for case in cases.discover(cli.FIXTURES))
+    # Public backends may read anything under fixtures/, so a case recorded from a real account goes there
+    # only scrubbed, and every file of it still has to pass scrub's own leftover check.
+    assert sorted(p.name for p in Path(cli.FIXTURES).iterdir() if p.is_dir()) == ["heldout", "recorded", "synthetic"]
+    for case in cases.discover(cli.FIXTURES):
+        source = case.label["source"]
+        assert source.startswith("synthetic") or source.startswith("scrubbed"), case.name
+        if source.startswith("scrubbed"):
+            assert case.directory.parent.name == "recorded", case.name
+            for path in case.directory.rglob("*.json"):
+                assert scrub.leftovers(path.read_text(encoding="utf-8")) == [], path

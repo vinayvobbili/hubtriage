@@ -31,5 +31,6 @@ CloudTrail history (2026-11-06). Every instance case has one more record since, 
 gives one, and `brute-force-instance-gone` now shows who terminated the instance and when.
 
 `../heldout` holds six more generated cases, written before any model answered them, to test a policy
-change made after looking at these. Cases recorded from a real account never go under `fixtures/`: the
-public backends may read anything here, and a test keeps it to made-up cases.
+change made after looking at these. Cases recorded from a real account go under `fixtures/` only
+scrubbed, in `../recorded`: the public backends may read anything here, and a test keeps it to
+made-up and scrubbed cases.

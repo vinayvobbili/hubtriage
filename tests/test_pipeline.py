@@ -58,6 +58,9 @@ def test_only_guardduty_s_mark_makes_a_sample():
     assert not sample_of("port-probe-ssh-open", mark="false").is_sample
     # A placeholder name is something an attacker can choose; the mark is GuardDuty's.
     assert not sample_of("port-probe-ssh-open", mark=None, Title="GeneratedFindingInstanceId").is_sample
+    # ASFF's own field, which some GuardDuty sample types carry without GuardDuty's.
+    assert sample_of("port-probe-ssh-open", mark=None, Sample=True).is_sample
+    assert not sample_of("port-probe-ssh-open", mark=None, Sample="false").is_sample
 
 
 def test_a_sample_is_decided_before_any_lookup_or_model(store):
