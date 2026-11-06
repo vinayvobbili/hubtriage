@@ -10,3 +10,10 @@ a scanner approved for an outside range, a second open port on an approved web s
 writing a bucket policy, and a role that no longer exists.
 
 Once a change is tuned on these, they stop being held out. The next change needs new ones.
+
+Their one clean use: Claude 6 of 6, and the cite-what-happened rule let its two correct benigns
+stand. Qwen's runs on them are not clean. Its answers came back looping on the shared server, and
+the JSON Schema hubtriage now sends was added after seeing that, so its 5 of 6 with the schema
+partly reflects a fix made on these cases. It still dismissed backup-role-opens-bucket-policy in
+every run. Before any model may dismiss live findings, it is tested on a new held-out set written
+after these changes.
