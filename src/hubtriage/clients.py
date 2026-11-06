@@ -17,6 +17,10 @@ params, account, region) and the file holding its response. The response is
 what botocore parsed, with `ResponseMetadata` dropped - it carries request ids
 and retry counts that differ on every run and say nothing about the account -
 and timestamps written as ISO 8601.
+
+A call AWS refused (AccessDenied, NoSuchEntity) is recorded too, as an `error`
+in place of a file, and replays as the same refusal. A refusal is an answer the
+model is told about, so a replay without it would not be the run it recorded.
 """
 
 from __future__ import annotations
@@ -37,6 +41,20 @@ class Client(Protocol):
 
 class CassetteMiss(LookupError):
     pass
+
+
+class RecordedError(RuntimeError):
+    """A refusal AWS gave when the cassette was recorded, raised again on replay."""
+
+    def __init__(self, code: str, message: str):
+        super().__init__(message)
+        self.code = code
+
+
+def describe_error(error: Exception) -> dict:
+    response = getattr(error, "response", None)
+    code = response.get("Error", {}).get("Code") if isinstance(response, dict) else None
+    return {"code": code or getattr(error, "code", None) or type(error).__name__, "message": str(error)}
 
 
 # AWS answered, but about the caller's session or load, not about what was asked.
@@ -92,27 +110,23 @@ class Cassette:
         self.directory = Path(directory)
         index_path = self.directory / INDEX
         entries = json.loads(index_path.read_text(encoding="utf-8")) if index_path.exists() else []
-        self._files = {
-            _key(e["service"], e["operation"], e["params"], e["account_id"], e["region"]): e["file"]
+        self._entries = {
+            _key(e["service"], e["operation"], e["params"], e["account_id"], e["region"]): e
             for e in entries
         }
-
-    def path_for(
-        self, service: str, operation: str, params: dict, *, account_id: str, region: str
-    ) -> Path:
-        name = self._files.get(_key(service, operation, params, account_id, region))
-        if name is None:
-            raise CassetteMiss(
-                f"{service}:{operation} {json.dumps(params, sort_keys=True)} in {account_id}/{region}"
-                f" was not recorded in {self.directory}"
-            )
-        return self.directory / name
 
     def call(
         self, service: str, operation: str, params: dict, *, account_id: str, region: str
     ) -> dict:
-        path = self.path_for(service, operation, params, account_id=account_id, region=region)
-        return json.loads(path.read_text(encoding="utf-8"))
+        entry = self._entries.get(_key(service, operation, params, account_id, region))
+        if entry is None:
+            raise CassetteMiss(
+                f"{service}:{operation} {json.dumps(params, sort_keys=True)} in {account_id}/{region}"
+                f" was not recorded in {self.directory}"
+            )
+        if "error" in entry:
+            raise RecordedError(entry["error"]["code"], entry["error"]["message"])
+        return json.loads((self.directory / entry["file"]).read_text(encoding="utf-8"))
 
 
 class Recorder:
@@ -130,26 +144,33 @@ class Recorder:
     def call(
         self, service: str, operation: str, params: dict, *, account_id: str, region: str
     ) -> dict:
-        response = self.client.call(
-            service, operation, params, account_id=account_id, region=region
-        )
+        entry = {
+            "service": service,
+            "operation": operation,
+            "params": params,
+            "account_id": account_id,
+            "region": region,
+        }
+        try:
+            response = self.client.call(
+                service, operation, params, account_id=account_id, region=region
+            )
+        except Exception as e:
+            # No answer at all is not kept: replaying it would invent a refusal.
+            if not is_unavailable(e):
+                self._add({**entry, "error": describe_error(e)})
+            raise
         text = to_json(response)
         name = f"{len(self._entries):02d}-{service}.{operation}.json"
         (self.directory / name).write_text(text, encoding="utf-8")
-        self._entries.append(
-            {
-                "service": service,
-                "operation": operation,
-                "params": params,
-                "account_id": account_id,
-                "region": region,
-                "file": name,
-            }
-        )
+        self._add({**entry, "file": name})
+        return json.loads(text)
+
+    def _add(self, entry: dict) -> None:
+        self._entries.append(entry)
         (self.directory / INDEX).write_text(
             json.dumps(self._entries, indent=2) + "\n", encoding="utf-8"
         )
-        return json.loads(text)
 
 
 class AwsClient:

@@ -194,7 +194,9 @@ def ingest_text(
     """
     try:
         parsed = structured.parse(text, records_at)
-    except structured.ParseError:
+    except structured.ParseError:  # nothing at that path: no instance in the reservation
+        parsed = None
+    if parsed is None or not parsed.rows:  # or an empty list there: no events
         records_at, kind = None, f"{kind}_empty"
         parsed = structured.parse(text, None)
     tool_call_id = store.add_tool_call(
