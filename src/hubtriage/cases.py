@@ -33,6 +33,7 @@ from pathlib import Path
 
 from witness.store import Store
 
+from . import evidence
 from .clients import Cassette, Client, Recorder
 from .findings import Finding
 from .llm import Judge, recorded
@@ -126,6 +127,26 @@ def record(raw: dict, out: str | Path, live: Client, judge: Judge) -> Result:
         store.close()
     (directory / "model_output.json").write_text(result.answer, encoding="utf-8")
     return result
+
+
+def record_evidence(raw: dict, out: str | Path, live: Client) -> tuple[Path, list[evidence.Collected]]:
+    """Keep a live finding and AWS's answers as a case directory, without asking any model.
+
+    For recording cases: the answers are what is worth keeping, and `hubtriage scrub` turns them
+    into a case any model may see. Nothing is written back, so the finding stays NEW.
+    """
+    finding = Finding.from_asff(raw)
+    directory = Path(out) / finding.id.rsplit("/", 1)[-1][:32]
+    directory.mkdir(parents=True, exist_ok=True)
+    shutil.rmtree(directory / "cassette", ignore_errors=True)
+    (directory / "finding.json").write_text(json.dumps(raw, indent=2, default=str) + "\n")
+    with tempfile.TemporaryDirectory() as tmp:
+        store = Store(Path(tmp) / "record.db")
+        try:
+            found = evidence.collect(store, Recorder(live, directory / "cassette"), finding, mode="live")
+        finally:
+            store.close()
+    return directory, found.collected
 
 
 def summarize(outcomes: list[Outcome]) -> dict:

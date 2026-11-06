@@ -156,11 +156,17 @@ def cmd_pull(args) -> int:
 
     session = boto3.Session()
     securityhub = session.client("securityhub", region_name=args.region)
-    judge = llm.from_env()
+    judge = None if args.record_only else llm.from_env()
     live = AwsClient(enrich_role=args.enrich_role, session=session)
     for count, raw in enumerate(hub.new_findings(securityhub, args.product), start=1):
         if count > args.limit:
             break
+        if args.record_only:
+            directory, collected = cases.record_evidence(raw, args.out, live)
+            print(f"{directory}  {Finding.from_asff(raw).title}")
+            for c in collected:
+                print(f"  {c.lookup.service}:{c.lookup.operation}  {c.error or f'{len(c.record_ids)} {c.kind}'}")
+            continue
         result = require_answer(cases.record(raw, args.out, live, judge))
         print(result.finding.title)
         _print_decision(result)
@@ -168,6 +174,26 @@ def cmd_pull(args) -> int:
             hub.write_back(securityhub, result.update)
             print("  written back to Security Hub")
         print()
+    return 0
+
+
+def cmd_scrub(args) -> int:
+    from .scrub import ScrubLeft, scrub_case
+
+    try:
+        counts = scrub_case(args.case, args.out)
+    except ScrubLeft as e:
+        print(f"refused: {e}", file=sys.stderr)
+        return 1
+    # It must still replay: the plan for the scrubbed finding has to find every answer it needs.
+    with tempfile.TemporaryDirectory() as tmp:
+        store = Store(Path(tmp) / "check.db")
+        try:
+            evidence.collect(store, Cassette(Path(args.out) / "cassette"), Finding.load(Path(args.out) / "finding.json"))
+        finally:
+            store.close()
+    print(f"{args.out}: replaced " + ", ".join(f"{n} {kind}" for kind, n in sorted(counts.items())))
+    print("Names are not found by pattern: run the privacy audit on it and read it before it goes anywhere.")
     return 0
 
 
@@ -299,7 +325,14 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--limit", type=int, default=10)
     p.add_argument("--enrich-role", default="hubtriage-enrich")
     p.add_argument("--write-back", action="store_true", help="send each verdict to Security Hub")
+    p.add_argument("--record-only", action="store_true",
+                   help="keep the finding and AWS's answers, ask no model, write nothing back")
     p.set_defaults(fn=cmd_pull)
+
+    p = sub.add_parser("scrub", help="copy a recorded case with every real identifier replaced")
+    p.add_argument("case")
+    p.add_argument("out")
+    p.set_defaults(fn=cmd_scrub)
 
     p = sub.add_parser("consume", help="live: triage findings from the SQS queue")
     p.add_argument("--queue-url", default=os.environ.get("HUBTRIAGE_QUEUE_URL"))
