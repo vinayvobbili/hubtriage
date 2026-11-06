@@ -26,7 +26,7 @@ from pathlib import Path
 from witness.store import Store
 
 from . import cases, consumer, evidence, guardrails, hub, live, llm, verdict
-from .clients import Cassette
+from .clients import Cassette, needs_login
 from .findings import Finding
 from .triage import require_answer
 
@@ -337,7 +337,15 @@ def main(argv: list[str] | None = None) -> int:
     p.set_defaults(fn=cmd_answers)
 
     args = ap.parse_args(argv)
-    return args.fn(args)
+    try:
+        return args.fn(args)
+    except Exception as e:
+        if not needs_login(e):
+            raise
+        profile = os.environ.get("AWS_PROFILE", "<profile>")
+        print(f"AWS login needed ({e}). Sign in and run again:\n  aws sso login --profile {profile}",
+              file=sys.stderr)
+        return 2
 
 
 if __name__ == "__main__":

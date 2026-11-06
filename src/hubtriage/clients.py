@@ -88,6 +88,17 @@ def is_unavailable(error: Exception) -> bool:
     return isinstance(error, BotoCoreError)
 
 
+def needs_login(error: BaseException) -> bool:
+    """True when the AWS session is missing or its SSO login has expired: sign in and run again."""
+    try:
+        from botocore import exceptions
+    except ImportError:
+        return False
+    login = (exceptions.NoCredentialsError, exceptions.SSOError, exceptions.SSOTokenLoadError,
+             exceptions.TokenRetrievalError, exceptions.UnauthorizedSSOTokenError)
+    return isinstance(error, login)
+
+
 def _iso(value: Any) -> str:
     if isinstance(value, (datetime, date)):
         return value.isoformat()

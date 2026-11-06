@@ -43,6 +43,19 @@ def test_an_answer_replays_as_recorded(tmp_path):
     assert Cassette(tmp_path).call("iam", "GetUser", {"UserName": "a"}, **WHERE) == {"User": {"UserName": "a"}}
 
 
+def test_an_expired_login_tells_you_to_sign_in_instead_of_a_traceback(monkeypatch, capsys):
+    from hubtriage import cli, live
+
+    def expired(session, region):
+        raise exceptions.TokenRetrievalError(provider="sso", error_msg="Token has expired and refresh failed")
+
+    monkeypatch.setattr(live, "status", expired)
+    monkeypatch.setattr(pytest.importorskip("boto3"), "Session", lambda: None)
+    monkeypatch.setenv("AWS_PROFILE", "demo-profile")
+    assert cli.main(["status"]) == 2
+    assert "aws sso login --profile demo-profile" in capsys.readouterr().err
+
+
 @pytest.mark.parametrize("text", ['{"Events": []}', '{"Reservations": []}'])
 def test_an_empty_answer_is_still_a_record_a_claim_can_cite(tmp_path, text):
     from witness.store import Store
