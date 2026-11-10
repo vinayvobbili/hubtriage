@@ -6,6 +6,8 @@
     hubtriage records CASE_DIR          the records a case's model sees, with ids
     hubtriage triage CASE_DIR           one case, verdict and write-back request
     hubtriage pull --out DIR            live: new findings, recorded as cases
+    hubtriage paused                    graph engine: triages waiting for a person to approve a dismissal
+    hubtriage resume THREAD approve|reject   graph engine: finish one
     hubtriage consume --queue-url URL   live: findings from the SQS queue, recorded as cases
     hubtriage check-iam --finding-id ID live: prove the agent's IAM limits on a sample finding
     hubtriage status                    live: read-only health of the security account
@@ -20,14 +22,16 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shutil
 import sys
 import tempfile
+import uuid
 from pathlib import Path
 
 from witness.store import Store
 
 from . import cases, consumer, evidence, guardrails, hub, lab, live, llm, verdict
-from .clients import Cassette, needs_login
+from .clients import Cassette, Recorder, needs_login
 from .findings import Finding
 from .triage import require_answer
 
@@ -144,8 +148,59 @@ def cmd_records(args) -> int:
     return 0
 
 
+def _graph():
+    """The LangGraph engine, imported only when asked for: it needs the `graph` extra."""
+    try:
+        from . import graph
+    except ImportError as e:
+        raise SystemExit(f"the graph engine needs LangGraph: pip install 'hubtriage[graph]' ({e})") from e
+    return graph
+
+
+def _securityhub_factory(region: str):
+    def factory():
+        import boto3
+
+        return boto3.Session().client("securityhub", region_name=region)
+
+    return factory
+
+
+def _graph_triage(
+    args, finding: Finding, client, judge, *, store_path: Path, mode: str, send: bool = False,
+    region: str = "us-east-1",
+):
+    """One finding through the graph. Returns the result, or None when it paused for a person."""
+    graph = _graph()
+    thread_id = f"{finding.id.rsplit('/', 1)[-1][:16]}-{uuid.uuid4().hex[:6]}"
+    with graph.checkpointer(args.graph_db) as saver:
+        g = graph.build_graph(client, judge, _securityhub_factory(region), checkpointer=saver)
+        try:
+            return graph.run(g, finding, thread_id, store_path, send=send, mode=mode)
+        except graph.Paused as p:
+            _print_paused(p.request, p.thread_id)
+            return None
+
+
+def _print_paused(request: dict, thread_id: str) -> None:
+    print(f"  paused    benign verdict on {request['title']!r} ({request['severity']}), waiting for a person")
+    for claim in request["claims"]:
+        print(f"            - {claim}")
+    print(f"  thread    {thread_id}")
+    print(f"            hubtriage resume {thread_id} approve|reject")
+
+
 def cmd_triage(args) -> int:
     case = cases.Case(Path(args.case).name, Path(args.case), {})
+    if args.engine == "graph":
+        judge = _judge(args.judge) or llm.recorded(case.directory / "model_output.json")
+        store_path = Path(args.graph_dir) / f"{case.name}-{uuid.uuid4().hex[:6]}" / "case.db"
+        result = _graph_triage(args, case.finding, Cassette(case.directory / "cassette"), judge,
+                               store_path=store_path, mode="replay")
+        if result is not None:
+            _print_decision(result)
+            print(json.dumps(result.update, indent=2))
+        return 0
     outcome = cases.run(case, _judge(args.judge))
     _print_decision(outcome.result)
     print(json.dumps(outcome.result.update, indent=2))
@@ -170,6 +225,19 @@ def cmd_pull(args) -> int:
             for c in collected:
                 print(f"  {c.lookup.service}:{c.lookup.operation}  {c.error or f'{len(c.record_ids)} {c.kind}'}")
             continue
+        if args.engine == "graph":
+            finding = Finding.from_asff(raw)
+            directory = _graph_case_dir(raw, finding, args.out)
+            print(finding.title)
+            result = _graph_triage(args, finding, Recorder(live, directory / "cassette"), judge,
+                                   store_path=directory / "case.db", mode="live",
+                                   send=args.write_back, region=args.region)
+            if result is not None:
+                _print_decision(result)
+                if result.sent:
+                    print("  written back to Security Hub")
+            print()
+            continue
         result = require_answer(cases.record(raw, args.out, live, judge))
         print(result.finding.title)
         _print_decision(result)
@@ -177,6 +245,43 @@ def cmd_pull(args) -> int:
             hub.write_back(securityhub, result.update)
             print("  written back to Security Hub")
         print()
+    return 0
+
+
+def _graph_case_dir(raw: dict, finding: Finding, out: str | Path) -> Path:
+    """A fresh case directory, as cases.record leaves one; the graph writes the rest."""
+    directory = Path(out) / finding.id.rsplit("/", 1)[-1][:32]
+    directory.mkdir(parents=True, exist_ok=True)
+    shutil.rmtree(directory / "cassette", ignore_errors=True)
+    for leftover in directory.glob("case.db*"):
+        leftover.unlink()
+    (directory / "finding.json").write_text(json.dumps(raw, indent=2, default=str) + "\n")
+    return directory
+
+
+def cmd_paused(args) -> int:
+    graph = _graph()
+    with graph.checkpointer(args.graph_db) as saver:
+        waiting = graph.paused(graph.build_graph(None, None, checkpointer=saver))
+    for item in waiting:
+        print(f"{item['thread_id']}  {item['severity']:8} {item['title']}  (account {item['account_id']})")
+        for claim in item["claims"]:
+            print(f"    - {claim}")
+    print(f"{len(waiting)} waiting")
+    return 0
+
+
+def cmd_resume(args) -> int:
+    graph = _graph()
+    with graph.checkpointer(args.graph_db) as saver:
+        g = graph.build_graph(None, None, _securityhub_factory(args.region), checkpointer=saver)
+        try:
+            result = graph.resume(g, args.thread, args.decision)
+        except LookupError as e:
+            raise SystemExit(str(e)) from e
+    print(result.finding.title)
+    _print_decision(result)
+    print("  written back to Security Hub" if result.sent else "  not written back (the triage was not started with --write-back)")
     return 0
 
 
@@ -332,10 +437,31 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--kind")
     p.set_defaults(fn=cmd_records)
 
+    graph_db = os.environ.get("HUBTRIAGE_GRAPH_DB", "runs/graph.db")
+
+    def add_engine(p) -> None:
+        p.add_argument("--engine", choices=["pipeline", "graph"], default="pipeline",
+                       help="graph: the LangGraph engine (pip install 'hubtriage[graph]'), which"
+                       " pauses before a dismissal; pipeline is the default")
+        p.add_argument("--graph-db", default=graph_db, help="the graph engine's checkpoints (default runs/graph.db)")
+
     p = sub.add_parser("triage", help="triage one case directory")
     p.add_argument("case")
     p.add_argument("--judge", default="recorded")
+    p.add_argument("--graph-dir", default="runs/graph", help="where the graph engine keeps a case's records")
+    add_engine(p)
     p.set_defaults(fn=cmd_triage)
+
+    p = sub.add_parser("paused", help="graph engine: triages waiting at a dismissal")
+    p.add_argument("--graph-db", default=graph_db)
+    p.set_defaults(fn=cmd_paused)
+
+    p = sub.add_parser("resume", help="graph engine: approve or reject a paused dismissal")
+    p.add_argument("thread", help="the thread id `hubtriage paused` lists")
+    p.add_argument("decision", choices=["approve", "reject"])
+    p.add_argument("--graph-db", default=graph_db)
+    p.add_argument("--region", default=os.environ.get("AWS_REGION", "us-east-1"))
+    p.set_defaults(fn=cmd_resume)
 
     p = sub.add_parser("pull", help="live: triage new findings and record each as a case")
     p.add_argument("--out", default="recordings")
@@ -346,6 +472,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--write-back", action="store_true", help="send each verdict to Security Hub")
     p.add_argument("--record-only", action="store_true",
                    help="keep the finding and AWS's answers, ask no model, write nothing back")
+    add_engine(p)
     p.set_defaults(fn=cmd_pull)
 
     p = sub.add_parser("scrub", help="copy a recorded case with every real identifier replaced")

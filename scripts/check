@@ -12,7 +12,7 @@ for v in "${VERSIONS[@]}"; do
   echo "== Python $v"
   env=".venv-py$v"
   uv venv --quiet --allow-existing --python "$v" "$env"
-  VIRTUAL_ENV="$env" uv pip install --quiet -e ".[dev,aws]"
+  VIRTUAL_ENV="$env" uv pip install --quiet -e ".[dev,aws,graph]"
   "$env/bin/ruff" check .
   "$env/bin/python" -m pytest -q
 done

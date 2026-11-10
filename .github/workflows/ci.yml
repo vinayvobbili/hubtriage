@@ -23,7 +23,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: python -m pip install --upgrade pip
-      - run: pip install -e ".[dev,aws]"
+      - run: pip install -e ".[dev,aws,graph]"
       - run: ruff check .
       - run: pytest -q
       - name: Demo (every labeled case must come out as labeled)
