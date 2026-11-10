@@ -206,6 +206,35 @@ check on the evidence can catch. A backend is added once a model it serves passe
 written after the last change, with no false benign. A shared local server queues requests from
 other programs, so `HUBTRIAGE_LOCAL_TIMEOUT` (seconds, default 120) counts the wait too.
 
+## Graph engine
+
+An alternative to the default pipeline: the same steps (`evidence.collect`, the prompt, the judge, the
+gate, `build_update`, `BatchUpdateFindings`) as LangGraph
+nodes, with the routing explicit, and a pause before any dismissal. The pipeline stays the default.
+
+```bash
+pip install -e '.[graph]'
+hubtriage triage fixtures/synthetic/ci-user-deploys --engine graph
+hubtriage pull --engine graph --write-back       # live; same model rules as the pipeline
+hubtriage paused                                 # triages waiting for a person
+hubtriage resume <thread> approve                # or reject
+```
+
+A benign verdict that survives the gate stops at `interrupt()` and is not written. Its state is kept in
+SQLite (`runs/graph.db`, or `HUBTRIAGE_GRAPH_DB` / `--graph-db`), so `resume` can finish it from another
+process. The model is the same judge chain as the pipeline (`HUBTRIAGE_LLM`, default local then Bedrock),
+so live findings are refused by the public backends here too.
+
+| Case | Route | Written back |
+|---|---|---|
+| the product marked it a sample | straight to write-back | `FALSE_POSITIVE` |
+| HIGH or CRITICAL severity, whatever the model said | person | `UNKNOWN`: needs a human |
+| the gate refused the verdict, or the model said needs a human | person | `UNKNOWN`: needs a human |
+| benign from a backend outside `HUBTRIAGE_MAY_DISMISS` | person | `UNKNOWN`: needs a human |
+| benign, every check passed | pause; approve | `BENIGN_POSITIVE` |
+| benign, every check passed | pause; reject | `UNKNOWN`: needs a human |
+| true positive | write-back | `TRUE_POSITIVE` |
+
 ## Status
 
 - [x] Offline pipeline: evidence → records → verdict → gate → write-back request, with tests
