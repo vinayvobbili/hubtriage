@@ -62,12 +62,15 @@ resource "aws_security_group" "ssh_open" {
   }
 }
 
-resource "aws_vpc_security_group_ingress_rule" "ssh_from_anywhere" {
+# Every TCP port, not only 22: GuardDuty reports a probe only when the source is on its threat
+# lists, so more open ports means more chances. Only sshd listens, so the rest answer nothing.
+# A group named for SSH that opens everything is also a realistic mistake to triage.
+resource "aws_vpc_security_group_ingress_rule" "all_tcp_from_anywhere" {
   security_group_id = aws_security_group.ssh_open.id
   description       = "SSH"
   ip_protocol       = "tcp"
-  from_port         = 22
-  to_port           = 22
+  from_port         = 0
+  to_port           = 65535
   cidr_ipv4         = "0.0.0.0/0"
 }
 
@@ -89,5 +92,36 @@ resource "aws_instance" "target" {
     encrypted   = true
   }
 
+  # The box itself misbehaves too: every hour it resolves two public Monero mining pools.
+  # GuardDuty reads the instance's DNS queries and should report
+  # CryptoCurrency:EC2/BitcoinTool.B!DNS, a finding the agent must not dismiss. The lookups
+  # need no egress rule: security groups do not filter the VPC's own DNS resolver. Nothing
+  # mines and nothing connects; a name lookup is all GuardDuty needs to see. AWS's own test
+  # domain would work as well, but its name says "guardduty" and would tell the model.
+  user_data                   = <<-EOT
+    #!/bin/bash
+    cat > /etc/systemd/system/lookup.service <<'UNIT'
+    [Service]
+    Type=oneshot
+    ExecStart=/bin/sh -c 'for d in pool.supportxmr.com xmr-us-east1.nanopool.org; do getent hosts "$d"; done'
+    UNIT
+    cat > /etc/systemd/system/lookup.timer <<'UNIT'
+    [Timer]
+    OnBootSec=5min
+    OnUnitActiveSec=1h
+    [Install]
+    WantedBy=timers.target
+    UNIT
+    systemctl daemon-reload
+    systemctl enable --now lookup.timer
+  EOT
+  user_data_replace_on_change = true
+
   tags = { Name = "ssh-host" }
+
+  # AWS publishes a new AMI every few weeks; without this every later apply would replace the
+  # box and start a fresh history. Replace it on purpose with -replace when that is wanted.
+  lifecycle {
+    ignore_changes = [ami]
+  }
 }
