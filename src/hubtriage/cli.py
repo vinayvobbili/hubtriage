@@ -9,6 +9,7 @@
     hubtriage consume --queue-url URL   live: findings from the SQS queue, recorded as cases
     hubtriage check-iam --finding-id ID live: prove the agent's IAM limits on a sample finding
     hubtriage status                    live: read-only health of the security account
+    hubtriage lab --instance ID         live: the stage-21 lab instance, and GuardDuty's view of it
     hubtriage sample [--wait SECONDS]   live: generate GuardDuty samples, wait for the queue
     hubtriage test-alert                live: send one test email through the alarm
     hubtriage answers DIR               what each saved model answer said (eval --answers)
@@ -25,7 +26,7 @@ from pathlib import Path
 
 from witness.store import Store
 
-from . import cases, consumer, evidence, guardrails, hub, live, llm, verdict
+from . import cases, consumer, evidence, guardrails, hub, lab, live, llm, verdict
 from .clients import Cassette, needs_login
 from .findings import Finding
 from .triage import require_answer
@@ -255,6 +256,22 @@ def cmd_status(args) -> int:
     return 0 if all(line.ok for line in lines) else 1
 
 
+def cmd_lab(args) -> int:
+    import boto3
+
+    # The caller's AWS_PROFILE is the security account; the instance is in workload.
+    security = boto3.Session()
+    workload = boto3.Session(profile_name=args.workload_profile)
+    lines = lab.lab(
+        security.client("guardduty", region_name=args.region),
+        workload.client("ec2", region_name=args.region),
+        args.instance,
+    )
+    for line in lines:
+        print(f"{line.name:24} {line.value}")
+    return 0
+
+
 def cmd_sample(args) -> int:
     import boto3
 
@@ -362,6 +379,13 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("status", help="live: read-only health of the security account")
     p.add_argument("--region", default=region)
     p.set_defaults(fn=cmd_status)
+
+    p = sub.add_parser("lab", help="live: is the stage-21 lab up, and is GuardDuty seeing it")
+    p.add_argument("--instance", required=True, help="the lab instance id, i-...")
+    p.add_argument("--workload-profile", default=os.environ.get("HUBTRIAGE_WORKLOAD_PROFILE", "hubtriage-workload"),
+                   help="AWS profile for the workload account; AWS_PROFILE is the security account")
+    p.add_argument("--region", default=region)
+    p.set_defaults(fn=cmd_lab)
 
     p = sub.add_parser("sample", help="live: generate GuardDuty sample findings")
     p.add_argument("--type", action="append", help="a finding type; repeatable")
