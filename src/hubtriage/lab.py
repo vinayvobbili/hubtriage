@@ -10,10 +10,9 @@ from typing import Any
 
 from .live import Line, detector_id
 
-# GetUsageStatistics wants the data sources named; these are the ones GuardDuty bills for.
+# GetUsageStatistics wants the data sources named, and rejects any it does not list.
 DATA_SOURCES = [
-    "FLOW_LOGS", "CLOUD_TRAIL", "DNS_LOGS", "S3_LOGS", "KUBERNETES_AUDIT_LOGS",
-    "EC2_MALWARE_SCAN", "RDS_LOGIN_EVENTS", "LAMBDA_NETWORK_LOGS", "EKS_RUNTIME_MONITORING",
+    "FLOW_LOGS", "CLOUD_TRAIL", "DNS_LOGS", "S3_LOGS", "KUBERNETES_AUDIT_LOGS", "EC2_MALWARE_SCAN",
 ]
 
 

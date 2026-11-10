@@ -268,7 +268,7 @@ def cmd_lab(args) -> int:
         args.instance,
     )
     for line in lines:
-        print(f"{line.name:24} {line.value}")
+        print(f"{line.name:28} {line.value}")
     return 0
 
 
