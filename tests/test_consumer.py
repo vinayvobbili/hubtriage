@@ -241,21 +241,24 @@ def test_a_model_outage_stops_the_run_and_leaves_every_finding_open(tmp_path):
 
 
 def test_new_findings_can_be_limited_to_one_resource():
-    class Paginated:
-        filters = None
+    def about(name, resource):
+        return {"Id": name, "Resources": [{"Id": resource}]}
 
+    class Paginated:
         def get_paginator(self, name):
             return self
 
         def paginate(self, Filters):
-            self.filters = Filters
-            return [{"Findings": [{"Id": "a"}]}]
+            return [{"Findings": [
+                about("a", "arn:aws:ec2:us-east-1:111122223333:instance/i-0123456789abcdef0"),
+                about("b", "arn:aws:ec2:us-east-1:111122223333:instance/i-0fedcba9876543210"),
+                about("c", "i-0123456789abcdef0"),
+                {"Id": "d"},
+            ]}]
 
-    client = Paginated()
-    assert list(hub.new_findings(client, "GuardDuty", "i-0123456789abcdef0")) == [{"Id": "a"}]
-    assert client.filters["ResourceId"] == [{"Value": "i-0123456789abcdef0", "Comparison": "CONTAINS"}]
-    list(hub.new_findings(client))
-    assert "ResourceId" not in client.filters
+    ids = lambda found: [f["Id"] for f in found]  # noqa: E731
+    assert ids(hub.new_findings(Paginated(), "GuardDuty", "i-0123456789abcdef0")) == ["a", "c"]
+    assert ids(hub.new_findings(Paginated())) == ["a", "b", "c", "d"]
 
 
 def test_pull_passes_the_resource_id_and_asks_no_model_when_recording(monkeypatch, tmp_path, capsys):

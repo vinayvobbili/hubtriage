@@ -19,14 +19,20 @@ NEW_ACTIVE = {
 def new_findings(
     securityhub: Any, product_name: str | None = "GuardDuty", resource_id: str | None = None
 ) -> Iterator[dict]:
-    """New active findings; `resource_id` keeps those about one resource (an instance id, or its ARN)."""
+    """New active findings; `resource_id` keeps those about one resource, like an instance id.
+
+    The hub's ResourceId filter takes no substring, and a resource's Id is its ARN (which carries
+    the account), so the match is made here: the id is the ARN's last part, or the whole Id.
+    """
     filters = dict(NEW_ACTIVE)
     if product_name:
         filters["ProductName"] = [{"Value": product_name, "Comparison": "EQUALS"}]
-    if resource_id:
-        filters["ResourceId"] = [{"Value": resource_id, "Comparison": "CONTAINS"}]
     for page in securityhub.get_paginator("get_findings").paginate(Filters=filters):
-        yield from page["Findings"]
+        for found in page["Findings"]:
+            if not resource_id or any(
+                r.get("Id", "").rsplit("/", 1)[-1] == resource_id for r in found.get("Resources", [])
+            ):
+                yield found
 
 
 class NotInHub(LookupError):
