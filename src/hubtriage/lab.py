@@ -76,7 +76,7 @@ def finding_lines(guardduty: Any, detector: str, instance: str) -> list[Line]:
         service = f["Service"]
         lines.append(Line(
             f["Type"],
-            f"severity {f['Severity']}, seen {service.get('Count', 1)}x,"
+            f"id {f['Id'][:8]}, severity {f['Severity']}, seen {service.get('Count', 1)}x,"
             f" first {service['EventFirstSeen']}, last {service['EventLastSeen']}",
         ))
     return lines

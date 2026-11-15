@@ -21,12 +21,12 @@ class Pages:
         return self.pages
 
 
-def finding(kind, count=3, sample=False):
+def finding(kind, count=3, sample=False, ident="abcdef0123456789"):
     service = {"Count": count, "EventFirstSeen": "2026-01-01T00:00:00Z",
                "EventLastSeen": "2026-01-02T00:00:00Z"}
     if sample:
         service["AdditionalInfo"] = {"Sample": True}
-    return {"Type": kind, "Severity": 2, "Service": service}
+    return {"Id": ident, "Type": kind, "Severity": 2, "Service": service}
 
 
 class Fake:
@@ -107,6 +107,13 @@ def test_findings_are_looked_up_by_instance_and_samples_are_left_out():
     assert out["findings"] == "1"
     assert "Backdoor:EC2/C&CActivity.B" not in out
     assert fake.criteria["Criterion"]["resource.instanceDetails.instanceId"] == {"Eq": [INSTANCE]}
+
+
+def test_findings_of_one_type_are_told_apart_by_their_short_id():
+    fake = Fake()
+    fake.findings = [finding("CryptoCurrency:EC2/BitcoinTool.B!DNS", ident=i) for i in ("4cd0e34eAA", "5ad0e34eBB")]
+    lines = [x.value for x in lab.finding_lines(fake, "detector", INSTANCE) if x.name.startswith("Crypto")]
+    assert [v.split(",")[0] for v in lines] == ["id 4cd0e34e", "id 5ad0e34e"]
 
 
 def test_no_findings_and_no_public_address():
