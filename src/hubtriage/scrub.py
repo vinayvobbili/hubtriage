@@ -34,7 +34,10 @@ KEY = re.compile(r"\b(AKIA|ASIA|AIDA|AROA|AGPA|ANPA|AIPA|ANVA|ABIA|ACCA)[A-Z0-9]
 SSO = re.compile(r"\b(AWSReservedSSO_[A-Za-z0-9+=,.@-]+?)_[0-9a-f]{16}\b")
 # EC2 and VPC resource ids: an instance, group, VPC, subnet, network interface or volume.
 # Placeholders count up from zero (eight leading zeros), which a real random id never has.
-RESOURCE = re.compile(r"\b(i|sg|vpc|subnet|eni|vol)-([0-9a-f]{17})\b")
+RESOURCE = re.compile(r"\b(eni-attach|i|sg|vpc|subnet|eni|vol|r)-([0-9a-f]{17})\b")
+# A public DNS name carries its address, ec2-203-0-113-9.compute-1.amazonaws.com; a MAC names a device.
+PUBLIC_DNS = re.compile(r"\bec2-(\d{1,3}-\d{1,3}-\d{1,3}-\d{1,3})\b")
+MAC = re.compile(r"(?<![\w:])(?:[0-9a-f]{2}:){5}[0-9a-f]{2}(?![\w:])", re.IGNORECASE)
 EMAIL = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+")
 V4 = re.compile(r"(?<![\d.])\d{1,3}(?:\.\d{1,3}){3}(?![\d.])")
 V6 = re.compile(r"(?<![\w:])[0-9a-fA-F]{1,4}(?::[0-9a-fA-F]{0,4}){3,7}(?![\w:])")
@@ -78,10 +81,18 @@ class Scrubber:
             return self._swap("account", m.group(),
                               lambda n: ACCOUNTS[n] if n < len(ACCOUNTS) else f"99998888{n:04d}")
 
+        def fake_v4(real: str) -> str:
+            return self._swap("ipv4", real, lambda n: f"203.0.113.{n % 254 + 1}")
+
         def v4(m):
-            if not _routable(m.group()):
-                return m.group()
-            return self._swap("ipv4", m.group(), lambda n: f"203.0.113.{n % 254 + 1}")
+            return fake_v4(m.group()) if _routable(m.group()) else m.group()
+
+        def public_dns(m):
+            real = m.group(1).replace("-", ".")
+            return f"ec2-{fake_v4(real).replace('.', '-')}" if _routable(real) else m.group()
+
+        def mac(m):
+            return self._swap("mac", m.group().lower(), lambda n: f"02:00:00:00:00:{n + 1:02x}")
 
         def v6(m):
             if not _routable(m.group()):
@@ -103,7 +114,9 @@ class Scrubber:
         text = ORG.sub(lambda m: self._swap("org", m.group(), lambda n: f"o-exampleorg{n + 1:02d}"), text)
         text = HEX32.sub(lambda m: self._swap("hex32", m.group(), lambda n: f"example{n:025d}"), text)
         text = EMAIL.sub(email, text)
+        text = MAC.sub(mac, text)
         text = V6.sub(v6, text)
+        text = PUBLIC_DNS.sub(public_dns, text)
         text = V4.sub(v4, text)
         return ACCOUNT.sub(account, text)
 
@@ -121,6 +134,8 @@ def leftovers(text: str, names: list[str] | None = None) -> list[str]:
     found += [m.group() for m in EMAIL.finditer(text) if m.group().split("@")[1].split(".")[0] != "example"]
     found += [m.group() for m in V4.finditer(text) if _routable(m.group())]
     found += [m.group() for m in V6.finditer(text) if _routable(m.group())]
+    found += [m.group() for m in PUBLIC_DNS.finditer(text) if _routable(m.group(1).replace("-", "."))]
+    found += [m.group() for m in MAC.finditer(text) if not m.group().startswith("02:00:00:00:00")]
     return found
 
 

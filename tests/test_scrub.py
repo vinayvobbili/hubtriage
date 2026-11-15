@@ -60,6 +60,16 @@ def test_ec2_resource_ids_become_placeholders_the_same_way_everywhere():
     assert leftovers(real) == real.split()
 
 
+def test_a_public_dns_name_follows_its_address_and_a_mac_and_attachment_are_replaced():
+    s = Scrubber()
+    out = s.text("8.8.8.8 ec2-8-8-8-8.compute-1.amazonaws.com ip-172-31-25-176 0A:FF:E8:B7:07:EB"
+                 " eni-attach-0a1b2c3d4e5f60718 r-0a1b2c3d4e5f60718")
+    assert out == ("203.0.113.1 ec2-203-0-113-1.compute-1.amazonaws.com ip-172-31-25-176 02:00:00:00:00:01"
+                   " eni-attach-00000000000000001 r-00000000000000002")
+    assert not leftovers(out)
+    assert len(leftovers("ec2-8-8-4-4.compute-1.amazonaws.com 0a:ff:e8:b7:07:eb")) == 2
+
+
 def test_leftovers_name_what_still_looks_real():
     found = leftovers(f"{REAL_ACCOUNT} 8.8.4.4 {REAL_SSO} sam@globex.com")
     assert set(found) == {REAL_ACCOUNT, "8.8.4.4", REAL_SSO, "sam@globex.com"}
