@@ -1,0 +1,26 @@
+{
+  "verdict": "true_positive",
+  "summary": "The instance queried xmr-us-east1.nanopool.org, a Bitcoin-related mining pool domain, and the query was not blocked.",
+  "claims": [
+    {
+      "text": "The instance queried the domain xmr-us-east1.nanopool.org.",
+      "bindings": [
+        {
+          "record_id": "8be4a8d0d009#0000",
+          "field": "Action.DnsRequestAction.Domain",
+          "value": "xmr-us-east1.nanopool.org"
+        }
+      ]
+    },
+    {
+      "text": "The activity was a DNS request.",
+      "bindings": [
+        {
+          "record_id": "8be4a8d0d009#0000",
+          "field": "Action.ActionType",
+          "value": "DNS_REQUEST"
+        }
+      ]
+    }
+  ]
+}

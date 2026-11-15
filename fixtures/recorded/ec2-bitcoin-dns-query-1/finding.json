@@ -1,0 +1,109 @@
+{
+  "SchemaVersion": "2018-10-08",
+  "Id": "arn:aws:guardduty:us-east-1:111122223333:detector/example0000000000000000000000000/finding/example0000000000000000000000001",
+  "ProductArn": "arn:aws:securityhub:us-east-1::product/aws/guardduty",
+  "ProductName": "GuardDuty",
+  "CompanyName": "Amazon",
+  "Region": "us-east-1",
+  "GeneratorId": "arn:aws:guardduty:us-east-1:111122223333:detector/example0000000000000000000000000",
+  "AwsAccountId": "111122223333",
+  "Types": [
+    "TTPs/Command and Control/CryptoCurrency:EC2-BitcoinTool.B!DNS",
+    "Effects/Resource Consumption/CryptoCurrency:EC2-BitcoinTool.B!DNS"
+  ],
+  "FirstObservedAt": "2026-11-10T17:55:59.000Z",
+  "LastObservedAt": "2026-11-15T17:21:59.000Z",
+  "CreatedAt": "2026-11-10T17:59:12.015Z",
+  "UpdatedAt": "2026-11-15T17:25:15.315Z",
+  "Severity": {
+    "Product": 8.0,
+    "Label": "HIGH",
+    "Normalized": 50
+  },
+  "Title": "The EC2 instance i-00000000000000002 queried a Bitcoin-related domain name.",
+  "Description": "The EC2 instance i-00000000000000002 is querying a domain name that is associated with Bitcoin-related activity.",
+  "SourceUrl": "https://us-east-1.console.aws.amazon.com/guardduty/home?region=us-east-1#/findings?macros=current&fId=example0000000000000000000000001",
+  "ProductFields": {
+    "aws/guardduty/service/action/actionType": "DNS_REQUEST",
+    "aws/guardduty/service/action/dnsRequestAction/blocked": "false",
+    "aws/guardduty/service/action/dnsRequestAction/domain": "pool.supportxmr.com",
+    "aws/guardduty/service/action/dnsRequestAction/domainWithSuffix": "supportxmr.com",
+    "aws/guardduty/service/action/dnsRequestAction/protocol": "UDP",
+    "aws/guardduty/service/action/dnsRequestAction/vpcOwnerAccountId": "111122223333",
+    "aws/guardduty/service/additionalInfo/threatListName": "Amazon Active Threat Defense",
+    "aws/guardduty/service/additionalInfo/threatName": "Bitcoin Related,PUA:Linux/CoinMiner.A,suspicious:mining/stratum",
+    "aws/guardduty/service/additionalInfo/value": "{\"threatListName\":\"Amazon Active Threat Defense\",\"threatName\":\"Bitcoin Related,PUA:Linux/CoinMiner.A,suspicious:mining/stratum\"}",
+    "aws/guardduty/service/additionalInfo/type": "default",
+    "aws/guardduty/service/archived": "false",
+    "aws/guardduty/service/count": "240",
+    "aws/guardduty/service/detectorId": "example0000000000000000000000000",
+    "aws/guardduty/service/eventFirstSeen": "2026-11-10T17:55:59.000Z",
+    "aws/guardduty/service/eventLastSeen": "2026-11-15T17:21:59.000Z",
+    "aws/guardduty/service/evidence/threatIntelligenceDetails.0_/threatListName": "Amazon Active Threat Defense",
+    "aws/guardduty/service/evidence/threatIntelligenceDetails.0_/threatNames.0_": "Bitcoin Related",
+    "aws/guardduty/service/evidence/threatIntelligenceDetails.0_/threatNames.1_": "PUA:Linux/CoinMiner.A",
+    "aws/guardduty/service/evidence/threatIntelligenceDetails.0_/threatNames.2_": "suspicious:mining/stratum",
+    "aws/guardduty/service/featureName": "DnsQueryLogs",
+    "aws/guardduty/service/resourceRole": "TARGET",
+    "aws/guardduty/service/serviceName": "guardduty",
+    "aws/securityhub/FindingId": "arn:aws:securityhub:us-east-1::product/aws/guardduty/arn:aws:guardduty:us-east-1:111122223333:detector/example0000000000000000000000000/finding/example0000000000000000000000001",
+    "aws/securityhub/ProductName": "GuardDuty",
+    "aws/securityhub/CompanyName": "Amazon"
+  },
+  "Resources": [
+    {
+      "Type": "AwsEc2Instance",
+      "Id": "arn:aws:ec2:us-east-1:111122223333:instance/i-00000000000000002",
+      "Partition": "aws",
+      "Region": "us-east-1",
+      "Provider": "AWS",
+      "Owner": {
+        "Account": {
+          "Id": "111122223333"
+        }
+      },
+      "Tags": {
+        "Name": "ssh-host",
+        "ManagedBy": "terraform"
+      },
+      "Details": {
+        "AwsEc2Instance": {
+          "Type": "t4g.nano",
+          "ImageId": "ami-0cc337c0f1a9da5ed",
+          "IpV4Addresses": [
+            "203.0.113.1",
+            "172.31.25.176"
+          ],
+          "VpcId": "vpc-00000000000000007",
+          "SubnetId": "subnet-00000000000000006",
+          "LaunchedAt": "2026-11-10T17:50:02.000Z"
+        }
+      }
+    }
+  ],
+  "WorkflowState": "NEW",
+  "Workflow": {
+    "Status": "NEW"
+  },
+  "RecordState": "ACTIVE",
+  "Action": {
+    "ActionType": "DNS_REQUEST",
+    "DnsRequestAction": {
+      "Domain": "pool.supportxmr.com",
+      "Protocol": "UDP",
+      "Blocked": false
+    }
+  },
+  "FindingProviderFields": {
+    "Severity": {
+      "Label": "HIGH"
+    },
+    "Types": [
+      "TTPs/Command and Control/CryptoCurrency:EC2-BitcoinTool.B!DNS",
+      "Effects/Resource Consumption/CryptoCurrency:EC2-BitcoinTool.B!DNS"
+    ]
+  },
+  "Sample": false,
+  "ProcessedAt": "2026-11-15T18:00:55.919Z",
+  "AwsAccountName": "workload"
+}

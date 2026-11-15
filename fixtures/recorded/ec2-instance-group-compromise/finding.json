@@ -1,0 +1,400 @@
+{
+  "SchemaVersion": "2018-10-08",
+  "Id": "arn:aws:guardduty:us-east-1:111122223333:detector/example0000000000000000000000000/finding/example0000000000000000000000001",
+  "ProductArn": "arn:aws:securityhub:us-east-1::product/aws/guardduty",
+  "ProductName": "GuardDuty",
+  "CompanyName": "Amazon",
+  "Region": "us-east-1",
+  "GeneratorId": "arn:aws:guardduty:us-east-1:111122223333:detector/example0000000000000000000000000",
+  "AwsAccountId": "111122223333",
+  "Types": [
+    "TTPs/AttackSequence:EC2/CompromisedInstanceGroup"
+  ],
+  "FirstObservedAt": "2026-11-10T17:55:59.000Z",
+  "LastObservedAt": "2026-11-15T17:21:59.000Z",
+  "CreatedAt": "2026-11-11T22:31:27.092Z",
+  "UpdatedAt": "2026-11-15T17:31:54.635Z",
+  "Severity": {
+    "Product": 9.0,
+    "Label": "CRITICAL",
+    "Normalized": 90
+  },
+  "Title": "Potential EC2 instance group compromise of one or more instances indicated by a sequence of actions.",
+  "Description": "A sequence of actions involving 5 signals indicating a potential compromise of EC2 instance i-00000000000000002 in account 111122223333 between 2026-11-10T17:55:59Z and 2026-11-15T17:21:59Z. Evidence: - 2 MITRE tactics observed: Impact, Credential Access - 2 MITRE techniques observed:   - T1110 - Brute Force   - T1496 - Resource Hijacking - DNS queries to Cryptomining domains: pool.supportxmr.com, xmr-us-east1.nanopool.org, pool-nyc.supportxmr.com ",
+  "SourceUrl": "https://us-east-1.console.aws.amazon.com/guardduty/home?region=us-east-1#/findings?macros=current&fId=example0000000000000000000000001",
+  "ProductFields": {
+    "aws/guardduty/service/additionalInfo/value": "",
+    "aws/guardduty/service/additionalInfo/type": "default",
+    "aws/guardduty/service/archived": "false",
+    "aws/guardduty/service/count": "104",
+    "aws/guardduty/service/detection": "",
+    "aws/guardduty/service/detectorId": "example0000000000000000000000000",
+    "aws/guardduty/service/eventFirstSeen": "2026-11-10T17:55:59.000Z",
+    "aws/guardduty/service/eventLastSeen": "2026-11-15T17:21:59.000Z",
+    "aws/guardduty/service/featureName": "Correlation",
+    "aws/guardduty/service/serviceName": "guardduty",
+    "aws/guardduty/service/detection/sequence/resources.0_/data/ec2Image/ec2InstanceUids.0_": "i-00000000000000002",
+    "aws/securityhub/FindingId": "arn:aws:securityhub:us-east-1::product/aws/guardduty/arn:aws:guardduty:us-east-1:111122223333:detector/example0000000000000000000000000/finding/example0000000000000000000000001",
+    "aws/securityhub/ProductName": "GuardDuty",
+    "aws/securityhub/CompanyName": "Amazon"
+  },
+  "Resources": [
+    {
+      "Type": "AwsEc2Instance",
+      "Id": "arn:aws:ec2:us-east-1:111122223333:instance/i-00000000000000002",
+      "Partition": "aws",
+      "Region": "us-east-1",
+      "Provider": "AWS",
+      "Owner": {
+        "Account": {
+          "Id": "111122223333"
+        }
+      },
+      "Tags": {
+        "GuardDuty": "ResourceV2"
+      },
+      "Details": {
+        "AwsEc2Instance": {
+          "Type": "t4g.nano",
+          "NetworkInterfaces": [
+            {
+              "NetworkInterfaceId": "203.0.113.1"
+            },
+            {
+              "NetworkInterfaceId": "eni-00000000000000005"
+            }
+          ]
+        }
+      },
+      "ApplicationArn": "arn:aws:ec2:us-east-1:111122223333:instance/i-00000000000000002"
+    }
+  ],
+  "WorkflowState": "NEW",
+  "Workflow": {
+    "Status": "NEW"
+  },
+  "RecordState": "ACTIVE",
+  "FindingProviderFields": {
+    "Severity": {
+      "Label": "CRITICAL"
+    },
+    "Types": [
+      "TTPs/AttackSequence:EC2/CompromisedInstanceGroup"
+    ]
+  },
+  "Sample": false,
+  "ProcessedAt": "2026-11-15T18:01:16.348Z",
+  "AwsAccountName": "workload",
+  "Detection": {
+    "Sequence": {
+      "Uid": "1794333803503-28287393-17ee-40a5-8f46-75d55320c8f3",
+      "Actors": [],
+      "Endpoints": [
+        {
+          "Id": "172.31.25.176:22:INBOUND",
+          "Ip": "172.31.25.176",
+          "Port": 22,
+          "Connection": {
+            "Direction": "INBOUND"
+          }
+        },
+        {
+          "Id": "pool-nyc.supportxmr.com",
+          "Domain": "pool-nyc.supportxmr.com"
+        },
+        {
+          "Id": "pool.supportxmr.com",
+          "Domain": "pool.supportxmr.com"
+        },
+        {
+          "Id": "xmr-us-east1.nanopool.org",
+          "Domain": "xmr-us-east1.nanopool.org"
+        },
+        {
+          "Id": "203.0.113.3:32806:INBOUND",
+          "Ip": "203.0.113.3",
+          "Port": 32806,
+          "Location": {
+            "Country": "CN",
+            "Lat": 34.7732,
+            "Lon": 113.722
+          },
+          "AutonomousSystem": {
+            "Name": "China Unicom Beijing Province Network",
+            "Number": 4808
+          },
+          "Connection": {
+            "Direction": "INBOUND"
+          }
+        },
+        {
+          "Id": "203.0.113.4:33672:INBOUND",
+          "Ip": "203.0.113.4",
+          "Port": 33672,
+          "Location": {
+            "Country": "CN",
+            "Lat": 34.7732,
+            "Lon": 113.722
+          },
+          "AutonomousSystem": {
+            "Name": "China Telecom Beijing Tianjin Hebei Big Data Industry Park Branch",
+            "Number": 141679
+          },
+          "Connection": {
+            "Direction": "INBOUND"
+          }
+        },
+        {
+          "Id": "203.0.113.3:32786:INBOUND",
+          "Ip": "203.0.113.3",
+          "Port": 32786,
+          "Location": {
+            "Country": "CN",
+            "Lat": 34.7732,
+            "Lon": 113.722
+          },
+          "AutonomousSystem": {
+            "Name": "China Unicom Beijing Province Network",
+            "Number": 4808
+          },
+          "Connection": {
+            "Direction": "INBOUND"
+          }
+        }
+      ],
+      "Signals": [
+        {
+          "Type": "FINDING",
+          "Id": "arn:aws:guardduty:us-east-1:111122223333:detector/example0000000000000000000000000/finding/example0000000000000000000000002",
+          "Title": "203.0.113.3 is performing SSH brute force attacks against i-00000000000000002.",
+          "ResourceIds": [
+            "i-00000000000000002",
+            "ami-0cc337c0f1a9da5ed"
+          ],
+          "SignalIndicators": [
+            {
+              "Key": "ATTACK_TACTIC",
+              "Values": [
+                "Credential Access"
+              ],
+              "Title": "Attack Tactic"
+            },
+            {
+              "Key": "ATTACK_TECHNIQUE",
+              "Values": [
+                "T1110 - Brute Force"
+              ],
+              "Title": "Attack Technique"
+            }
+          ],
+          "Name": "UnauthorizedAccess:EC2/SSHBruteForce",
+          "CreatedAt": 1794623027,
+          "UpdatedAt": 1794623685,
+          "FirstSeenAt": 1794621339,
+          "LastSeenAt": 1794622534,
+          "Severity": 2.0,
+          "Count": 2,
+          "ActorIds": [],
+          "EndpointIds": [
+            "172.31.25.176:22:INBOUND",
+            "203.0.113.3:32806:INBOUND",
+            "203.0.113.3:32786:INBOUND"
+          ]
+        },
+        {
+          "Type": "FINDING",
+          "Id": "arn:aws:guardduty:us-east-1:111122223333:detector/example0000000000000000000000000/finding/example0000000000000000000000003",
+          "Title": "The EC2 instance i-00000000000000002 queried a Bitcoin-related domain name.",
+          "ResourceIds": [
+            "i-00000000000000002",
+            "ami-0cc337c0f1a9da5ed"
+          ],
+          "SignalIndicators": [
+            {
+              "Key": "ATTACK_TACTIC",
+              "Values": [
+                "Impact"
+              ],
+              "Title": "Attack Tactic"
+            },
+            {
+              "Key": "CRYPTOMINING_DOMAIN",
+              "Values": [
+                "pool-nyc.supportxmr.com"
+              ],
+              "Title": "Cryptomining Domain"
+            },
+            {
+              "Key": "ATTACK_TECHNIQUE",
+              "Values": [
+                "T1496 - Resource Hijacking"
+              ],
+              "Title": "Attack Technique"
+            }
+          ],
+          "Name": "CryptoCurrency:EC2/BitcoinTool.B!DNS",
+          "CreatedAt": 1794333555,
+          "UpdatedAt": 1794763511,
+          "FirstSeenAt": 1794333359,
+          "LastSeenAt": 1794763319,
+          "Severity": 8.0,
+          "Count": 134,
+          "ActorIds": [],
+          "EndpointIds": [
+            "pool-nyc.supportxmr.com"
+          ]
+        },
+        {
+          "Type": "FINDING",
+          "Id": "arn:aws:guardduty:us-east-1:111122223333:detector/example0000000000000000000000000/finding/example0000000000000000000000004",
+          "Title": "203.0.113.4 is performing SSH brute force attacks against i-00000000000000002.",
+          "ResourceIds": [
+            "i-00000000000000002",
+            "ami-0cc337c0f1a9da5ed"
+          ],
+          "SignalIndicators": [
+            {
+              "Key": "ATTACK_TACTIC",
+              "Values": [
+                "Credential Access"
+              ],
+              "Title": "Attack Tactic"
+            },
+            {
+              "Key": "ATTACK_TECHNIQUE",
+              "Values": [
+                "T1110 - Brute Force"
+              ],
+              "Title": "Attack Technique"
+            }
+          ],
+          "Name": "UnauthorizedAccess:EC2/SSHBruteForce",
+          "CreatedAt": 1794435914,
+          "UpdatedAt": 1794435914,
+          "FirstSeenAt": 1794434398,
+          "LastSeenAt": 1794434996,
+          "Severity": 2.0,
+          "Count": 1,
+          "ActorIds": [],
+          "EndpointIds": [
+            "172.31.25.176:22:INBOUND",
+            "203.0.113.4:33672:INBOUND"
+          ]
+        },
+        {
+          "Type": "FINDING",
+          "Id": "arn:aws:guardduty:us-east-1:111122223333:detector/example0000000000000000000000000/finding/example0000000000000000000000005",
+          "Title": "The EC2 instance i-00000000000000002 queried a Bitcoin-related domain name.",
+          "ResourceIds": [
+            "i-00000000000000002",
+            "ami-0cc337c0f1a9da5ed"
+          ],
+          "SignalIndicators": [
+            {
+              "Key": "CRYPTOMINING_DOMAIN",
+              "Values": [
+                "pool.supportxmr.com"
+              ],
+              "Title": "Cryptomining Domain"
+            },
+            {
+              "Key": "ATTACK_TACTIC",
+              "Values": [
+                "Impact"
+              ],
+              "Title": "Attack Tactic"
+            },
+            {
+              "Key": "ATTACK_TECHNIQUE",
+              "Values": [
+                "T1496 - Resource Hijacking"
+              ],
+              "Title": "Attack Technique"
+            }
+          ],
+          "Name": "CryptoCurrency:EC2/BitcoinTool.B!DNS",
+          "CreatedAt": 1794333555,
+          "UpdatedAt": 1794763511,
+          "FirstSeenAt": 1794333359,
+          "LastSeenAt": 1794763319,
+          "Severity": 8.0,
+          "Count": 131,
+          "ActorIds": [],
+          "EndpointIds": [
+            "pool.supportxmr.com"
+          ]
+        },
+        {
+          "Type": "FINDING",
+          "Id": "arn:aws:guardduty:us-east-1:111122223333:detector/example0000000000000000000000000/finding/example0000000000000000000000006",
+          "Title": "The EC2 instance i-00000000000000002 queried a Bitcoin-related domain name.",
+          "ResourceIds": [
+            "i-00000000000000002",
+            "ami-0cc337c0f1a9da5ed"
+          ],
+          "SignalIndicators": [
+            {
+              "Key": "ATTACK_TACTIC",
+              "Values": [
+                "Impact"
+              ],
+              "Title": "Attack Tactic"
+            },
+            {
+              "Key": "CRYPTOMINING_DOMAIN",
+              "Values": [
+                "xmr-us-east1.nanopool.org"
+              ],
+              "Title": "Cryptomining Domain"
+            },
+            {
+              "Key": "ATTACK_TECHNIQUE",
+              "Values": [
+                "T1496 - Resource Hijacking"
+              ],
+              "Title": "Attack Technique"
+            }
+          ],
+          "Name": "CryptoCurrency:EC2/BitcoinTool.B!DNS",
+          "CreatedAt": 1794333551,
+          "UpdatedAt": 1794763520,
+          "FirstSeenAt": 1794333359,
+          "LastSeenAt": 1794763319,
+          "Severity": 8.0,
+          "Count": 126,
+          "ActorIds": [],
+          "EndpointIds": [
+            "xmr-us-east1.nanopool.org"
+          ]
+        }
+      ],
+      "SequenceIndicators": [
+        {
+          "Key": "ATTACK_TACTIC",
+          "Values": [
+            "Credential Access",
+            "Impact"
+          ],
+          "Title": "Attack Tactic"
+        },
+        {
+          "Key": "CRYPTOMINING_DOMAIN",
+          "Values": [
+            "pool-nyc.supportxmr.com",
+            "pool.supportxmr.com",
+            "xmr-us-east1.nanopool.org"
+          ],
+          "Title": "Cryptomining Domain"
+        },
+        {
+          "Key": "ATTACK_TECHNIQUE",
+          "Values": [
+            "T1496 - Resource Hijacking",
+            "T1110 - Brute Force"
+          ],
+          "Title": "Attack Technique"
+        }
+      ]
+    }
+  }
+}

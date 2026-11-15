@@ -1,0 +1,147 @@
+{
+  "SchemaVersion": "2018-10-08",
+  "Id": "arn:aws:guardduty:us-east-1:111122223333:detector/example0000000000000000000000000/finding/example0000000000000000000000001",
+  "ProductArn": "arn:aws:securityhub:us-east-1::product/aws/guardduty",
+  "ProductName": "GuardDuty",
+  "CompanyName": "Amazon",
+  "Region": "us-east-1",
+  "GeneratorId": "arn:aws:guardduty:us-east-1:111122223333:detector/example0000000000000000000000000",
+  "AwsAccountId": "111122223333",
+  "Types": [
+    "TTPs/Initial Access/UnauthorizedAccess:EC2-SSHBruteForce"
+  ],
+  "FirstObservedAt": "2026-11-11T21:59:58.000Z",
+  "LastObservedAt": "2026-11-11T22:09:56.000Z",
+  "CreatedAt": "2026-11-11T22:25:14.324Z",
+  "UpdatedAt": "2026-11-11T22:25:14.324Z",
+  "Severity": {
+    "Product": 2.0,
+    "Label": "LOW",
+    "Normalized": 40
+  },
+  "Title": "An EC2 instance was involved in SSH brute force attacks.",
+  "Description": "An EC2 instance has been involved in SSH brute force attacks.",
+  "SourceUrl": "https://us-east-1.console.aws.amazon.com/guardduty/home?region=us-east-1#/findings?macros=current&fId=example0000000000000000000000001",
+  "ProductFields": {
+    "aws/guardduty/service/action/actionType": "NETWORK_CONNECTION",
+    "aws/guardduty/service/action/networkConnectionAction/blocked": "false",
+    "aws/guardduty/service/action/networkConnectionAction/connectionDirection": "INBOUND",
+    "aws/guardduty/service/action/networkConnectionAction/localIpDetails/ipAddressV4": "172.31.25.176",
+    "aws/guardduty/service/action/networkConnectionAction/localNetworkInterface": "eni-00000000000000005",
+    "aws/guardduty/service/action/networkConnectionAction/localPortDetails/port": "22",
+    "aws/guardduty/service/action/networkConnectionAction/localPortDetails/portName": "SSH",
+    "aws/guardduty/service/action/networkConnectionAction/protocol": "TCP",
+    "aws/guardduty/service/action/networkConnectionAction/remoteIpDetails/city/cityName": "UNKNOWN",
+    "aws/guardduty/service/action/networkConnectionAction/remoteIpDetails/country/countryName": "China",
+    "aws/guardduty/service/action/networkConnectionAction/remoteIpDetails/geoLocation/lat": "34.7732",
+    "aws/guardduty/service/action/networkConnectionAction/remoteIpDetails/geoLocation/lon": "113.722",
+    "aws/guardduty/service/action/networkConnectionAction/remoteIpDetails/ipAddressV4": "203.0.113.3",
+    "aws/guardduty/service/action/networkConnectionAction/remoteIpDetails/organization/asn": "141679",
+    "aws/guardduty/service/action/networkConnectionAction/remoteIpDetails/organization/asnOrg": "China Telecom Beijing Tianjin Hebei Big Data Industry Park Branch",
+    "aws/guardduty/service/action/networkConnectionAction/remoteIpDetails/organization/isp": "China Telecom Beijing Tianjin Hebei Big Data Indus",
+    "aws/guardduty/service/action/networkConnectionAction/remoteIpDetails/organization/org": "China Telecom Beijing Tianjin Hebei Big Data Indus",
+    "aws/guardduty/service/action/networkConnectionAction/remotePortDetails/port": "33672",
+    "aws/guardduty/service/action/networkConnectionAction/remotePortDetails/portName": "Unknown",
+    "aws/guardduty/service/additionalInfo/packetsIn": "2367",
+    "aws/guardduty/service/additionalInfo/packetsOut": "2048",
+    "aws/guardduty/service/additionalInfo/threatListName": "Amazon",
+    "aws/guardduty/service/additionalInfo/value": "{\"packetsIn\":2367,\"packetsOut\":2048,\"threatListName\":\"Amazon\"}",
+    "aws/guardduty/service/additionalInfo/type": "default",
+    "aws/guardduty/service/archived": "false",
+    "aws/guardduty/service/count": "1",
+    "aws/guardduty/service/detectorId": "example0000000000000000000000000",
+    "aws/guardduty/service/eventFirstSeen": "2026-11-11T21:59:58.000Z",
+    "aws/guardduty/service/eventLastSeen": "2026-11-11T22:09:56.000Z",
+    "aws/guardduty/service/evidence/threatIntelligenceDetails.0_/threatListName": "Amazon",
+    "aws/guardduty/service/evidence/threatIntelligenceDetails.0_/threatNames": "[]",
+    "aws/guardduty/service/featureName": "VpcFlowLogs",
+    "aws/guardduty/service/resourceRole": "TARGET",
+    "aws/guardduty/service/serviceName": "guardduty",
+    "aws/securityhub/FindingId": "arn:aws:securityhub:us-east-1::product/aws/guardduty/arn:aws:guardduty:us-east-1:111122223333:detector/example0000000000000000000000000/finding/example0000000000000000000000001",
+    "aws/securityhub/ProductName": "GuardDuty",
+    "aws/securityhub/CompanyName": "Amazon"
+  },
+  "Resources": [
+    {
+      "Type": "AwsEc2Instance",
+      "Id": "arn:aws:ec2:us-east-1:111122223333:instance/i-00000000000000002",
+      "Partition": "aws",
+      "Region": "us-east-1",
+      "Provider": "AWS",
+      "Owner": {
+        "Account": {
+          "Id": "111122223333"
+        }
+      },
+      "Tags": {
+        "Name": "ssh-host",
+        "ManagedBy": "terraform"
+      },
+      "Details": {
+        "AwsEc2Instance": {
+          "Type": "t4g.nano",
+          "ImageId": "ami-0cc337c0f1a9da5ed",
+          "IpV4Addresses": [
+            "203.0.113.1",
+            "172.31.25.176"
+          ],
+          "VpcId": "vpc-00000000000000007",
+          "SubnetId": "subnet-00000000000000006",
+          "LaunchedAt": "2026-11-10T17:50:02.000Z"
+        }
+      }
+    }
+  ],
+  "WorkflowState": "NEW",
+  "Workflow": {
+    "Status": "NEW"
+  },
+  "RecordState": "ACTIVE",
+  "Action": {
+    "ActionType": "NETWORK_CONNECTION",
+    "NetworkConnectionAction": {
+      "ConnectionDirection": "INBOUND",
+      "RemoteIpDetails": {
+        "IpAddressV4": "203.0.113.3",
+        "Organization": {
+          "Asn": 141679,
+          "AsnOrg": "China Telecom Beijing Tianjin Hebei Big Data Industry Park Branch",
+          "Isp": "China Telecom Beijing Tianjin Hebei Big Data Indus",
+          "Org": "China Telecom Beijing Tianjin Hebei Big Data Indus"
+        },
+        "Country": {
+          "CountryCode": "CN",
+          "CountryName": "China"
+        },
+        "City": {
+          "CityName": "UNKNOWN"
+        },
+        "GeoLocation": {
+          "Lon": 113.722,
+          "Lat": 34.7732
+        }
+      },
+      "RemotePortDetails": {
+        "Port": 33672,
+        "PortName": "Unknown"
+      },
+      "LocalPortDetails": {
+        "Port": 22,
+        "PortName": "SSH"
+      },
+      "Protocol": "TCP",
+      "Blocked": false
+    }
+  },
+  "FindingProviderFields": {
+    "Severity": {
+      "Label": "LOW"
+    },
+    "Types": [
+      "TTPs/Initial Access/UnauthorizedAccess:EC2-SSHBruteForce"
+    ]
+  },
+  "Sample": false,
+  "ProcessedAt": "2026-11-12T00:05:37.118Z",
+  "AwsAccountName": "workload"
+}

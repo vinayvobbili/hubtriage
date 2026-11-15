@@ -1,0 +1,6 @@
+{
+  "verdict": "true_positive",
+  "refused": 0,
+  "source": "scrubbed: a real GuardDuty finding from the project's test account (2026-11), through `hubtriage scrub`, read by hand before commit",
+  "why": "GuardDuty's attack-sequence finding links several suspicious actions on the instance into one compromise."
+}

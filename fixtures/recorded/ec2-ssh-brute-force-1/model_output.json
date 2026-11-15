@@ -1,0 +1,26 @@
+{
+  "verdict": "needs_human",
+  "summary": "GuardDuty saw inbound SSH brute force from 203.0.113.3; the records do not show whether any attempt got in.",
+  "claims": [
+    {
+      "text": "The attempts came in over SSH.",
+      "bindings": [
+        {
+          "record_id": "ee8f3d82425a#0000",
+          "field": "Action.NetworkConnectionAction.LocalPortDetails.PortName",
+          "value": "SSH"
+        }
+      ]
+    },
+    {
+      "text": "The source address was 203.0.113.3.",
+      "bindings": [
+        {
+          "record_id": "ee8f3d82425a#0000",
+          "field": "Action.NetworkConnectionAction.RemoteIpDetails.IpAddressV4",
+          "value": "203.0.113.3"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "Events": [
+    {
+      "AccessKeyId": "ASIA-EXAMPLE-1",
+      "CloudTrailEvent": "{\"eventVersion\":\"1.11\",\"userIdentity\":{\"type\":\"AssumedRole\",\"principalId\":\"AROA-EXAMPLE-2:terraform\",\"arn\":\"arn:aws:sts::111122223333:assumed-role/OrganizationAccountAccessRole/terraform\",\"accountId\":\"111122223333\",\"accessKeyId\":\"ASIA-EXAMPLE-1\",\"sessionContext\":{\"sessionIssuer\":{\"type\":\"Role\",\"principalId\":\"AROA-EXAMPLE-2\",\"arn\":\"arn:aws:iam::111122223333:role/OrganizationAccountAccessRole\",\"accountId\":\"111122223333\",\"userName\":\"OrganizationAccountAccessRole\"},\"attributes\":{\"creationDate\":\"2026-11-10T17:49:30Z\",\"mfaAuthenticated\":\"false\"}}},\"eventTime\":\"2026-11-10T17:50:02Z\",\"eventSource\":\"ec2.amazonaws.com\",\"eventName\":\"RunInstances\",\"awsRegion\":\"us-east-1\",\"sourceIPAddress\":\"203.0.113.2\",\"userAgent\":\"APN/1.0 HashiCorp/1.0 Terraform/1.16.6 (+https://www.terraform.io) terraform-provider-aws/6.72.0 (+https://registry.terraform.io/providers/hashicorp/aws) aws-sdk-go-v2/1.47.4 ua/2.1 os/macos lang/go#1.27.3 md/GOOS#darwin md/GOARCH#arm64 api/ec2#1.341.0 m/i\",\"requestParameters\":{\"instancesSet\":{\"items\":[{\"imageId\":\"ami-0cc337c0f1a9da5ed\",\"minCount\":1,\"maxCount\":1}]},\"groupSet\":{\"items\":[{\"groupId\":\"sg-00000000000000004\"}]},\"userData\":\"<sensitiveDataRemoved>\",\"instanceType\":\"t4g.nano\",\"blockDeviceMapping\":{\"items\":[{\"deviceName\":\"/dev/xvda\",\"ebs\":{\"volumeSize\":8,\"deleteOnTermination\":true,\"volumeType\":\"gp3\",\"encrypted\":true}}]},\"monitoring\":{\"enabled\":false},\"disableApiTermination\":false,\"disableApiStop\":false,\"clientToken\":\"person1\",\"ebsOptimized\":false,\"tagSpecificationSet\":{\"items\":[{\"resourceType\":\"instance\",\"tags\":[{\"key\":\"ManagedBy\",\"value\":\"terraform\"},{\"key\":\"Name\",\"value\":\"ssh-host\"}]},{\"resourceType\":\"volume\",\"tags\":[{\"key\":\"ManagedBy\",\"value\":\"terraform\"}]}]},\"hibernationOptions\":{\"configured\":false},\"metadataOptions\":{\"httpTokens\":\"required\",\"httpEndpoint\":\"enabled\",\"httpProtocolIpv6\":\"disabled\"}},\"responseElements\":{\"requestId\":\"df254ffa-ae91-45c8-aa11-fb6117c45089\",\"reservationId\":\"r-00000000000000008\",\"ownerId\":\"111122223333\",\"groupSet\":{},\"instancesSet\":{\"items\":[{\"instanceId\":\"i-00000000000000002\",\"imageId\":\"ami-0cc337c0f1a9da5ed\",\"bootMode\":\"uefi\",\"currentInstanceBootMode\":\"uefi\",\"instanceState\":{\"code\":0,\"name\":\"pending\"},\"privateDnsName\":\"ip-172-31-25-176.ec2.internal\",\"operator\":{\"managed\":false},\"amiLaunchIndex\":0,\"productCodes\":{},\"instanceType\":\"t4g.nano\",\"launchTime\":1794333002000,\"placement\":{\"availabilityZone\":\"us-east-1c\",\"availabilityZoneId\":\"use1-az4\",\"tenancy\":\"default\"},\"monitoring\":{\"state\":\"disabled\"},\"subnetId\":\"subnet-00000000000000006\",\"vpcId\":\"vpc-00000000000000007\",\"privateIpAddress\":\"172.31.25.176\",\"stateReason\":{\"code\":\"pending\",\"message\":\"pending\"},\"architecture\":\"arm64\",\"rootDeviceType\":\"ebs\",\"rootDeviceName\":\"/dev/xvda\",\"blockDeviceMapping\":{},\"virtualizationType\":\"hvm\",\"hypervisor\":\"xen\",\"tagSet\":{\"items\":[{\"key\":\"Name\",\"value\":\"ssh-host\"},{\"key\":\"ManagedBy\",\"value\":\"terraform\"}]},\"clientToken\":\"person1\",\"groupSet\":{\"items\":[{\"groupId\":\"sg-00000000000000004\",\"groupName\":\"ssh-access\"}]},\"sourceDestCheck\":true,\"networkInterfaceSet\":{\"items\":[{\"networkInterfaceId\":\"eni-00000000000000005\",\"subnetId\":\"subnet-00000000000000006\",\"vpcId\":\"vpc-00000000000000007\",\"ownerId\":\"111122223333\",\"operator\":{\"managed\":false},\"status\":\"in-use\",\"macAddress\":\"02:00:00:00:00:01\",\"privateIpAddress\":\"172.31.25.176\",\"privateDnsName\":\"ip-172-31-25-176.ec2.internal\",\"sourceDestCheck\":true,\"interfaceType\":\"interface\",\"groupSet\":{\"items\":[{\"groupId\":\"sg-00000000000000004\",\"groupName\":\"ssh-access\"}]},\"attachment\":{\"attachmentId\":\"eni-attach-00000000000000003\",\"deviceIndex\":0,\"networkCardIndex\":0,\"status\":\"attaching\",\"attachTime\":1794333002000,\"deleteOnTermination\":true},\"privateIpAddressesSet\":{\"item\":[{\"privateIpAddress\":\"172.31.25.176\",\"privateDnsName\":\"ip-172-31-25-176.ec2.internal\",\"primary\":true}]},\"ipv6AddressesSet\":{},\"tagSet\":{}}]},\"ebsOptimized\":false,\"enaSupport\":true,\"cpuOptions\":{\"coreCount\":2,\"threadsPerCore\":1},\"capacityReservationSpecification\":{\"capacityReservationPreference\":\"open\"},\"hibernationOptions\":{\"configured\":false},\"enclaveOptions\":{\"enabled\":false},\"metadataOptions\":{\"state\":\"pending\",\"httpTokens\":\"required\",\"httpPutResponseHopLimit\":2,\"httpEndpoint\":\"enabled\",\"httpProtocolIpv4\":\"enabled\",\"httpProtocolIpv6\":\"disabled\",\"instanceMetadataTags\":\"disabled\"},\"maintenanceOptions\":{\"autoRecovery\":\"default\",\"rebootMigration\":\"default\"},\"privateDnsNameOptions\":{\"hostnameType\":\"ip-name\",\"enableResourceNameDnsARecord\":false,\"enableResourceNameDnsAAAARecord\":false}}]}},\"requestID\":\"df254ffa-ae91-45c8-aa11-fb6117c45089\",\"eventID\":\"73cc205f-fea5-44ea-93d8-661b3d1eac96\",\"readOnly\":false,\"resources\":[{\"accountId\":\"111122223333\",\"type\":\"AWS::EC2::Instance\",\"ARN\":\"arn:aws:ec2:us-east-1:111122223333:instance/i-00000000000000002\"}],\"eventType\":\"AwsApiCall\",\"managementEvent\":true,\"recipientAccountId\":\"111122223333\",\"eventCategory\":\"Management\",\"tlsDetails\":{\"tlsVersion\":\"TLSv1.3\",\"cipherSuite\":\"TLS_AES_128_GCM_SHA256\",\"clientProvidedHostHeader\":\"ec2.us-east-1.amazonaws.com\"}}",
+      "EventId": "73cc205f-fea5-44ea-93d8-661b3d1eac96",
+      "EventName": "RunInstances",
+      "EventSource": "ec2.amazonaws.com",
+      "EventTime": "2026-11-10T12:50:02-05:00",
+      "ReadOnly": "false",
+      "Resources": [
+        {
+          "ResourceName": "vpc-00000000000000007",
+          "ResourceType": "AWS::EC2::VPC"
+        },
+        {
+          "ResourceName": "ami-0cc337c0f1a9da5ed",
+          "ResourceType": "AWS::EC2::Ami"
+        },
+        {
+          "ResourceName": "eni-00000000000000005",
+          "ResourceType": "AWS::EC2::NetworkInterface"
+        },
+        {
+          "ResourceName": "i-00000000000000002",
+          "ResourceType": "AWS::EC2::Instance"
+        },
+        {
+          "ResourceName": "ssh-access",
+          "ResourceType": "AWS::EC2::SecurityGroup"
+        },
+        {
+          "ResourceName": "sg-00000000000000004",
+          "ResourceType": "AWS::EC2::SecurityGroup"
+        },
+        {
+          "ResourceName": "subnet-00000000000000006",
+          "ResourceType": "AWS::EC2::Subnet"
+        }
+      ],
+      "Username": "terraform"
+    }
+  ]
+}

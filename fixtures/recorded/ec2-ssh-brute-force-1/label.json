@@ -1,0 +1,6 @@
+{
+  "verdict": "needs_human",
+  "refused": 0,
+  "source": "scrubbed: a real GuardDuty finding from the project's test account (2026-11), through `hubtriage scrub`, read by hand before commit",
+  "why": "SSH brute force against an instance: the evidence cannot say whether any attempt got in, so a person decides."
+}

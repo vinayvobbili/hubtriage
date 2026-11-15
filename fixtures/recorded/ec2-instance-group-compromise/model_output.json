@@ -1,0 +1,26 @@
+{
+  "verdict": "true_positive",
+  "summary": "GuardDuty linked several signals on the instance into one attack sequence, including a mining pool domain and inbound connections from outside.",
+  "claims": [
+    {
+      "text": "The sequence includes a request for the mining pool domain pool.supportxmr.com.",
+      "bindings": [
+        {
+          "record_id": "40570a3b9ed5#0000",
+          "field": "Detection.Sequence.Endpoints.2.Domain",
+          "value": "pool.supportxmr.com"
+        }
+      ]
+    },
+    {
+      "text": "The sequence includes an inbound connection to port 22 from outside.",
+      "bindings": [
+        {
+          "record_id": "40570a3b9ed5#0000",
+          "field": "Detection.Sequence.Endpoints.4.Connection.Direction",
+          "value": "INBOUND"
+        }
+      ]
+    }
+  ]
+}

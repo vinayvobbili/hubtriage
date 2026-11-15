@@ -1,0 +1,6 @@
+{
+  "verdict": "needs_human",
+  "refused": 0,
+  "source": "scrubbed: a real GuardDuty finding from the project's test account (2026-11), through `hubtriage scrub`, read by hand before commit",
+  "why": "The same finding type as ec2-ssh-brute-force-1, recorded separately; the verdict is the same."
+}

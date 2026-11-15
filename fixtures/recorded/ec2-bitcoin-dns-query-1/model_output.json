@@ -1,0 +1,26 @@
+{
+  "verdict": "true_positive",
+  "summary": "The instance queried pool.supportxmr.com, a Bitcoin-related mining pool domain, and the query was not blocked.",
+  "claims": [
+    {
+      "text": "The instance queried the domain pool.supportxmr.com.",
+      "bindings": [
+        {
+          "record_id": "bdd68cb252b1#0000",
+          "field": "Action.DnsRequestAction.Domain",
+          "value": "pool.supportxmr.com"
+        }
+      ]
+    },
+    {
+      "text": "The activity was a DNS request.",
+      "bindings": [
+        {
+          "record_id": "bdd68cb252b1#0000",
+          "field": "Action.ActionType",
+          "value": "DNS_REQUEST"
+        }
+      ]
+    }
+  ]
+}

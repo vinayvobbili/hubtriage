@@ -1,0 +1,169 @@
+{
+  "Reservations": [
+    {
+      "Groups": [],
+      "Instances": [
+        {
+          "AmiLaunchIndex": 0,
+          "Architecture": "arm64",
+          "BlockDeviceMappings": [
+            {
+              "DeviceName": "/dev/xvda",
+              "Ebs": {
+                "AttachTime": "2026-11-10T17:50:02+00:00",
+                "DeleteOnTermination": true,
+                "EbsCardIndex": 0,
+                "Status": "attached",
+                "VolumeId": "vol-00000000000000001"
+              }
+            }
+          ],
+          "BootMode": "uefi",
+          "CapacityReservationSpecification": {
+            "CapacityReservationPreference": "open"
+          },
+          "ClientToken": "person1",
+          "CpuOptions": {
+            "CoreCount": 2,
+            "ThreadsPerCore": 1
+          },
+          "CurrentInstanceBootMode": "uefi",
+          "EbsOptimized": false,
+          "EnaSupport": true,
+          "EnclaveOptions": {
+            "Enabled": false
+          },
+          "HibernationOptions": {
+            "Configured": false
+          },
+          "Hypervisor": "xen",
+          "ImageId": "ami-0cc337c0f1a9da5ed",
+          "InstanceId": "i-00000000000000002",
+          "InstanceType": "t4g.nano",
+          "LaunchTime": "2026-11-10T17:50:02+00:00",
+          "MaintenanceOptions": {
+            "AutoRecovery": "default",
+            "RebootMigration": "default"
+          },
+          "MetadataOptions": {
+            "HttpEndpoint": "enabled",
+            "HttpProtocolIpv6": "disabled",
+            "HttpPutResponseHopLimit": 2,
+            "HttpTokens": "required",
+            "InstanceMetadataTags": "disabled",
+            "State": "applied"
+          },
+          "Monitoring": {
+            "State": "disabled"
+          },
+          "NetworkInterfaces": [
+            {
+              "Association": {
+                "IpOwnerId": "amazon",
+                "PublicDnsName": "ec2-203-0-113-1.compute-1.amazonaws.com",
+                "PublicIp": "203.0.113.1"
+              },
+              "Attachment": {
+                "AttachTime": "2026-11-10T17:50:02+00:00",
+                "AttachmentId": "eni-attach-00000000000000003",
+                "DeleteOnTermination": true,
+                "DeviceIndex": 0,
+                "NetworkCardIndex": 0,
+                "Status": "attached"
+              },
+              "Description": "",
+              "Groups": [
+                {
+                  "GroupId": "sg-00000000000000004",
+                  "GroupName": "ssh-access"
+                }
+              ],
+              "InterfaceType": "interface",
+              "Ipv6Addresses": [],
+              "MacAddress": "02:00:00:00:00:01",
+              "NetworkInterfaceId": "eni-00000000000000005",
+              "Operator": {
+                "Managed": false
+              },
+              "OwnerId": "111122223333",
+              "PrivateDnsName": "ip-172-31-25-176.ec2.internal",
+              "PrivateIpAddress": "172.31.25.176",
+              "PrivateIpAddresses": [
+                {
+                  "Association": {
+                    "IpOwnerId": "amazon",
+                    "PublicDnsName": "ec2-203-0-113-1.compute-1.amazonaws.com",
+                    "PublicIp": "203.0.113.1"
+                  },
+                  "Primary": true,
+                  "PrivateDnsName": "ip-172-31-25-176.ec2.internal",
+                  "PrivateIpAddress": "172.31.25.176"
+                }
+              ],
+              "SourceDestCheck": true,
+              "Status": "in-use",
+              "SubnetId": "subnet-00000000000000006",
+              "VpcId": "vpc-00000000000000007"
+            }
+          ],
+          "NetworkPerformanceOptions": {
+            "BandwidthWeighting": "default"
+          },
+          "Operator": {
+            "HiddenByDefault": false,
+            "Managed": false
+          },
+          "Placement": {
+            "AvailabilityZone": "us-east-1c",
+            "AvailabilityZoneId": "use1-az4",
+            "GroupName": "",
+            "Tenancy": "default"
+          },
+          "PlatformDetails": "Linux/UNIX",
+          "PrivateDnsName": "ip-172-31-25-176.ec2.internal",
+          "PrivateDnsNameOptions": {
+            "EnableResourceNameDnsAAAARecord": false,
+            "EnableResourceNameDnsARecord": false,
+            "HostnameType": "ip-name"
+          },
+          "PrivateIpAddress": "172.31.25.176",
+          "ProductCodes": [],
+          "PublicDnsName": "ec2-203-0-113-1.compute-1.amazonaws.com",
+          "PublicIpAddress": "203.0.113.1",
+          "RootDeviceName": "/dev/xvda",
+          "RootDeviceType": "ebs",
+          "SecondaryInterfaces": [],
+          "SecurityGroups": [
+            {
+              "GroupId": "sg-00000000000000004",
+              "GroupName": "ssh-access"
+            }
+          ],
+          "SourceDestCheck": true,
+          "State": {
+            "Code": 16,
+            "Name": "running"
+          },
+          "StateTransitionReason": "",
+          "SubnetId": "subnet-00000000000000006",
+          "Tags": [
+            {
+              "Key": "Name",
+              "Value": "ssh-host"
+            },
+            {
+              "Key": "ManagedBy",
+              "Value": "terraform"
+            }
+          ],
+          "UsageOperation": "RunInstances",
+          "UsageOperationUpdateTime": "2026-11-10T17:50:02+00:00",
+          "VirtualizationType": "hvm",
+          "VpcId": "vpc-00000000000000007"
+        }
+      ],
+      "OwnerId": "111122223333",
+      "ReservationId": "r-00000000000000008"
+    }
+  ]
+}

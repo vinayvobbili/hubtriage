@@ -1,0 +1,35 @@
+{
+  "SecurityGroups": [
+    {
+      "Description": "SSH access",
+      "GroupId": "sg-00000000000000004",
+      "GroupName": "ssh-access",
+      "IpPermissions": [
+        {
+          "FromPort": 0,
+          "IpProtocol": "tcp",
+          "IpRanges": [
+            {
+              "CidrIp": "0.0.0.0/0",
+              "Description": "SSH"
+            }
+          ],
+          "Ipv6Ranges": [],
+          "PrefixListIds": [],
+          "ToPort": 65535,
+          "UserIdGroupPairs": []
+        }
+      ],
+      "IpPermissionsEgress": [],
+      "OwnerId": "111122223333",
+      "SecurityGroupArn": "arn:aws:ec2:us-east-1:111122223333:security-group/sg-00000000000000004",
+      "Tags": [
+        {
+          "Key": "ManagedBy",
+          "Value": "terraform"
+        }
+      ],
+      "VpcId": "vpc-00000000000000007"
+    }
+  ]
+}
