@@ -16,10 +16,15 @@ NEW_ACTIVE = {
 }
 
 
-def new_findings(securityhub: Any, product_name: str | None = "GuardDuty") -> Iterator[dict]:
+def new_findings(
+    securityhub: Any, product_name: str | None = "GuardDuty", resource_id: str | None = None
+) -> Iterator[dict]:
+    """New active findings; `resource_id` keeps those about one resource (an instance id, or its ARN)."""
     filters = dict(NEW_ACTIVE)
     if product_name:
         filters["ProductName"] = [{"Value": product_name, "Comparison": "EQUALS"}]
+    if resource_id:
+        filters["ResourceId"] = [{"Value": resource_id, "Comparison": "CONTAINS"}]
     for page in securityhub.get_paginator("get_findings").paginate(Filters=filters):
         yield from page["Findings"]
 

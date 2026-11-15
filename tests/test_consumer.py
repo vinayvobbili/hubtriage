@@ -240,12 +240,42 @@ def test_a_model_outage_stops_the_run_and_leaves_every_finding_open(tmp_path):
     assert len(sqs.visible) == 1  # the second message did not spend a receive
 
 
+def test_new_findings_can_be_limited_to_one_resource():
+    class Paginated:
+        filters = None
+
+        def get_paginator(self, name):
+            return self
+
+        def paginate(self, Filters):
+            self.filters = Filters
+            return [{"Findings": [{"Id": "a"}]}]
+
+    client = Paginated()
+    assert list(hub.new_findings(client, "GuardDuty", "i-0123456789abcdef0")) == [{"Id": "a"}]
+    assert client.filters["ResourceId"] == [{"Value": "i-0123456789abcdef0", "Comparison": "CONTAINS"}]
+    list(hub.new_findings(client))
+    assert "ResourceId" not in client.filters
+
+
+def test_pull_passes_the_resource_id_and_asks_no_model_when_recording(monkeypatch, tmp_path, capsys):
+    boto3 = pytest.importorskip("boto3")
+    doc = raw_finding()
+    seen = {}
+    monkeypatch.setattr(boto3.Session, "client", lambda self, *a, **kw: FakeHub(doc))
+    monkeypatch.setattr(hub, "new_findings", lambda client, product, resource_id=None: seen.update(r=resource_id) or [doc])
+    monkeypatch.setattr(llm, "from_env", lambda: pytest.fail("a model was asked"))
+    monkeypatch.setattr(cases, "record_evidence", lambda raw, out, live: (Path(out) / "x", []))
+    assert cli.main(["pull", "--record-only", "--resource-id", "i-0123456789abcdef0", "--out", str(tmp_path)]) == 0
+    assert seen == {"r": "i-0123456789abcdef0"}
+
+
 def test_pull_writes_nothing_back_when_no_model_answered(monkeypatch, tmp_path):
     boto3 = pytest.importorskip("boto3")
     doc = raw_finding()
     securityhub = FakeHub(doc)
     monkeypatch.setattr(boto3.Session, "client", lambda self, *a, **kw: securityhub)
-    monkeypatch.setattr(hub, "new_findings", lambda client, product: [doc])
+    monkeypatch.setattr(hub, "new_findings", lambda client, product, resource_id=None: [doc])
     monkeypatch.setattr(llm, "from_env", lambda: no_model)
     monkeypatch.setattr(
         cases,

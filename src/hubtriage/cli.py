@@ -216,7 +216,7 @@ def cmd_pull(args) -> int:
     securityhub = session.client("securityhub", region_name=args.region)
     judge = None if args.record_only else llm.from_env()
     live = AwsClient(enrich_role=args.enrich_role, session=session)
-    for count, raw in enumerate(hub.new_findings(securityhub, args.product), start=1):
+    for count, raw in enumerate(hub.new_findings(securityhub, args.product, args.resource_id), start=1):
         if count > args.limit:
             break
         if args.record_only:
@@ -468,6 +468,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--region", default=os.environ.get("AWS_REGION", "us-east-1"))
     p.add_argument("--product", default="GuardDuty")
     p.add_argument("--limit", type=int, default=10)
+    p.add_argument("--resource-id", help="only findings about this resource, like an instance id i-...")
     p.add_argument("--enrich-role", default="hubtriage-enrich")
     p.add_argument("--write-back", action="store_true", help="send each verdict to Security Hub")
     p.add_argument("--record-only", action="store_true",
