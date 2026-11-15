@@ -32,6 +32,9 @@ ORG = re.compile(r"\bo-[a-z0-9]{10,32}\b")
 HEX32 = re.compile(r"(?<![0-9a-zA-Z])[0-9a-f]{32}(?![0-9a-zA-Z])")
 KEY = re.compile(r"\b(AKIA|ASIA|AIDA|AROA|AGPA|ANPA|AIPA|ANVA|ABIA|ACCA)[A-Z0-9]{12,20}\b")
 SSO = re.compile(r"\b(AWSReservedSSO_[A-Za-z0-9+=,.@-]+?)_[0-9a-f]{16}\b")
+# EC2 and VPC resource ids: an instance, group, VPC, subnet, network interface or volume.
+# Placeholders count up from zero (eight leading zeros), which a real random id never has.
+RESOURCE = re.compile(r"\b(i|sg|vpc|subnet|eni|vol)-([0-9a-f]{17})\b")
 EMAIL = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+")
 V4 = re.compile(r"(?<![\d.])\d{1,3}(?:\.\d{1,3}){3}(?![\d.])")
 V6 = re.compile(r"(?<![\w:])[0-9a-fA-F]{1,4}(?::[0-9a-fA-F]{0,4}){3,7}(?![\w:])")
@@ -93,6 +96,8 @@ class Scrubber:
         for name in sorted({n for n in self.names if n}, key=len, reverse=True):
             text = re.sub(re.escape(name), lambda m, name=name: self._swap(
                 "name", name.lower(), lambda n: f"person{n + 1}"), text, flags=re.IGNORECASE)
+        text = RESOURCE.sub(lambda m: self._swap(
+            "resource", m.group(), lambda n: f"{m.group(1)}-{n + 1:017x}"), text)
         text = SSO.sub(lambda m: self._swap("sso", m.group(), lambda n: f"{m.group(1)}_{n:016x}"), text)
         text = KEY.sub(lambda m: self._swap("key", m.group(), lambda n: f"{m.group(1)}-EXAMPLE-{n + 1}"), text)
         text = ORG.sub(lambda m: self._swap("org", m.group(), lambda n: f"o-exampleorg{n + 1:02d}"), text)
@@ -108,6 +113,7 @@ def leftovers(text: str, names: list[str] | None = None) -> list[str]:
     found = [m.group() for n in names or [] if n for m in re.finditer(re.escape(n), text, re.IGNORECASE)]
     found += [m.group() for m in ACCOUNT.finditer(text) if m.group() not in ACCOUNTS]
     found += [m.group() for m in KEY.finditer(text)]
+    found += [m.group() for m in RESOURCE.finditer(text) if not m.group(2).startswith("0" * 8)]
     found += [m.group() for m in ORG.finditer(text) if not m.group().startswith("o-exampleorg")]
     found += [m.group() for m in HEX32.finditer(text)]
     # Placeholders count up from zero; a real suffix is random and never starts with ten zeros.

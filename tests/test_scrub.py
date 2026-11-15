@@ -50,6 +50,16 @@ def test_names_given_are_replaced_in_any_case_and_checked_for():
     assert leftovers("signed in as Dana", names=["dana"]) == ["Dana"]
 
 
+def test_ec2_resource_ids_become_placeholders_the_same_way_everywhere():
+    real = "i-0a1b2c3d4e5f60718 sg-0f1e2d3c4b5a69788 vpc-0a9b8c7d6e5f40312 subnet-0123456789abcdef0"
+    s = Scrubber()
+    out = s.text(real)
+    assert out == "i-00000000000000001 sg-00000000000000002 vpc-00000000000000003 subnet-00000000000000004"
+    assert not leftovers(out)
+    assert s.text("arn:aws:ec2:::instance/i-0a1b2c3d4e5f60718") == "arn:aws:ec2:::instance/i-00000000000000001"
+    assert leftovers(real) == real.split()
+
+
 def test_leftovers_name_what_still_looks_real():
     found = leftovers(f"{REAL_ACCOUNT} 8.8.4.4 {REAL_SSO} sam@globex.com")
     assert set(found) == {REAL_ACCOUNT, "8.8.4.4", REAL_SSO, "sam@globex.com"}
