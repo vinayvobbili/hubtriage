@@ -1,6 +1,7 @@
 {
   "verdict": "needs_human",
+  "also_correct": ["true_positive"],
   "refused": 0,
   "source": "scrubbed: a real GuardDuty finding from the project's test account (2026-11), through `hubtriage scrub`, read by hand before commit",
-  "why": "SSH brute force against an instance: the evidence cannot say whether any attempt got in, so a person decides."
+  "why": "SSH brute force against an instance: the evidence cannot say whether any attempt got in, so a person decides. Contested: Claude and the local Qwen both answered true_positive on this LOW-severity finding, and that is defensible too, since the brute force did happen. No rule here says what to do when the records cannot show whether a login succeeded, so either verdict counts. Dismissing it does not."
 }

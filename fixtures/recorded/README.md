@@ -15,10 +15,18 @@ synthetic cases.
 
 The six `ec2-` cases are real GuardDuty findings, not samples. Each was scrubbed with `hubtriage scrub`
 and read by hand before it was committed, and each keeps the AWS answers recorded for it in `cassette/`.
-They have no model answer: a judge reads the cassette and decides.
+Each has a `model_output.json`, written by hand as a reference answer, like the synthetic cases'. It is
+not a model's: it is what the `recorded` judge replays, and `hubtriage eval --judge env` asks a real
+model instead.
 
 - `ec2-bitcoin-dns-query-1`, `-2`, `-3`: an instance queried a Bitcoin-related domain name
   (`CryptoCurrency:EC2-BitcoinTool.B!DNS`). Labeled `true_positive`.
 - `ec2-instance-group-compromise`: GuardDuty's `AttackSequence:EC2/CompromisedInstanceGroup`.
   Labeled `true_positive`.
-- `ec2-ssh-brute-force-1`, `-2`: `UnauthorizedAccess:EC2-SSHBruteForce`. Labeled `needs_human`.
+- `ec2-ssh-brute-force-1`, `-2`: `UnauthorizedAccess:EC2-SSHBruteForce`, LOW severity. Labeled
+  `needs_human`, and contested: `also_correct` lets `true_positive` count too. The records cannot show
+  whether any login attempt succeeded, which is why a person should decide. Claude (Opus 5.5) and the
+  local Qwen both answered `true_positive` instead, and that is defensible, since the brute force did
+  happen and nothing here says what to do when the records can't tell. So the eval counts these two
+  with the other contested cases (the two port-probe cases in `../synthetic`) and reports them apart
+  from the uncontested ones. A dismissal is still wrong on both.

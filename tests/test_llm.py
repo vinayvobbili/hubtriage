@@ -130,6 +130,20 @@ def test_a_contested_case_accepts_its_other_verdict_but_never_a_dismissal():
     assert not scored(label, "benign").correct and scored(label, "benign").false_benign
 
 
+def test_the_recorded_ssh_brute_force_cases_are_contested_like_the_port_probes():
+    found = {c.name: c for c in cases.discover(cli.FIXTURES)}
+    contested = sorted(n for n, c in found.items() if c.label.get("also_correct"))
+    assert contested == [
+        "ec2-ssh-brute-force-1", "ec2-ssh-brute-force-2", "port-probe-misread-port", "port-probe-ssh-open",
+    ]
+    for name in ("ec2-ssh-brute-force-1", "ec2-ssh-brute-force-2"):
+        assert (found[name].label["verdict"], found[name].label["also_correct"]) == ("needs_human", ["true_positive"])
+    # Claude and Qwen both said true_positive on them; the eval counts that as correct, and a benign as not.
+    outcomes = [scored(found[n].label, said) for n in contested[:2] for said in ("true_positive", "benign")]
+    assert [o.correct for o in outcomes] == [True, False, True, False]
+    assert cases.summarize(outcomes)["contested"] == 4
+
+
 def test_the_eval_counts_dismissals_apart_from_cheap_mix_ups():
     outcomes = [
         scored({"verdict": "true_positive"}, "needs_human"),  # still reaches a person
