@@ -193,7 +193,7 @@ def _print_paused(request: dict, thread_id: str) -> None:
 def cmd_triage(args) -> int:
     case = cases.Case(Path(args.case).name, Path(args.case), {})
     if args.engine == "graph":
-        judge = _judge(args.judge) or llm.recorded(case.directory / "model_output.json")
+        judge = _judge(args.judge, case.directory) or llm.recorded(case.directory / "model_output.json")
         store_path = Path(args.graph_dir) / f"{case.name}-{uuid.uuid4().hex[:6]}" / "case.db"
         result = _graph_triage(args, case.finding, Cassette(case.directory / "cassette"), judge,
                                store_path=store_path, mode="replay")
@@ -201,7 +201,7 @@ def cmd_triage(args) -> int:
             _print_decision(result)
             print(json.dumps(result.update, indent=2))
         return 0
-    outcome = cases.run(case, _judge(args.judge))
+    outcome = cases.run(case, _judge(args.judge, case.directory))
     _print_decision(outcome.result)
     print(json.dumps(outcome.result.update, indent=2))
     return 0

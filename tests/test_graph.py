@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import re
+import shutil
 from pathlib import Path
 
 import pytest
@@ -298,6 +299,33 @@ def test_the_graph_command_line_gives_the_pipeline_s_output_for_a_true_positive(
 
 
 # ------------------------------------------------------------------ the model guard
+
+
+def graph_triage_with_claude(monkeypatch, tmp_path, case: Path):
+    """`triage --engine graph --judge env` with HUBTRIAGE_LLM=claude and no network. Returns what got built."""
+    built = []
+
+    def claude_api(model, keychain=""):
+        built.append(model)
+        return lambda prompt: (SYNTHETIC / "ssh-brute-force-open" / "model_output.json").read_text(encoding="utf-8")
+
+    monkeypatch.setattr(llm, "claude_api", claude_api)
+    monkeypatch.setenv("HUBTRIAGE_LLM", "claude")
+    cli.main(["triage", str(case), "--engine", "graph", "--judge", "env",
+              "--graph-dir", str(tmp_path / "d"), "--graph-db", str(tmp_path / "g.db")])
+    return built
+
+
+def test_the_graph_triage_of_a_fixtures_case_may_use_a_public_backend(monkeypatch, tmp_path, capsys):
+    built = graph_triage_with_claude(monkeypatch, tmp_path, SYNTHETIC / "ssh-brute-force-open")
+    assert built and "verdict   true_positive" in capsys.readouterr().out
+
+
+def test_the_graph_triage_of_anything_else_refuses_a_public_backend(monkeypatch, tmp_path):
+    case = tmp_path / "recordings" / "ssh-brute-force-open"
+    shutil.copytree(SYNTHETIC / "ssh-brute-force-open", case)
+    with pytest.raises(llm.PublicBackendRefused):
+        graph_triage_with_claude(monkeypatch, tmp_path, case)
 
 
 def test_the_graph_engine_takes_its_judge_from_the_pipeline_s_guard(monkeypatch):

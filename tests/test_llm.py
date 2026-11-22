@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 from pathlib import Path
 from types import SimpleNamespace
@@ -289,6 +290,38 @@ def test_only_cases_under_fixtures_count_as_made_up(monkeypatch, tmp_path):
         cli._judge("env")
     with pytest.raises(llm.PublicBackendRefused):
         cli._judge("env", cli.FIXTURES / ".." / "recordings")
+
+
+MADE_UP = cli.FIXTURES / "synthetic" / "ssh-brute-force-open"
+
+
+def claude_with_no_network(monkeypatch):
+    """HUBTRIAGE_LLM=claude, where the backend answers with the case's recorded answer. Returns what got built."""
+    built = []
+
+    def claude_api(model, keychain=""):
+        built.append(model)
+        return lambda prompt: (MADE_UP / "model_output.json").read_text(encoding="utf-8")
+
+    monkeypatch.setattr(llm, "claude_api", claude_api)
+    monkeypatch.setenv("HUBTRIAGE_LLM", "claude")
+    return built
+
+
+def test_triage_on_a_fixtures_case_may_use_a_public_backend(monkeypatch, capsys):
+    built = claude_with_no_network(monkeypatch)
+    assert cli.main(["triage", str(MADE_UP), "--judge", "env"]) == 0
+    assert built and "verdict   true_positive" in capsys.readouterr().out
+
+
+def test_triage_on_anything_else_refuses_a_public_backend(monkeypatch, tmp_path):
+    built = claude_with_no_network(monkeypatch)
+    for outside in ("recordings", "elsewhere"):
+        case = tmp_path / outside / MADE_UP.name
+        shutil.copytree(MADE_UP, case)
+        with pytest.raises(llm.PublicBackendRefused):
+            cli.main(["triage", str(case), "--judge", "env"])
+    assert not built
 
 
 @pytest.mark.parametrize("command", [["consume", "--queue-url", "q"], ["pull"]])
