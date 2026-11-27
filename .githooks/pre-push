@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
 # Run CI's checks locally before a push. Enable with: git config core.hooksPath .githooks
 # Skip once with: git push --no-verify
-exec "$(git rev-parse --show-toplevel)/scripts/check"
+# The checks (tests, privacy audit) run one push at a time on this Mac: `serial` (toolbelt) makes parallel pushes
+# queue instead of running together at full CPU. Without it the checks run at once, with a warning.
+check="$(git rev-parse --show-toplevel)/scripts/check"
+if command -v serial >/dev/null 2>&1; then
+  exec serial pre-push -- "$check"
+fi
+echo "pre-push: 'serial' (toolbelt) isn't on the PATH, so these checks won't wait for other pushes' checks" >&2
+exec "$check"
