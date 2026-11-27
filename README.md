@@ -135,8 +135,8 @@ accurate a model is; a larger held-out set of recorded cases comes next.
   label-by-verdict table rather than one number. Its one refused claim was a correct reading with
   the wrong type (CloudTrail's `readOnly: true` cited as `"true"`), so the prompt now says a value
   keeps its JSON type.
-- **The gate admitted two wrong dismissals.** Qwen 9B, the local model live findings go to, agreed
-  with 14 of 19 labels, and two of its misses were benign verdicts whose every claim was true: an
+- **The gate admitted two wrong dismissals.** Qwen 9B, the local model when those runs were made,
+  agreed with 14 of 19 labels, and two of its misses were benign verdicts whose every claim was true: an
   approved scanner's tag, never the outside address it scanned; a role's documented purpose, never
   the empty CloudTrail answer. A benign verdict now has to cite what happened. Requiring every kind
   of record was tried first and turned three of Claude's correct dismissals into escalations, over
@@ -205,10 +205,15 @@ name and address, so `pull` and `consume` refuse `claude` and `agy` and run on l
 
 Neither of those may dismiss a finding yet. A benign verdict from a backend not named in
 `HUBTRIAGE_MAY_DISMISS` (default `claude,agy`, which only ever see made-up cases) goes to a person,
-like any other `needs_human`. Qwen 9B, the local model, dismissed a backup role rewriting its
-bucket's policy in every run, citing the right records and drawing the wrong conclusion, which no
-check on the evidence can catch. A backend is added once a model it serves passes a held-out set
-written after the last change, with no false benign. A shared local server queues requests from
+like any other `needs_human`. Qwen 9B, the local model when those runs were made, dismissed a
+backup role rewriting its bucket's policy in every run, citing the right records and drawing the
+wrong conclusion, which no check on the evidence can catch. The local server's model has since
+changed to Gemma 4 12B (4-bit), which has not passed a held-out set either, so local still may not
+dismiss. Its first run on the made-up cases agreed with 9 of 19 synthetic labels, 2 of 6 held-out
+labels and 7 of 7 recorded ones, and it still answered benign for backup-role-opens-bucket-policy.
+It over-called `true_positive` on cases labeled benign or needs_human, and the gate refused none of
+its claims; these are labels on small hand-made sets, not an accuracy number. A backend is added once a
+model it serves passes a held-out set written after the last change, with no false benign. A shared local server queues requests from
 other programs, so `HUBTRIAGE_LOCAL_TIMEOUT` (seconds, default 120) counts the wait too.
 
 ## Graph engine

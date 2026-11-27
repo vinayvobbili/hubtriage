@@ -24,8 +24,8 @@ Answering is not the same as being trusted to dismiss. Each answer from `from_en
 says whether its backend may close the loop on a finding: a benign verdict from one
 that may not goes to a person. Only backends named in HUBTRIAGE_MAY_DISMISS may,
 and the local and Bedrock ones are off until a model they serve passes a held-out
-set it was not tuned on with no false benign. Qwen 9B dismissed a bucket-policy
-rewrite as a backup job in every run.
+set it was not tuned on with no false benign. Qwen 9B, the local model when this
+was written, dismissed a bucket-policy rewrite as a backup job in every run.
 """
 
 from __future__ import annotations
